@@ -1,15 +1,17 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { 
-  MessageSquare, 
-  Calendar, 
-  BookOpen, 
-  Users, 
+import {
+  MessageSquare,
+  Calendar,
+  BookOpen,
+  Users,
   User,
   Brain,
   BarChart3
 } from 'lucide-react';
 import { ProgressRing } from '@/components/Profile/ProgressRing';
+import { useEffect } from 'react';
+import { SignedIn, SignedOut, SignInButton, UserButton , useAuth } from '@clerk/clerk-react';
 
 const Navbar = () => {
   const location = useLocation();
@@ -25,6 +27,28 @@ const Navbar = () => {
     { path: '/admin', label: 'Dashboard', icon: BarChart3 },
   ];
 
+  const { getToken, isSignedIn } = useAuth();
+
+
+  useEffect(() => {
+    const syncUser = async () => {
+      if (!isSignedIn) return;
+
+      const token = await getToken();
+
+      const result = await fetch("http://localhost:5000/api/register", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(result)
+    };
+
+    syncUser();
+  }, [isSignedIn, getToken]);
+
   return (
     <nav className="bg-card/95 backdrop-blur-lg border-b border-border sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4">
@@ -36,6 +60,14 @@ const Navbar = () => {
             </div>
             <span className="font-bold text-xl text-foreground">MindCare</span>
           </Link>
+
+          {/* sigin sigin out */}
+          <SignedOut>
+            <SignInButton />
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
 
           {/* Navigation Links - Desktop */}
           <div className="hidden md:flex items-center space-x-1">
@@ -82,14 +114,12 @@ const Navbar = () => {
                   to={item.path}
                   className="flex flex-col items-center py-2 px-1"
                 >
-                  <Icon 
-                    className={`w-5 h-5 ${
-                      isActive(item.path) ? 'text-primary' : 'text-muted-foreground'
-                    }`} 
+                  <Icon
+                    className={`w-5 h-5 ${isActive(item.path) ? 'text-primary' : 'text-muted-foreground'
+                      }`}
                   />
-                  <span className={`text-xs mt-1 ${
-                    isActive(item.path) ? 'text-primary font-medium' : 'text-muted-foreground'
-                  }`}>
+                  <span className={`text-xs mt-1 ${isActive(item.path) ? 'text-primary font-medium' : 'text-muted-foreground'
+                    }`}>
                     {item.label}
                   </span>
                 </Link>
