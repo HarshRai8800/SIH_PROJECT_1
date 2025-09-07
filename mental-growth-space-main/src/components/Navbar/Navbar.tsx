@@ -10,11 +10,18 @@ import {
   BarChart3
 } from 'lucide-react';
 import { ProgressRing } from '@/components/Profile/ProgressRing';
-import { useEffect } from 'react';
-import { SignedIn, SignedOut, SignInButton, UserButton , useAuth } from '@clerk/clerk-react';
+import { useEffect, useState } from 'react';
+import { SignedIn, SignedOut, SignInButton, UserButton, useAuth } from '@clerk/clerk-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const location = useLocation();
+  const [language, setLanguage] = useState("English"); // Language state
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -29,7 +36,6 @@ const Navbar = () => {
 
   const { getToken, isSignedIn } = useAuth();
 
-
   useEffect(() => {
     const syncUser = async () => {
       if (!isSignedIn) return;
@@ -43,7 +49,7 @@ const Navbar = () => {
         },
       });
 
-      console.log(result)
+      console.log(result);
     };
 
     syncUser();
@@ -53,15 +59,54 @@ const Navbar = () => {
     <nav className="bg-card/95 backdrop-blur-lg border-b border-border sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
-              <Brain className="w-6 h-6 text-white" />
-            </div>
-            <span className="font-bold text-xl text-foreground">MindCare</span>
-          </Link>
+          
+          {/* Left section: Language toggle + Logo + Role selection */}
+          <div className="flex items-center space-x-2">
+            
+            {/* Language Toggle */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">{language}</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem onClick={() => setLanguage("English")}>English</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage("Hindi")}>Hindi</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage("Kashmiri (Dogri)")}>Kashmiri (Dogri)</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage("Urdu")}>Urdu</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage("Punjabi")}>Punjabi</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          {/* sigin sigin out */}
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <span className="font-bold text-xl text-foreground">MindSpark</span>
+            </Link>
+
+            {/* Role Selection Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                  <span>Choose your role</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem asChild>
+                  <Link to="/student">Sign in as Student</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/counsellor">Sign in as Counsellor</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/admin">Sign in as Admin</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Sign-in / Sign-out */}
           <SignedOut>
             <SignInButton />
           </SignedOut>
@@ -115,11 +160,11 @@ const Navbar = () => {
                   className="flex flex-col items-center py-2 px-1"
                 >
                   <Icon
-                    className={`w-5 h-5 ${isActive(item.path) ? 'text-primary' : 'text-muted-foreground'
-                      }`}
+                    className={`w-5 h-5 ${isActive(item.path) ? 'text-primary' : 'text-muted-foreground'}`}
                   />
-                  <span className={`text-xs mt-1 ${isActive(item.path) ? 'text-primary font-medium' : 'text-muted-foreground'
-                    }`}>
+                  <span
+                    className={`text-xs mt-1 ${isActive(item.path) ? 'text-primary font-medium' : 'text-muted-foreground'}`}
+                  >
                     {item.label}
                   </span>
                 </Link>
