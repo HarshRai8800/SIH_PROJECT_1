@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -14,22 +15,25 @@ interface Message {
 }
 
 const ChatbotPage = () => {
+  const { t } = useTranslation();
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hello! I'm MindBot, your wellness companion. I'm here to listen and provide support. How are you feeling today?",
+      text: t("Hello! I'm MindBot, your wellness companion. I'm here to listen and provide support. How are you feeling today?"),
       isUser: false,
       timestamp: new Date(),
     },
   ]);
+
   const [inputMessage, setInputMessage] = useState('');
 
   const mockResponses = [
-    "I understand that can be really challenging. Can you tell me more about what's been on your mind?",
-    "It sounds like you're dealing with a lot right now. Remember, it's okay to feel overwhelmed sometimes.",
-    "That's a great step in taking care of yourself. Have you tried any relaxation techniques that work for you?",
-    "I'm here to support you. Would you like me to suggest some coping strategies that other students have found helpful?",
-    "Thank you for sharing that with me. Your feelings are valid, and seeking support shows real strength.",
+    t("I understand that can be really challenging. Can you tell me more about what's been on your mind?"),
+    t("It sounds like you're dealing with a lot right now. Remember, it's okay to feel overwhelmed sometimes."),
+    t("That's a great step in taking care of yourself. Have you tried any relaxation techniques that work for you?"),
+    t("I'm here to support you. Would you like me to suggest some coping strategies that other students have found helpful?"),
+    t("Thank you for sharing that with me. Your feelings are valid, and seeking support shows real strength."),
   ];
 
   const handleSendMessage = () => {
@@ -45,7 +49,6 @@ const ChatbotPage = () => {
     setMessages(prev => [...prev, newUserMessage]);
     setInputMessage('');
 
-    // Simulate bot response
     setTimeout(() => {
       const botResponse: Message = {
         id: (Date.now() + 1).toString(),
@@ -63,6 +66,12 @@ const ChatbotPage = () => {
     }
   };
 
+  const quickSuggestions = [
+    t("I'm feeling stressed about exams"),
+    t("I need help with sleep issues"),
+    t("I want to talk about anxiety")
+  ];
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
@@ -73,11 +82,11 @@ const ChatbotPage = () => {
           <div className="text-center mb-8">
             <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
               <Bot className="w-4 h-4" />
-              <span>AI Wellness Assistant</span>
+              <span>{t("AI Wellness Assistant")}</span>
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Chat with MindBot</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2">{t("Chat with MindBot")}</h1>
             <p className="text-muted-foreground">
-              Your confidential AI companion for mental health support and guidance
+              {t("Your confidential AI companion for mental health support and guidance")}
             </p>
           </div>
 
@@ -88,24 +97,16 @@ const ChatbotPage = () => {
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex items-start space-x-3 ${
-                    message.isUser ? 'flex-row-reverse space-x-reverse' : ''
-                  }`}
+                  className={`flex items-start space-x-3 ${message.isUser ? 'flex-row-reverse space-x-reverse' : ''}`}
                 >
-                  {/* Avatar */}
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                     message.isUser 
                       ? 'bg-primary text-primary-foreground' 
                       : 'bg-secondary text-secondary-foreground'
                   }`}>
-                    {message.isUser ? (
-                      <User className="w-4 h-4" />
-                    ) : (
-                      <Bot className="w-4 h-4" />
-                    )}
+                    {message.isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                   </div>
 
-                  {/* Message Bubble */}
                   <div className={`max-w-[75%] p-4 rounded-lg ${
                     message.isUser
                       ? 'bg-primary text-primary-foreground ml-auto'
@@ -113,10 +114,7 @@ const ChatbotPage = () => {
                   }`}>
                     <p className="text-sm leading-relaxed">{message.text}</p>
                     <span className="text-xs opacity-70 mt-2 block">
-                      {message.timestamp.toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                      })}
+                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                 </div>
@@ -130,7 +128,7 @@ const ChatbotPage = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Share what's on your mind..."
+                  placeholder={t("Share what's on your mind...")}
                   className="flex-1"
                 />
                 <Button onClick={handleSendMessage} disabled={!inputMessage.trim()}>
@@ -139,18 +137,14 @@ const ChatbotPage = () => {
               </div>
               <p className="text-xs text-muted-foreground mt-2 flex items-center">
                 <Heart className="w-3 h-3 mr-1" />
-                This conversation is private and confidential
+                {t("This conversation is private and confidential")}
               </p>
             </div>
           </Card>
 
           {/* Quick Actions */}
           <div className="grid md:grid-cols-3 gap-4 mt-6">
-            {[
-              'I\'m feeling stressed about exams',
-              'I need help with sleep issues',
-              'I want to talk about anxiety'
-            ].map((suggestion, index) => (
+            {quickSuggestions.map((suggestion, index) => (
               <Button
                 key={index}
                 variant="outline"

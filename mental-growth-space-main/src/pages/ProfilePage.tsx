@@ -17,8 +17,11 @@ import {
 import { ProgressRing } from '@/components/Profile/ProgressRing';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
+import { useTranslation } from 'react-i18next';
 
 const ProfilePage = () => {
+  const { t } = useTranslation();
+
   const userData = {
     name: "Alex Johnson",
     email: "alex.johnson@university.edu",
@@ -34,36 +37,36 @@ const ProfilePage = () => {
     {
       id: '1',
       type: 'session',
-      title: 'Completed Stress Management Session',
-      description: 'Anxiety & Breathing Techniques',
-      date: '2 hours ago',
+      title: t('Completed Stress Management Session'),
+      description: t('Anxiety & Breathing Techniques'),
+      date: t('2 hours ago'),
       icon: Brain,
       color: 'primary'
     },
     {
       id: '2',
       type: 'resource',
-      title: 'Read Article: "Sleep Hygiene Tips"',
-      description: 'Sleep Health Resource',
-      date: '1 day ago',
+      title: t('Read Article: "Sleep Hygiene Tips"'),
+      description: t('Sleep Health Resource'),
+      date: t('1 day ago'),
       icon: CheckCircle,
       color: 'wellness'
     },
     {
       id: '3',
       type: 'goal',
-      title: 'Achieved Daily Mindfulness Goal',
-      description: '7-day mindfulness streak',
-      date: '2 days ago',
+      title: t('Achieved Daily Mindfulness Goal'),
+      description: t('7-day mindfulness streak'),
+      date: t('2 days ago'),
       icon: Target,
       color: 'secondary'
     },
     {
       id: '4',
       type: 'forum',
-      title: 'Posted in Support Forum',
-      description: 'Shared experience with exam anxiety',
-      date: '3 days ago',
+      title: t('Posted in Support Forum'),
+      description: t('Shared experience with exam anxiety'),
+      date: t('3 days ago'),
       icon: Heart,
       color: 'accent'
     }
@@ -72,25 +75,25 @@ const ProfilePage = () => {
   const achievements = [
     {
       id: '1',
-      title: 'First Week Complete',
-      description: 'Completed your first week of wellness tracking',
-      date: 'Earned 1 week ago',
+      title: t('First Week Complete'),
+      description: t('Completed your first week of wellness tracking'),
+      date: t('Earned 1 week ago'),
       icon: '🌟',
       color: 'wellness'
     },
     {
       id: '2',
-      title: 'Resource Explorer',
-      description: 'Read 10 wellness articles',
-      date: 'Earned 3 days ago',
+      title: t('Resource Explorer'),
+      description: t('Read 10 wellness articles'),
+      date: t('Earned 3 days ago'),
       icon: '📚',
       color: 'primary'
     },
     {
       id: '3',
-      title: 'Community Helper',
-      description: 'Received 5 helpful votes in forum',
-      date: 'Earned 1 week ago',
+      title: t('Community Helper'),
+      description: t('Received 5 helpful votes in forum'),
+      date: t('Earned 1 week ago'),
       icon: '🤝',
       color: 'secondary'
     }
@@ -99,26 +102,26 @@ const ProfilePage = () => {
   const wellnessGoals = [
     {
       id: '1',
-      title: 'Daily Mindfulness',
-      description: 'Practice 10 minutes of mindfulness daily',
+      title: t('Daily Mindfulness'),
+      description: t('Practice 10 minutes of mindfulness daily'),
       progress: 85,
-      target: 'Daily',
+      target: t('Daily'),
       streak: 6
     },
     {
       id: '2',
-      title: 'Sleep Schedule',
-      description: 'Maintain consistent 8-hour sleep schedule',
+      title: t('Sleep Schedule'),
+      description: t('Maintain consistent 8-hour sleep schedule'),
       progress: 60,
-      target: 'Daily',
+      target: t('Daily'),
       streak: 3
     },
     {
       id: '3',
-      title: 'Stress Check-ins',
-      description: 'Complete weekly stress level assessments',
+      title: t('Stress Check-ins'),
+      description: t('Complete weekly stress level assessments'),
       progress: 75,
-      target: 'Weekly',
+      target: t('Weekly'),
       streak: 2
     }
   ];
@@ -133,16 +136,16 @@ const ProfilePage = () => {
           <div className="text-center mb-8">
             <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
               <User className="w-4 h-4" />
-              <span>Personal Dashboard</span>
+              <span>{t('Personal Dashboard')}</span>
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Your Wellness Journey</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2">{t('Your Wellness Journey')}</h1>
             <p className="text-muted-foreground">
-              Track your progress and celebrate your mental health achievements
+              {t('Track your progress and celebrate your mental health achievements')}
             </p>
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Profile Information */}
+            {/* Profile Info */}
             <div className="lg:col-span-1 space-y-6">
               {/* Profile Card */}
               <Card className="card-gradient p-6 text-center">
@@ -150,7 +153,7 @@ const ProfilePage = () => {
                   <ProgressRing progress={userData.wellnessScore} size={120} strokeWidth={8} />
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <User className="w-8 h-8 text-primary mb-1" />
-                    <span className="text-xs font-medium text-muted-foreground">Wellness</span>
+                    <span className="text-xs font-medium text-muted-foreground">{t('Wellness')}</span>
                   </div>
                 </div>
                 
@@ -160,17 +163,17 @@ const ProfilePage = () => {
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
                     <div className="text-2xl font-bold text-primary">{userData.wellnessScore}%</div>
-                    <div className="text-xs text-muted-foreground">Wellness Score</div>
+                    <div className="text-xs text-muted-foreground">{t('Wellness Score')}</div>
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-wellness">{userData.currentStreak}</div>
-                    <div className="text-xs text-muted-foreground">Day Streak</div>
+                    <div className="text-xs text-muted-foreground">{t('Day Streak')}</div>
                   </div>
                 </div>
                 
                 <Button className="w-full mt-6" variant="outline">
                   <Settings className="w-4 h-4 mr-2" />
-                  Edit Profile
+                  {t('Edit Profile')}
                 </Button>
               </Card>
 
@@ -178,19 +181,19 @@ const ProfilePage = () => {
               <Card className="card-gradient p-6">
                 <h3 className="font-semibold text-foreground mb-4 flex items-center">
                   <TrendingUp className="w-5 h-5 mr-2 text-primary" />
-                  Quick Stats
+                  {t('Quick Stats')}
                 </h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Total Sessions</span>
+                    <span className="text-sm text-muted-foreground">{t('Total Sessions')}</span>
                     <span className="font-semibold text-foreground">{userData.totalSessions}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Goals Completed</span>
+                    <span className="text-sm text-muted-foreground">{t('Goals Completed')}</span>
                     <span className="font-semibold text-wellness">{userData.goalsCompleted}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Member Since</span>
+                    <span className="text-sm text-muted-foreground">{t('Member Since')}</span>
                     <span className="font-semibold text-foreground">{userData.joinDate}</span>
                   </div>
                 </div>
@@ -200,7 +203,7 @@ const ProfilePage = () => {
               <Card className="card-gradient p-6">
                 <h3 className="font-semibold text-foreground mb-4 flex items-center">
                   <Award className="w-5 h-5 mr-2 text-wellness" />
-                  Recent Achievements
+                  {t('Recent Achievements')}
                 </h3>
                 <div className="space-y-4">
                   {achievements.map((achievement) => (
@@ -230,13 +233,13 @@ const ProfilePage = () => {
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-semibold text-foreground flex items-center">
                     <Target className="w-5 h-5 mr-2 text-primary" />
-                    Wellness Goals
+                    {t('Wellness Goals')}
                   </h3>
                   <Button size="sm" variant="outline">
-                    Add Goal
+                    {t('Add Goal')}
                   </Button>
                 </div>
-                
+
                 <div className="grid md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
                   {wellnessGoals.map((goal) => (
                     <Card key={goal.id} className="p-4 border-border/50">
@@ -253,7 +256,7 @@ const ProfilePage = () => {
                         
                         <div className="space-y-2">
                           <div className="flex justify-between text-xs">
-                            <span className="text-muted-foreground">Progress</span>
+                            <span className="text-muted-foreground">{t('Progress')}</span>
                             <span className="font-medium text-foreground">{goal.progress}%</span>
                           </div>
                           <div className="w-full bg-muted rounded-full h-2">
@@ -265,7 +268,7 @@ const ProfilePage = () => {
                           <div className="flex items-center space-x-1">
                             <Trophy className="w-3 h-3 text-wellness" />
                             <span className="text-xs text-muted-foreground">
-                              {goal.streak} day streak
+                              {goal.streak} {t('day streak')}
                             </span>
                           </div>
                         </div>
@@ -279,7 +282,7 @@ const ProfilePage = () => {
               <Card className="card-gradient p-6">
                 <h3 className="font-semibold text-foreground mb-6 flex items-center">
                   <Clock className="w-5 h-5 mr-2 text-secondary" />
-                  Recent Activity
+                  {t('Recent Activity')}
                 </h3>
                 
                 <div className="space-y-4">
@@ -301,7 +304,7 @@ const ProfilePage = () => {
                 </div>
                 
                 <Button variant="outline" className="w-full mt-4">
-                  View All Activity
+                  {t('View All Activity')}
                 </Button>
               </Card>
 
@@ -309,25 +312,25 @@ const ProfilePage = () => {
               <Card className="card-gradient p-6">
                 <h3 className="font-semibold text-foreground mb-6 flex items-center">
                   <Calendar className="w-5 h-5 mr-2 text-accent" />
-                  This Week's Summary
+                  {t("This Week's Summary")}
                 </h3>
                 
                 <div className="grid md:grid-cols-4 gap-4">
                   <div className="text-center p-4 rounded-lg bg-primary/5">
                     <div className="text-2xl font-bold text-primary mb-1">5</div>
-                    <div className="text-xs text-muted-foreground">Sessions</div>
+                    <div className="text-xs text-muted-foreground">{t('Sessions')}</div>
                   </div>
                   <div className="text-center p-4 rounded-lg bg-secondary/5">
                     <div className="text-2xl font-bold text-secondary mb-1">3</div>
-                    <div className="text-xs text-muted-foreground">Resources</div>
+                    <div className="text-xs text-muted-foreground">{t('Resources')}</div>
                   </div>
                   <div className="text-center p-4 rounded-lg bg-wellness/5">
                     <div className="text-2xl font-bold text-wellness mb-1">2</div>
-                    <div className="text-xs text-muted-foreground">Goals Met</div>
+                    <div className="text-xs text-muted-foreground">{t('Goals Met')}</div>
                   </div>
                   <div className="text-center p-4 rounded-lg bg-accent/5">
                     <div className="text-2xl font-bold text-accent mb-1">7.2</div>
-                    <div className="text-xs text-muted-foreground">Avg Mood</div>
+                    <div className="text-xs text-muted-foreground">{t('Avg Mood')}</div>
                   </div>
                 </div>
               </Card>

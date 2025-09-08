@@ -1,33 +1,38 @@
 import { Heart, Phone, Mail, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation();
+
+  const quickLinks = [
+    { label: t("Crisis Support"), href: '/crisis' },
+    { label: t("Privacy Policy"), href: '/privacy' },
+    { label: t("Terms of Service"), href: '/terms' },
+    { label: t("Accessibility"), href: '/accessibility' }
+  ];
+
   return (
     <footer className="bg-muted/50 border-t border-border mt-auto">
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-4 gap-8">
           {/* College Info */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-foreground text-lg">University Wellness Center</h3>
+            <h3 className="font-semibold text-foreground text-lg">{t("University Wellness Center")}</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              Supporting student mental health and well-being through innovative digital interventions and personalized care.
+              {t("Supporting student mental health and well-being through innovative digital interventions and personalized care.")}
             </p>
             <div className="flex items-center space-x-2 text-wellness">
               <Heart className="w-4 h-4" />
-              <span className="text-sm text-muted-foreground">Your wellness matters</span>
+              <span className="text-sm text-muted-foreground">{t("Your wellness matters")}</span>
             </div>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="font-medium text-foreground">Quick Links</h4>
+            <h4 className="font-medium text-foreground">{t("Quick Links")}</h4>
             <div className="space-y-2">
-              {[
-                { label: 'Crisis Support', href: '/crisis' },
-                { label: 'Privacy Policy', href: '/privacy' },
-                { label: 'Terms of Service', href: '/terms' },
-                { label: 'Accessibility', href: '/accessibility' }
-              ].map((link) => (
+              {quickLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
@@ -41,11 +46,11 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h4 className="font-medium text-foreground">Contact Us</h4>
+            <h4 className="font-medium text-foreground">{t("Contact Us")}</h4>
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-primary" />
-                <span className="text-sm text-muted-foreground">24/7 Crisis: (555) 123-4567</span>
+                <span className="text-sm text-muted-foreground">{t("24/7 Crisis")}: (555) 123-4567</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-primary" />
@@ -53,21 +58,21 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="w-4 h-4 text-primary" />
-                <span className="text-sm text-muted-foreground">Student Center, Room 201</span>
+                <span className="text-sm text-muted-foreground">{t("Student Center, Room 201")}</span>
               </div>
             </div>
           </div>
 
           {/* Resources */}
           <div className="space-y-4">
-            <h4 className="font-medium text-foreground">Emergency Resources</h4>
+            <h4 className="font-medium text-foreground">{t("Emergency Resources")}</h4>
             <div className="space-y-2">
               <div className="p-3 bg-destructive/10 rounded-lg border border-destructive/20">
-                <p className="text-sm font-medium text-destructive">Crisis Hotline</p>
-                <p className="text-sm text-destructive">988 - Suicide & Crisis Lifeline</p>
+                <p className="text-sm font-medium text-destructive">{t("Crisis Hotline")}</p>
+                <p className="text-sm text-destructive">988 - {t("Suicide & Crisis Lifeline")}</p>
               </div>
               <div className="p-3 bg-secondary/10 rounded-lg border border-secondary/20">
-                <p className="text-sm font-medium text-secondary">Campus Safety</p>
+                <p className="text-sm font-medium text-secondary">{t("Campus Safety")}</p>
                 <p className="text-sm text-secondary">(555) 987-6543</p>
               </div>
             </div>
@@ -76,12 +81,12 @@ const Footer = () => {
 
         <div className="border-t border-border mt-8 pt-6 flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
           <p className="text-sm text-muted-foreground">
-            © 2024 University Wellness Center. All rights reserved.
+            © 2024 {t("University Wellness Center")}. {t("All rights reserved.")}
           </p>
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <span>Confidential & HIPAA Compliant</span>
+            <span>{t("Confidential & HIPAA Compliant")}</span>
             <span>•</span>
-            <span>Available 24/7</span>
+            <span>{t("Available 24/7")}</span>
           </div>
         </div>
       </div>
