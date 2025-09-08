@@ -54,12 +54,12 @@ model TestResult {
 
 model Ticket {
   id           Int    @id @default(autoincrement())
-  issue        String
+  discription        String
   status       TicketStatus @default(OPEN)
-
+  level        Level        @default(GENERAL)  
   // Relations
-  student      User   @relation("StudentTickets", fields: [studentId], references: [id])
-  studentId    Int
+  student      User?   @relation("StudentTickets", fields: [studentId], references: [id])
+  studentId    Int?
 
   counsellor   User   @relation("CounsellorTickets", fields: [counsellorId], references: [id])
   counsellorId Int
@@ -68,6 +68,11 @@ model Ticket {
   updatedAt    DateTime @updatedAt
 }
 
+enum Level {
+  GENERAL
+  SPECIALASKING
+  EMERGENCY
+}
 enum TicketStatus {
   OPEN
   IN_PROGRESS

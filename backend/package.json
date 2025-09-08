@@ -19,7 +19,10 @@
   },
   "dependencies": {
     "@clerk/express": "^1.7.28",
+    "@inngest/agent-kit": "^0.9.0",
     "@prisma/client": "^6.15.0",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "inngest": "^3.40.2",
+    "nodemailer": "^7.0.6"
   }
 }

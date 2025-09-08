@@ -29,6 +29,8 @@ const Navbar = () => {
 
   const { getToken, isSignedIn } = useAuth();
 
+  console.log(isSignedIn)
+
 
   useEffect(() => {
     const syncUser = async () => {
@@ -62,11 +64,12 @@ const Navbar = () => {
           </Link>
 
           {/* sigin sigin out */}
+          {/* <p>knmmgb</p> */}
           <SignedOut>
             <SignInButton />
           </SignedOut>
           <SignedIn>
-            <UserButton />
+            <UserButton/>
           </SignedIn>
 
           {/* Navigation Links - Desktop */}
