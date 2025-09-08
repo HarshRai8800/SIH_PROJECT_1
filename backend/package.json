@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
@@ -19,10 +20,12 @@
   },
   "dependencies": {
     "@clerk/express": "^1.7.28",
+    "@google/generative-ai": "^0.24.1",
     "@inngest/agent-kit": "^0.9.0",
     "@prisma/client": "^6.15.0",
     "cors": "^2.8.5",
     "inngest": "^3.40.2",
-    "nodemailer": "^7.0.6"
+    "nodemailer": "^7.0.6",
+    "socket.io": "^4.8.1"
   }
 }

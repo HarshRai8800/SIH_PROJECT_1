@@ -46,7 +46,6 @@ export const registerUser = async (req, res) => {
       },
     });
 
-    console.log(user)
     return res.json(user);
   } catch (err) {
     console.log(err.message)

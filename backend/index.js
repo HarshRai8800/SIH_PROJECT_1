@@ -4,9 +4,13 @@ import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import router from "./routes/loginroute.js";
 import updateUserRoute from "./routes/updateUser.js";
+import http from "http";
+import socketConfig from "./socket-io/socket-io.js";
+
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
 
 app.use(cors());
 app.use(express.json());
@@ -22,6 +26,8 @@ app.get("/", (req, res) => {
 app.use("/api", router);
 app.use("/api.updateuser",updateUserRoute)
 
+socketConfig(server);
+
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

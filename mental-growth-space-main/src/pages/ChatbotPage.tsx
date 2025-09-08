@@ -1,72 +1,74 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Send, Bot, User, Heart } from 'lucide-react';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
-
-interface Message {
-  id: string;
-  text: string;
-  isUser: boolean;
-  timestamp: Date;
-}
+import { io } from "socket.io-client";
+import { useNavigate } from 'react-router-dom';
 
 const ChatbotPage = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: "Hello! I'm MindBot, your wellness companion. I'm here to listen and provide support. How are you feeling today?",
-      isUser: false,
-      timestamp: new Date(),
-    },
-  ]);
-  const [inputMessage, setInputMessage] = useState('');
-
-  const mockResponses = [
-    "I understand that can be really challenging. Can you tell me more about what's been on your mind?",
-    "It sounds like you're dealing with a lot right now. Remember, it's okay to feel overwhelmed sometimes.",
-    "That's a great step in taking care of yourself. Have you tried any relaxation techniques that work for you?",
-    "I'm here to support you. Would you like me to suggest some coping strategies that other students have found helpful?",
-    "Thank you for sharing that with me. Your feelings are valid, and seeking support shows real strength.",
-  ];
-
-  const handleSendMessage = () => {
-    if (!inputMessage.trim()) return;
-
-    const newUserMessage: Message = {
-      id: Date.now().toString(),
-      text: inputMessage,
-      isUser: true,
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, newUserMessage]);
-    setInputMessage('');
-
-    // Simulate bot response
-    setTimeout(() => {
-      const botResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        text: mockResponses[Math.floor(Math.random() * mockResponses.length)],
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, botResponse]);
-    }, 1000);
+  type Message = {
+    id?: string | number;
+    sender: "bot" | "user";
+    text: string;
+    timestamp?: Date;
+    isUser?: boolean;
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSendMessage();
-    }
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [counsellingButton, setCounsellingButton] = useState(false);
+  const socketRef = useRef<any>();
+  const messagesEndRef = useRef<HTMLDivElement | null>(null); 
+  const navigate = useNavigate() ;
+
+  useEffect(() => {
+    socketRef.current = io("http://localhost:5000");
+
+    socketRef.current.on("bot_message", (msg: string) => {
+      if (msg.includes("#book#counselling")) {
+        socketRef.current.emit("end_chat");
+        socketRef.current.disconnect(); 
+        setCounsellingButton(true);
+        return;
+      }
+
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: msg, timestamp: new Date() }
+      ]);
+    });
+
+    return () => {
+      socketRef.current?.disconnect();
+    };
+  }, []);
+
+  // 👇 Auto-scroll on new message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const sendMessage = () => {
+    if (!input.trim()) return;
+    socketRef.current.emit("user_message", input);
+    setMessages((prev) => [
+      ...prev,
+      { sender: "user", text: input, timestamp: new Date(), isUser: true }
+    ]);
+    setInput("");
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") sendMessage();
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      
+
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
@@ -85,19 +87,21 @@ const ChatbotPage = () => {
           <Card className="card-gradient h-[600px] flex flex-col">
             {/* Messages Area */}
             <div className="flex-1 p-6 overflow-y-auto space-y-4">
-              {messages.map((message) => (
+              {messages.map((message, index) => (
                 <div
-                  key={message.id}
+                  key={index}
                   className={`flex items-start space-x-3 ${
                     message.isUser ? 'flex-row-reverse space-x-reverse' : ''
                   }`}
                 >
                   {/* Avatar */}
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    message.isUser 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-secondary text-secondary-foreground'
-                  }`}>
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      message.isUser
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-secondary text-secondary-foreground'
+                    }`}
+                  >
                     {message.isUser ? (
                       <User className="w-4 h-4" />
                     ) : (
@@ -106,64 +110,86 @@ const ChatbotPage = () => {
                   </div>
 
                   {/* Message Bubble */}
-                  <div className={`max-w-[75%] p-4 rounded-lg ${
-                    message.isUser
-                      ? 'bg-primary text-primary-foreground ml-auto'
-                      : 'bg-muted text-foreground'
-                  }`}>
+                  <div
+                    className={`max-w-[75%] p-4 rounded-lg ${
+                      message.isUser
+                        ? 'bg-primary text-primary-foreground ml-auto'
+                        : 'bg-muted text-foreground'
+                    }`}
+                  >
                     <p className="text-sm leading-relaxed">{message.text}</p>
-                    <span className="text-xs opacity-70 mt-2 block">
-                      {message.timestamp.toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                      })}
-                    </span>
+                    {message.timestamp && (
+                      <span className="text-xs opacity-70 mt-2 block">
+                        {message.timestamp.toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Input Area */}
-            <div className="border-t border-border p-4">
-              <div className="flex items-center space-x-3">
-                <Input
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Share what's on your mind..."
-                  className="flex-1"
-                />
-                <Button onClick={handleSendMessage} disabled={!inputMessage.trim()}>
-                  <Send className="w-4 h-4" />
-                </Button>
+            {!counsellingButton && (
+              <div className="border-t border-border p-4">
+                <div className="flex items-center space-x-3">
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Share what's on your mind..."
+                    className="flex-1"
+                  />
+                  <Button onClick={sendMessage} disabled={!input.trim()}>
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2 flex items-center">
+                  <Heart className="w-3 h-3 mr-1" />
+                  This conversation is private and confidential
+                </p>
               </div>
-              <p className="text-xs text-muted-foreground mt-2 flex items-center">
-                <Heart className="w-3 h-3 mr-1" />
-                This conversation is private and confidential
-              </p>
-            </div>
+            )}
           </Card>
 
-          {/* Quick Actions */}
-          <div className="grid md:grid-cols-3 gap-4 mt-6">
-            {[
-              'I\'m feeling stressed about exams',
-              'I need help with sleep issues',
-              'I want to talk about anxiety'
-            ].map((suggestion, index) => (
+          {/* Counselling Button */}
+          {counsellingButton && (
+            <div className="mt-4 text-center">
               <Button
-                key={index}
-                variant="outline"
-                className="p-4 h-auto text-left justify-start"
-                onClick={() => setInputMessage(suggestion)}
+                onClick={() => navigate('/counselling')}
+                className="px-6 py-3 text-lg"
               >
-                <span className="text-sm">{suggestion}</span>
+                Book Counselling
               </Button>
-            ))}
-          </div>
+            </div>
+          )}
+
+          {/* Quick Actions */}
+          {!counsellingButton && (
+            <div className="grid md:grid-cols-3 gap-4 mt-6">
+              {[
+                "I'm feeling stressed about exams",
+                "I need help with sleep issues",
+                "I want to talk about anxiety",
+                "I want to book a counselling session"
+              ].map((suggestion, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  className="p-4 h-auto text-left justify-start"
+                  onClick={() => setInput(suggestion)}
+                >
+                  <span className="text-sm">{suggestion}</span>
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );
