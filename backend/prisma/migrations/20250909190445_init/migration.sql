@@ -1,25 +1,35 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "public"."Level" AS ENUM ('GENERAL', 'SPECIALASKING', 'EMERGENCY');
 
-  - Added the required column `updatedAt` to the `User` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "public"."TicketStatus" AS ENUM ('OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED');
 
 -- CreateEnum
 CREATE TYPE "public"."MentalState" AS ENUM ('HEALTHY', 'SLIGHTLY_RISKY', 'MODERATE', 'BAD_SHAPE', 'SERIOUS');
 
--- AlterTable
-ALTER TABLE "public"."User" ADD COLUMN     "allRatings" INTEGER[],
-ADD COLUMN     "averageRating" DOUBLE PRECISION,
-ADD COLUMN     "bio" TEXT,
-ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "experience" TEXT,
-ADD COLUMN     "expertise" TEXT[],
-ADD COLUMN     "languages" TEXT[],
-ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL,
-ALTER COLUMN "role" SET DEFAULT 'STUDENT';
+-- CreateEnum
+CREATE TYPE "public"."Role" AS ENUM ('ADMIN', 'STUDENT', 'TEACHER');
+
+-- CreateTable
+CREATE TABLE "public"."User" (
+    "id" SERIAL NOT NULL,
+    "clerkId" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "firstName" TEXT,
+    "lastName" TEXT,
+    "imageUrl" TEXT,
+    "role" "public"."Role" NOT NULL DEFAULT 'STUDENT',
+    "bio" TEXT,
+    "expertise" TEXT[],
+    "experience" TEXT,
+    "averageRating" DOUBLE PRECISION,
+    "allRatings" INTEGER[],
+    "languages" TEXT[],
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "public"."TestResult" (
@@ -38,9 +48,10 @@ CREATE TABLE "public"."TestResult" (
 -- CreateTable
 CREATE TABLE "public"."Ticket" (
     "id" SERIAL NOT NULL,
-    "issue" TEXT NOT NULL,
+    "discription" TEXT NOT NULL,
     "status" "public"."TicketStatus" NOT NULL DEFAULT 'OPEN',
-    "studentId" INTEGER NOT NULL,
+    "level" "public"."Level" NOT NULL DEFAULT 'GENERAL',
+    "studentId" INTEGER,
     "counsellorId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -48,11 +59,17 @@ CREATE TABLE "public"."Ticket" (
     CONSTRAINT "Ticket_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateIndex
+CREATE UNIQUE INDEX "User_clerkId_key" ON "public"."User"("clerkId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
+
 -- AddForeignKey
 ALTER TABLE "public"."TestResult" ADD CONSTRAINT "TestResult_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Ticket" ADD CONSTRAINT "Ticket_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Ticket" ADD CONSTRAINT "Ticket_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "public"."User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Ticket" ADD CONSTRAINT "Ticket_counsellorId_fkey" FOREIGN KEY ("counsellorId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
