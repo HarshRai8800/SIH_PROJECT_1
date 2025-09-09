@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,10 +16,56 @@ import { Calendar, Clock, User, Shield, CheckCircle } from 'lucide-react';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
 import { useToast } from '@/hooks/use-toast';
+import { socketconnection } from '@/lib/socketconnection';
+
 
 const CounsellingPage = () => {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const [briefmsg, setbriefmsg] = useState("");
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    // Connection event listeners
+    const handleConnect = () => {
+      console.log("CounsellingPage: Connected to server");
+      setIsConnected(true);
+    };
+
+    const handleDisconnect = () => {
+      console.log("CounsellingPage: Disconnected from server");
+      setIsConnected(false);
+    };
+
+    const handleConnectError = (error: any) => {
+      console.error("CounsellingPage: Connection error:", error);
+      setIsConnected(false);
+    };
+
+    const handleBrief = (msg: string) => {
+      console.log("Received counselling summary:", msg);
+      setbriefmsg(msg);
+    };
+
+    // Add event listeners
+    socketconnection.on("connect", handleConnect);
+    socketconnection.on("disconnect", handleDisconnect);
+    socketconnection.on("connect_error", handleConnectError);
+    socketconnection.on("book_counselling", handleBrief);
+
+    // Check if already connected
+    if (socketconnection.connected) {
+      setIsConnected(true);
+    }
+
+    return () => {
+      // Remove event listeners but don't disconnect the global connection
+      socketconnection.off("connect", handleConnect);
+      socketconnection.off("disconnect", handleDisconnect);
+      socketconnection.off("connect_error", handleConnectError);
+      socketconnection.off("book_counselling", handleBrief);
+    };
+  }, []);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -27,7 +73,7 @@ const CounsellingPage = () => {
     studentId: '',
     preferredTime: '',
     counsellor: '',
-    reason: '',
+    reason: briefmsg,
     urgency: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -105,9 +151,15 @@ const CounsellingPage = () => {
             <div className="inline-flex items-center space-x-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-medium mb-4">
               <Calendar className="w-4 h-4" />
               <span>{t('Professional Counselling')}</span>
+              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
             </div>
             <h1 className="text-3xl font-bold text-foreground mb-2">{t('Book a Counselling Session')}</h1>
             <p className="text-muted-foreground">{t('Schedule a confidential appointment with our licensed mental health professionals')}</p>
+            {!isConnected && (
+              <p className="text-yellow-600 text-sm mt-2">
+                Connecting to server... Please wait
+              </p>
+            )}
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
@@ -209,6 +261,12 @@ const CounsellingPage = () => {
                   {/* Additional Information */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-foreground">{t('Additional Information')}</h3>
+                    {briefmsg && (
+                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-sm text-blue-800 font-medium mb-1">AI Chat Summary:</p>
+                        <p className="text-sm text-blue-700">{briefmsg}</p>
+                      </div>
+                    )}
                     <div className="space-y-2">
                       <Label htmlFor="reason">{t("What would you like to discuss? (Optional)")}</Label>
                       <Textarea
