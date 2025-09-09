@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -16,6 +17,9 @@ const ChatbotPage = () => {
     timestamp?: Date;
     isUser?: boolean;
   };
+
+  const { t } = useTranslation();
+
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -46,7 +50,6 @@ const ChatbotPage = () => {
     };
   }, []);
 
-  // 👇 Auto-scroll on new message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);

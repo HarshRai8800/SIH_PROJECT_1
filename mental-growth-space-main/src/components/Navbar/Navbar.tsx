@@ -1,5 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import {
   MessageSquare,
   Calendar,
@@ -15,16 +15,17 @@ import { SignedIn, SignedOut, SignInButton, UserButton , useAuth } from '@clerk/
 
 const Navbar = () => {
   const location = useLocation();
+  const [language, setLanguage] = useState("English"); // Language state
 
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: '/', label: 'Home', icon: Brain },
-    { path: '/chatbot', label: 'Chatbot', icon: MessageSquare },
-    { path: '/counselling', label: 'Counselling', icon: Calendar },
-    { path: '/resources', label: 'Resources', icon: BookOpen },
-    { path: '/forum', label: 'Forum', icon: Users },
-    { path: '/admin', label: 'Dashboard', icon: BarChart3 },
+    { path: "/", label: t("home"), icon: Brain },
+    { path: "/chatbot", label: t("chatbot"), icon: MessageSquare },
+    { path: "/counselling", label: t("counselling"), icon: Calendar },
+    { path: "/resources", label: t("resources"), icon: BookOpen },
+    { path: "/forum", label: t("forum"), icon: Users },
+    { path: "/admin", label: t("dashboard"), icon: BarChart3 },
   ];
 
   const { getToken, isSignedIn } = useAuth();
@@ -37,8 +38,7 @@ const Navbar = () => {
       if (!isSignedIn) return;
 
       const token = await getToken();
-
-      const result = await fetch("http://localhost:5000/api/register", {
+      await fetch("http://localhost:5000/api/register", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -100,8 +100,12 @@ const Navbar = () => {
               </div>
             </div>
             <div className="hidden sm:block">
-              <div className="text-sm font-medium text-foreground">Alex Johnson</div>
-              <div className="text-xs text-muted-foreground">Wellness: 70%</div>
+              <div className="text-sm font-medium text-foreground">
+                Alex Johnson
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {t("wellness")}: 70%
+              </div>
             </div>
           </Link>
         </div>
@@ -121,7 +125,11 @@ const Navbar = () => {
                     className={`w-5 h-5 ${isActive(item.path) ? 'text-primary' : 'text-muted-foreground'
                       }`}
                   />
-                  <span className={`text-xs mt-1 ${isActive(item.path) ? 'text-primary font-medium' : 'text-muted-foreground'
+                  <span className={`text-xs mt-1 ${
+                      isActive(item.path)
+                        ? "text-primary font-medium"
+                        : "text-muted-foreground"
+                    
                     }`}>
                     {item.label}
                   </span>
