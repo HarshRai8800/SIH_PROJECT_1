@@ -16,11 +16,14 @@ import { WellnessChart } from '@/components/Charts/WellnessChart';
 import { StressLevelsChart } from '@/components/Charts/StressLevelsChart';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
+import { useTranslation } from 'react-i18next';
 
 const AdminDashboard = () => {
+  const { t } = useTranslation();
+
   const dashboardStats = [
     {
-      title: 'Active Students',
+      title: t('Active Students'),
       value: '2,547',
       change: '+12%',
       trend: 'up',
@@ -28,7 +31,7 @@ const AdminDashboard = () => {
       color: 'primary'
     },
     {
-      title: 'Sessions This Month',
+      title: t('Sessions This Month'),
       value: '1,892',
       change: '+8%',
       trend: 'up',
@@ -36,7 +39,7 @@ const AdminDashboard = () => {
       color: 'secondary'
     },
     {
-      title: 'Counselling Bookings',
+      title: t('Counselling Bookings'),
       value: '234',
       change: '+15%',
       trend: 'up',
@@ -44,7 +47,7 @@ const AdminDashboard = () => {
       color: 'wellness'
     },
     {
-      title: 'High-Risk Alerts',
+      title: t('High-Risk Alerts'),
       value: '12',
       change: '-20%',
       trend: 'down',
@@ -57,35 +60,35 @@ const AdminDashboard = () => {
     {
       id: '1',
       type: 'high-risk',
-      message: 'Student showing signs of severe stress in chatbot interactions',
-      student: 'Anonymous ID: STU***789',
-      timestamp: '2 hours ago',
+      message: t('Student showing signs of severe stress in chatbot interactions'),
+      student: t('Anonymous ID: STU***789'),
+      timestamp: t('2 hours ago'),
       status: 'pending'
     },
     {
       id: '2',
       type: 'crisis',
-      message: 'Crisis keywords detected in forum post',
-      student: 'Anonymous ID: STU***456',
-      timestamp: '4 hours ago',
+      message: t('Crisis keywords detected in forum post'),
+      student: t('Anonymous ID: STU***456'),
+      timestamp: t('4 hours ago'),
       status: 'resolved'
     },
     {
       id: '3',
       type: 'wellbeing',
-      message: 'Student completed wellness milestone - 30 day streak',
-      student: 'Anonymous ID: STU***123',
-      timestamp: '6 hours ago',
+      message: t('Student completed wellness milestone - 30 day streak'),
+      student: t('Anonymous ID: STU***123'),
+      timestamp: t('6 hours ago'),
       status: 'completed'
     }
   ];
 
   const topConcerns = [
-    { concern: 'Exam Anxiety', percentage: 68, change: '+5%' },
-    { concern: 'Sleep Issues', percentage: 45, change: '+12%' },
-    { concern: 'Social Anxiety', percentage: 38, change: '-3%' },
-    { concern: 'Academic Pressure', percentage: 52, change: '+8%' },
-    { concern: 'Homesickness', percentage: 29, change: '+15%' }
+    { concern: t('Exam Anxiety'), percentage: 68, change: '+5%' },
+    { concern: t('Sleep Issues'), percentage: 45, change: '+12%' },
+    { concern: t('Social Anxiety'), percentage: 38, change: '-3%' },
+    { concern: t('Academic Pressure'), percentage: 52, change: '+8%' },
+    { concern: t('Homesickness'), percentage: 29, change: '+15%' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -117,21 +120,21 @@ const AdminDashboard = () => {
             <div>
               <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
                 <BarChart3 className="w-4 h-4" />
-                <span>Administrative Dashboard</span>
+                <span>{t('Administrative Dashboard')}</span>
               </div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Wellness Analytics</h1>
+              <h1 className="text-3xl font-bold text-foreground mb-2">{t('Wellness Analytics')}</h1>
               <p className="text-muted-foreground">
-                Monitor student wellbeing trends and system usage (All data anonymized)
+                {t('Monitor student wellbeing trends and system usage (All data anonymized)')}
               </p>
             </div>
             
             <div className="flex space-x-3">
               <Button variant="outline" size="sm">
                 <Download className="w-4 h-4 mr-2" />
-                Export Data
+                {t('Export Data')}
               </Button>
               <Button size="sm">
-                Generate Report
+                {t('Generate Report')}
               </Button>
             </div>
           </div>
@@ -176,8 +179,8 @@ const AdminDashboard = () => {
               {/* Engagement Chart */}
               <Card className="card-gradient p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-foreground">Student Engagement</h3>
-                  <Badge variant="outline">Last 6 Months</Badge>
+                  <h3 className="text-lg font-semibold text-foreground">{t('Student Engagement')}</h3>
+                  <Badge variant="outline">{t('Last 6 Months')}</Badge>
                 </div>
                 <WellnessChart />
               </Card>
@@ -185,15 +188,15 @@ const AdminDashboard = () => {
               {/* Wellness Trends */}
               <Card className="card-gradient p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-foreground">Wellness Trend Analysis</h3>
-                  <Badge variant="outline">Last 6 Weeks</Badge>
+                  <h3 className="text-lg font-semibold text-foreground">{t('Wellness Trend Analysis')}</h3>
+                  <Badge variant="outline">{t('Last 6 Weeks')}</Badge>
                 </div>
                 <StressLevelsChart />
               </Card>
 
               {/* Top Concerns */}
               <Card className="card-gradient p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-6">Most Common Concerns</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-6">{t('Most Common Concerns')}</h3>
                 <div className="space-y-4">
                   {topConcerns.map((concern) => (
                     <div key={concern.concern} className="space-y-2">
@@ -231,7 +234,7 @@ const AdminDashboard = () => {
               <Card className="card-gradient p-6">
                 <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
                   <AlertTriangle className="w-5 h-5 mr-2 text-primary" />
-                  Recent Alerts
+                  {t('Recent Alerts')}
                 </h3>
                 <div className="space-y-4">
                   {recentAlerts.map((alert) => {
@@ -249,7 +252,7 @@ const AdminDashboard = () => {
                             </div>
                           </div>
                           <Badge className={`text-xs bg-${getStatusColor(alert.status)}/10 text-${getStatusColor(alert.status)}`}>
-                            {alert.status}
+                            {t(alert.status)}
                           </Badge>
                         </div>
                         <p className="text-xs text-muted-foreground">{alert.timestamp}</p>
@@ -258,37 +261,37 @@ const AdminDashboard = () => {
                   })}
                 </div>
                 <Button variant="outline" size="sm" className="w-full mt-4">
-                  View All Alerts
+                  {t('View All Alerts')}
                 </Button>
               </Card>
 
               {/* System Health */}
               <Card className="card-gradient p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4">System Health</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">{t('System Health')}</h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Chatbot Uptime</span>
+                    <span className="text-sm text-muted-foreground">{t('Chatbot Uptime')}</span>
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-wellness rounded-full"></div>
                       <span className="text-sm font-medium text-foreground">99.9%</span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Response Time</span>
+                    <span className="text-sm text-muted-foreground">{t('Response Time')}</span>
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-wellness rounded-full"></div>
                       <span className="text-sm font-medium text-foreground">&lt; 2s</span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Database Status</span>
+                    <span className="text-sm text-muted-foreground">{t('Database Status')}</span>
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-wellness rounded-full"></div>
-                      <span className="text-sm font-medium text-foreground">Healthy</span>
+                      <span className="text-sm font-medium text-foreground">{t('Healthy')}</span>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">API Calls Today</span>
+                    <span className="text-sm text-muted-foreground">{t('API Calls Today')}</span>
                     <span className="text-sm font-medium text-foreground">47,392</span>
                   </div>
                 </div>
@@ -296,32 +299,32 @@ const AdminDashboard = () => {
 
               {/* Quick Actions */}
               <Card className="card-gradient p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">{t('Quick Actions')}</h3>
                 <div className="space-y-3">
                   <Button size="sm" className="w-full justify-start">
                     <Users className="w-4 h-4 mr-2" />
-                    View All Students
+                    {t('View All Students')}
                   </Button>
                   <Button size="sm" variant="outline" className="w-full justify-start">
                     <MessageSquare className="w-4 h-4 mr-2" />
-                    Monitor Chatbot
+                    {t('Monitor Chatbot')}
                   </Button>
                   <Button size="sm" variant="outline" className="w-full justify-start">
                     <Calendar className="w-4 h-4 mr-2" />
-                    Counselling Queue
+                    {t('Counselling Queue')}
                   </Button>
                   <Button size="sm" variant="outline" className="w-full justify-start">
                     <TrendingUp className="w-4 h-4 mr-2" />
-                    Analytics Report
+                    {t('Analytics Report')}
                   </Button>
                 </div>
               </Card>
 
               {/* Privacy Notice */}
               <Card className="bg-muted/50 p-6">
-                <h3 className="text-sm font-semibold text-foreground mb-2">Privacy & Compliance</h3>
+                <h3 className="text-sm font-semibold text-foreground mb-2">{t('Privacy & Compliance')}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  All student data is anonymized and HIPAA compliant. Individual identification is not possible through this dashboard.
+                  {t('All student data is anonymized and HIPAA compliant. Individual identification is not possible through this dashboard.')}
                 </p>
               </Card>
             </div>

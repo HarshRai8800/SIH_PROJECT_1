@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Send, Bot, User, Heart } from 'lucide-react';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
-import { io } from "socket.io-client";
 import { useNavigate } from 'react-router-dom';
+import { socketconnection } from '@/lib/socketconnection';
 
 const ChatbotPage = () => {
   type Message = {
@@ -17,20 +18,36 @@ const ChatbotPage = () => {
     isUser?: boolean;
   };
 
+  const { t } = useTranslation();
+
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [counsellingButton, setCounsellingButton] = useState(false);
-  const socketRef = useRef<any>();
-  const messagesEndRef = useRef<HTMLDivElement | null>(null); 
-  const navigate = useNavigate() ;
+  const [isConnected, setIsConnected] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000");
+    // Connection event listeners
+    const handleConnect = () => {
+      console.log("Connected to server");
+      setIsConnected(true);
+    };
 
-    socketRef.current.on("bot_message", (msg: string) => {
+    const handleDisconnect = () => {
+      console.log("Disconnected from server");
+      setIsConnected(false);
+    };
+
+    const handleConnectError = (error: any) => {
+      console.error("Connection error:", error);
+      setIsConnected(false);
+    };
+
+    const handleBotMessage = (msg: string) => {
       if (msg.includes("#book#counselling")) {
-        socketRef.current.emit("end_chat");
-        socketRef.current.disconnect(); 
+        socketconnection.emit("end_chat");
         setCounsellingButton(true);
         return;
       }
@@ -39,21 +56,42 @@ const ChatbotPage = () => {
         ...prev,
         { sender: "bot", text: msg, timestamp: new Date() }
       ]);
-    });
+    };
+
+    const handleBookCounselling = (msg: string) => {
+      console.log("Counselling summary:", msg);
+      // Don't disconnect here as it's a global connection
+    };
+
+    // Add event listeners
+    socketconnection.on("connect", handleConnect);
+    socketconnection.on("disconnect", handleDisconnect);
+    socketconnection.on("connect_error", handleConnectError);
+    socketconnection.on("bot_message", handleBotMessage);
+    socketconnection.on("book_counselling", handleBookCounselling);
+
+    // Check if already connected
+    if (socketconnection.connected) {
+      setIsConnected(true);
+    }
 
     return () => {
-      socketRef.current?.disconnect();
+      // Remove event listeners but don't disconnect the global connection
+      socketconnection.off("connect", handleConnect);
+      socketconnection.off("disconnect", handleDisconnect);
+      socketconnection.off("connect_error", handleConnectError);
+      socketconnection.off("bot_message", handleBotMessage);
+      socketconnection.off("book_counselling", handleBookCounselling);
     };
   }, []);
 
-  // 👇 Auto-scroll on new message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const sendMessage = () => {
-    if (!input.trim()) return;
-    socketRef.current.emit("user_message", input);
+    if (!input.trim() || !isConnected) return;
+    socketconnection.emit("user_message", input);
     setMessages((prev) => [
       ...prev,
       { sender: "user", text: input, timestamp: new Date(), isUser: true }
@@ -76,11 +114,17 @@ const ChatbotPage = () => {
             <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
               <Bot className="w-4 h-4" />
               <span>AI Wellness Assistant</span>
+              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
             </div>
             <h1 className="text-3xl font-bold text-foreground mb-2">Chat with MindBot</h1>
             <p className="text-muted-foreground">
               Your confidential AI companion for mental health support and guidance
             </p>
+            {!isConnected && (
+              <p className="text-yellow-600 text-sm mt-2">
+                Connecting to server... Please wait
+              </p>
+            )}
           </div>
 
           {/* Chat Container */}
@@ -143,7 +187,7 @@ const ChatbotPage = () => {
                     placeholder="Share what's on your mind..."
                     className="flex-1"
                   />
-                  <Button onClick={sendMessage} disabled={!input.trim()}>
+                  <Button onClick={sendMessage} disabled={!input.trim() || !isConnected}>
                     <Send className="w-4 h-4" />
                   </Button>
                 </div>

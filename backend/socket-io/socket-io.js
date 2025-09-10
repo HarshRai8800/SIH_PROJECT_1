@@ -2,7 +2,11 @@ import { Server } from "socket.io";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default function socketConfig(server) {
-    const io = new Server(server, { cors: { origin: "*" } });
+    const io = new Server(server, {
+        cors: {
+            origin: "*", 
+        }
+    });
     const sessions = {};
 
     io.on("connection", (socket) => {
@@ -62,24 +66,45 @@ export default function socketConfig(server) {
                 botReply = "#book#counselling";
 
             sessions[socket.id].push({ role: "bot", content: botReply });
-            console.log(sessions[socket.id]);
             socket.emit("bot_message", botReply);
         });
 
         socket.on("end_chat", async () => {
+            console.log("chat ended ");
             const chatHistory = sessions[socket.id];
 
-            // try {
-            //     await axios.post("http://localhost:5000/counseling", {
-            //         sessionId: socket.id,
-            //         conversation: chatHistory,
-            //     });
-            //     console.log("Conversation routed to counseling service");
-            // } catch (error) {
-            //     console.error("Error routing conversation:", error.message);
-            // }
+            const sessionHistory = sessions[socket.id]
+                .map(m => `${m.role.toUpperCase()}: ${m.content}`)
+                .join("\n");
 
-            socket.emit("bot_message", "Thank you for sharing. A counselor will reach out soon.");
+            const prompt2 = `You are an AI counselor assistant.
+            
+                            SESSION HISTORY:
+                            ${sessionHistory}
+
+                            You will be provided with a session history of a conversation between a student (who may be mentally depressed) and the AI support bot.
+                            Your task is to create a short summary (about 4-5 lines) that captures:
+                            - How the student is feeling emotionally and mentally.  
+                            - Key concerns, struggles, or themes the student mentioned.  
+                            - The overall tone of the conversation (e.g., hopeless, anxious, slightly positive).  
+                            - Any signs of improvement, willingness to talk, or distress.  
+
+                            If the session history is empty or not provided, return an empty response that is "".`
+
+            const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+            let summary = "No conversation history available.";
+
+
+            try {
+                const result = await model.generateContent([{ text: prompt2 }]);
+                summary = result.response.text().trim();
+            } catch (error) {
+                console.error("AI error:", error.message);
+            }
+
+            socket.emit("book_counselling", summary);
             delete sessions[socket.id];
         });
 
