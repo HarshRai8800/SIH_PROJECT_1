@@ -6,7 +6,8 @@ import router from "./routes/loginroute.js";
 import updateUserRoute from "./routes/updateUser.js";
 import http from "http";
 import socketConfig from "./socket-io/socket-io.js";
-
+import ticket from "./routes/createticket.js"
+import counseller from "./routes/counseller.js"
 dotenv.config();
 
 const app = express();
@@ -24,7 +25,9 @@ app.get("/", (req, res) => {
 
 // Auth routes
 app.use("/api", router);
-app.use("/api.updateuser",updateUserRoute)
+app.use("/api/user",updateUserRoute)
+app.use("/api/ticket",ticket)
+app.use("/api/counseller",counseller)
 
 socketConfig(server);
 

@@ -10,9 +10,7 @@ export const registerUser = async (req, res) => {
   const clerkId = req.auth.userId;
 
   try {
-    const { role: roleFromBody } = req.body || {};
 
-    // Fetch user profile from Clerk
     const clerkUser = await clerkClient.users.getUser(clerkId);
     const primaryEmailId = clerkUser?.primaryEmailAddressId;
     const primaryEmailObj = clerkUser?.emailAddresses?.find((e) => e.id === primaryEmailId) || clerkUser?.emailAddresses?.[0];
@@ -25,7 +23,6 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ error: "Unable to resolve user email from Clerk" });
     }
 
-    const role = roleFromBody || "STUDENT"; // default to STUDENT if not provided
 
     const user = await db.user.upsert({
       where: { clerkId },
@@ -34,7 +31,6 @@ export const registerUser = async (req, res) => {
         firstName,
         lastName,
         imageUrl,
-        role,
       },
       create: {
         clerkId,
@@ -42,7 +38,6 @@ export const registerUser = async (req, res) => {
         firstName,
         lastName,
         imageUrl,
-        role,
       },
     });
 

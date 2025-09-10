@@ -14,36 +14,49 @@ export const createTicket = async(req,res)=>{
     if(!user){
         return res.status(403).send("Forbidden");
     }
-    const {counsellerId} = req.body;
-
-    if(level=="SPECIALASKING"&&!counsellerId){
-        return res.status(400).send("CounsellerId is required for special asking level");
+   try {
+    const {mode,discription,meetingLocation,timing,conserns,severityOfCase,counsellerType} = req.body;
+ 
+    if(mode=="offline"&&!meetingLocation){
+     return res.status(401).json({error:"Meeting location not mentioned"});
     }
-    try {
-        if(level=="SPECIALASKING"){
-            const ticket = await db.ticket.create({
-            data:{
-                status,
-                issue,
-                level,
-                studentId:user.id,
-                counsellorId:counsellerId||null
-            }
-        })
-        if(ticket){
-                return res.status(201).json(ticket);
-            }else{
-                return res.status(500).send("Something went wrong");
-            }
+ 
+    const ticket = await db.ticket.create({
+     data:{
+         studentId:user?.id,
+        discription,     
+        level :severityOfCase,  
+        meetingLocation,   
+        timing,  
+        consern :conserns,
+        severity :severityOfCase,
+        counsellerType:counsellerType?counsellerType:null
+     }
+    })
+    if(ticket){
+        return res.status(401).json({error:"Ticket can not be created correpted data"});
+    }
+
+    await inngest.send({
+        name:"ticket/created",
+        data:{
+            ticketId:ticket.id
         }
+    })
 
-
-        
-    } catch (error) {
-        
-    }
+    res.status(201).json({message:"ticket has been created and assigned succesfully"})
 
 
 
+   } catch (error) {
+    console.log(error.message);
+     return res.status(500).json({error:"Internal server error"});
+   }
 
 }
+        
+   
+
+
+
+

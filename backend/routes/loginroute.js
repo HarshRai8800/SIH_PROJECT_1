@@ -4,7 +4,7 @@ import { registerUser } from "../controllers/logincontroller.js";
 
 const router = express.Router();
 
-router.post("/register", requireAuth(), registerUser);
+router.post("/registerUser", requireAuth(), registerUser);
 
 export default router;
 
