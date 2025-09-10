@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { 
-  BookOpen, 
-  Headphones, 
-  Play, 
-  Video, 
-  Search, 
+import {
+  BookOpen,
+  Headphones,
+  Play,
+  Video,
+  Search,
   Filter,
   Clock,
   Star,
@@ -17,9 +17,12 @@ import {
 } from 'lucide-react';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
+import { Link } from 'react-router-dom';
 
 const ResourcesPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  console.log("Current language:", i18n.language);
 
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,106 +35,133 @@ const ResourcesPage = () => {
     { id: 'academic', label: t('Academic Wellness'), count: 5 }
   ];
 
-  const resources = [
-    // Articles
-    {
-      id: '1',
-      type: 'article',
-      title: t('Understanding Test Anxiety: Strategies for Success'),
-      description: t('Learn evidence-based techniques to manage pre-exam stress and improve academic performance.'),
-      category: 'anxiety',
-      duration: '8 min read',
-      rating: 4.8,
-      author: 'Dr. Sarah Chen',
-      image: '/api/placeholder/300/200'
-    },
-    {
-      id: '2',
-      type: 'article',
-      title: t('Building Healthy Sleep Habits in College'),
-      description: t('Discover how proper sleep hygiene can transform your mental health and academic success.'),
-      category: 'sleep',
-      duration: '6 min read',
-      rating: 4.9,
-      author: 'Dr. Michael Torres',
-      image: '/api/placeholder/300/200'
-    },
-    {
-      id: '3',
-      type: 'article',
-      title: t('Mindfulness Techniques for Daily Stress Relief'),
-      description: t('Simple mindfulness practices you can use anywhere to reduce stress and increase focus.'),
-      category: 'stress',
-      duration: '5 min read',
-      rating: 4.7,
-      author: 'Dr. Lisa Wang',
-      image: '/api/placeholder/300/200'
-    },
-    
-    // Audio Resources
-    {
-      id: '4',
-      type: 'audio',
-      title: t('Deep Breathing Exercise for Anxiety'),
-      description: t('Guided breathing meditation to help calm anxiety and promote relaxation.'),
-      category: 'anxiety',
-      duration: '10 min',
-      rating: 4.9,
-      author: t('MindCare Audio Team'),
-      image: '/api/placeholder/300/200'
-    },
-    {
-      id: '5',
-      type: 'audio',
-      title: t('Progressive Muscle Relaxation'),
-      description: t('Complete body scan meditation to release physical tension and mental stress.'),
-      category: 'stress',
-      duration: '15 min',
-      rating: 4.8,
-      author: t('MindCare Audio Team'),
-      image: '/api/placeholder/300/200'
-    },
-    {
-      id: '6',
-      type: 'audio',
-      title: t('Sleep Stories: Peaceful Forest'),
-      description: t('Calming bedtime story to help you drift off to restful sleep.'),
-      category: 'sleep',
-      duration: '20 min',
-      rating: 4.9,
-      author: t('MindCare Audio Team'),
-      image: '/api/placeholder/300/200'
-    },
 
-    // Videos
-    {
-      id: '7',
-      type: 'video',
-      title: t('Study Break Yoga: 10-Minute Desk Stretches'),
-      description: t('Simple yoga movements you can do at your desk to relieve study stress.'),
-      category: 'academic',
-      duration: '10 min',
-      rating: 4.7,
-      author: t('Wellness Studio'),
-      image: '/api/placeholder/300/200'
-    },
-    {
-      id: '8',
-      type: 'video',
-      title: t('Time Management Strategies for Students'),
-      description: t('Practical techniques to organize your schedule and reduce academic overwhelm.'),
-      category: 'academic',
-      duration: '12 min',
-      rating: 4.8,
-      author: t('Academic Success Center'),
-      image: '/api/placeholder/300/200'
-    }
-  ];
+  const resourcelang = {
+    en: [
+      // Articles
+      {
+        id: '1',
+        type: 'article',
+        title: t('Understanding Test Anxiety: Strategies for Success'),
+        description: t('Learn evidence-based techniques to manage pre-exam stress and improve academic performance.'),
+        category: 'anxiety',
+        duration: '8 min read',
+        rating: 4.8,
+        author: 'Dr. Sarah Chen',
+        image: '/api/placeholder/300/200',
+        link: 'https://www.youtube.com/'
+      },
+      {
+        id: '2',
+        type: 'article',
+        title: t('Building Healthy Sleep Habits in College'),
+        description: t('Discover how proper sleep hygiene can transform your mental health and academic success.'),
+        category: 'sleep',
+        duration: '6 min read',
+        rating: 4.9,
+        author: 'Dr. Michael Torres',
+        image: '/api/placeholder/300/200',
+        link: 'https://www.youtube.com/'
+      },
+      {
+        id: '3',
+        type: 'article',
+        title: t('Mindfulness Techniques for Daily Stress Relief'),
+        description: t('Simple mindfulness practices you can use anywhere to reduce stress and increase focus.'),
+        category: 'stress',
+        duration: '5 min read',
+        rating: 4.7,
+        author: 'Dr. Lisa Wang',
+        image: '/api/placeholder/300/200',
+        link: 'https://www.youtube.com/'
+      },
 
+      // Audio Resources
+      {
+        id: '4',
+        type: 'audio',
+        title: t('Deep Breathing Exercise for Anxiety'),
+        description: t('Guided breathing meditation to help calm anxiety and promote relaxation.'),
+        category: 'anxiety',
+        duration: '10 min',
+        rating: 4.9,
+        author: t('MindCare Audio Team'),
+        image: '/api/placeholder/300/200',
+        link: 'https://www.youtube.com/'
+      },
+      {
+        id: '5',
+        type: 'audio',
+        title: t('Progressive Muscle Relaxation'),
+        description: t('Complete body scan meditation to release physical tension and mental stress.'),
+        category: 'stress',
+        duration: '15 min',
+        rating: 4.8,
+        author: t('MindCare Audio Team'),
+        image: '/api/placeholder/300/200',
+        link: 'https://www.youtube.com/'
+      },
+      {
+        id: '6',
+        type: 'audio',
+        title: t('Sleep Stories: Peaceful Forest'),
+        description: t('Calming bedtime story to help you drift off to restful sleep.'),
+        category: 'sleep',
+        duration: '20 min',
+        rating: 4.9,
+        author: t('MindCare Audio Team'),
+        image: '/api/placeholder/300/200',
+        link: 'https://www.youtube.com/'
+      },
+
+      // Videos
+      {
+        id: '7',
+        type: 'video',
+        title: t('Study Break Yoga: 10-Minute Desk Stretches'),
+        description: t('Simple yoga movements you can do at your desk to relieve study stress.'),
+        category: 'academic',
+        duration: '10 min',
+        rating: 4.7,
+        author: t('Wellness Studio'),
+        image: '/api/placeholder/300/200',
+        link: 'https://www.youtube.com/'
+      },
+      {
+        id: '8',
+        type: 'video',
+        title: t('Time Management Strategies for Students'),
+        description: t('Practical techniques to organize your schedule and reduce academic overwhelm.'),
+        category: 'academic',
+        duration: '12 min',
+        rating: 4.8,
+        author: t('Academic Success Center'),
+        image: '/api/placeholder/300/200',
+        link: 'https://www.youtube.com/'
+      }
+    ],
+    hi: [
+      {
+        id: '8',
+        type: 'video',
+        title: t('Time Management Strategies for Students'),
+        description: t('Practical techniques to organize your schedule and reduce academic overwhelm.'),
+        category: 'academic',
+        duration: '12 min',
+        rating: 4.8,
+        author: t('Academic Success Center'),
+        image: '/api/placeholder/300/200',
+        link: 'https://www.youtube.com/'
+      }
+    ]
+
+  }
+
+  const resources = resourcelang[i18n.language] || resourcelang['en']; //anuj
   const filteredResources = resources.filter(resource => {
     const matchesCategory = activeCategory === 'all' || resource.category === activeCategory;
     const matchesSearch = resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         resource.description.toLowerCase().includes(searchQuery.toLowerCase());
+      resource.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -156,7 +186,7 @@ const ResourcesPage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      
+
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -183,7 +213,7 @@ const ResourcesPage = () => {
                   className="pl-10"
                 />
               </div>
-              
+
               {/* Category Filter */}
               <div className="flex flex-wrap gap-2">
                 {categories.map((category) => (
@@ -210,68 +240,70 @@ const ResourcesPage = () => {
             {filteredResources.map((resource) => {
               const Icon = getIcon(resource.type);
               return (
-                <Card key={resource.id} className="card-gradient card-hover group cursor-pointer">
-                  <div className="relative overflow-hidden rounded-t-lg">
-                    <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                      <Icon className="w-12 h-12 text-primary/60" />
-                    </div>
-                    
-                    {(resource.type === 'audio' || resource.type === 'video') && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center">
-                          <Play className="w-6 h-6 text-primary ml-1" />
-                        </div>
+                <Link to={resource.link} target="_blank" key={resource.id} className="no-underline">
+                  <Card key={resource.id} className="card-gradient card-hover group cursor-pointer">
+                    <div className="relative overflow-hidden rounded-t-lg">
+                      <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                        <Icon className="w-12 h-12 text-primary/60" />
                       </div>
-                    )}
 
-                    <div className="absolute top-3 left-3">
-                      <Badge className={`bg-${getTypeColor(resource.type)}/90 text-${getTypeColor(resource.type)}-foreground`}>
-                        {t(resource.type)}
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <div className="p-6 space-y-4">
-                    <div className="space-y-2">
-                      <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                        {resource.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                        {resource.description}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <div className="flex items-center space-x-3">
-                        <div className="flex items-center space-x-1">
-                          <Clock className="w-3 h-3" />
-                          <span>{resource.duration}</span>
+                      {(resource.type === 'audio' || resource.type === 'video') && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center">
+                            <Play className="w-6 h-6 text-primary ml-1" />
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-1">
-                          <Star className="w-3 h-3 text-wellness" />
-                          <span>{resource.rating}</span>
-                        </div>
-                      </div>
-                      
-                      {resource.type === 'article' && (
-                        <Button size="sm" variant="ghost" className="h-6 px-2">
-                          <Download className="w-3 h-3 mr-1" />
-                          {t('Save')}
-                        </Button>
                       )}
+
+                      <div className="absolute top-3 left-3">
+                        <Badge className={`bg-${getTypeColor(resource.type)}/90 text-${getTypeColor(resource.type)}-foreground`}>
+                          {t(resource.type)}
+                        </Badge>
+                      </div>
                     </div>
 
-                    <div className="text-xs text-muted-foreground">
-                      {t('By')} {resource.author}
-                    </div>
+                    <div className="p-6 space-y-4">
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                          {resource.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                          {resource.description}
+                        </p>
+                      </div>
 
-                    <Button className="w-full" variant={resource.type === 'article' ? "outline" : "default"}>
-                      {resource.type === 'article' && t('Read Article')}
-                      {resource.type === 'audio' && t('Listen Now')}
-                      {resource.type === 'video' && t('Watch Video')}
-                    </Button>
-                  </div>
-                </Card>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-1">
+                            <Clock className="w-3 h-3" />
+                            <span>{resource.duration}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Star className="w-3 h-3 text-wellness" />
+                            <span>{resource.rating}</span>
+                          </div>
+                        </div>
+
+                        {resource.type === 'article' && (
+                          <Button size="sm" variant="ghost" className="h-6 px-2">
+                            <Download className="w-3 h-3 mr-1" />
+                            {t('Save')}
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="text-xs text-muted-foreground">
+                        {t('By')} {resource.author}
+                      </div>
+
+                      <Button className="w-full" variant={resource.type === 'article' ? "outline" : "default"}>
+                        {resource.type === 'article' && t('Read Article')}
+                        {resource.type === 'audio' && t('Listen Now')}
+                        {resource.type === 'video' && t('Watch Video')}
+                      </Button>
+                    </div>
+                  </Card>
+                </Link>
               );
             })}
           </div>
@@ -287,7 +319,7 @@ const ResourcesPage = () => {
           )}
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );
