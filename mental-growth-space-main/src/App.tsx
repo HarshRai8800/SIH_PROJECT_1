@@ -42,6 +42,7 @@ const App = () => (
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/success-stories" element={<SuccessStoriesPage />} />
+      
 
           {/* ✅ New role-based routes */}
           <Route path="/student" element={<StudentSignIn />} />
