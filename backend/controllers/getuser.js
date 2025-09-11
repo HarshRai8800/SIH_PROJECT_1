@@ -1,4 +1,4 @@
-import { db } from "../prismaClient/prisma";
+import { db } from "../prismaClient/prisma.js";
 
 
 

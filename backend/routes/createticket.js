@@ -1,6 +1,6 @@
 import express from 'express'
 import { requireAuth } from "@clerk/express";
-import createTicket from "../controllers/ticket"
+import {createTicket }from "../controllers/ticket.js"
 
 const router  = express.Router();
 
