@@ -30,7 +30,7 @@ model User {
   updatedAt         DateTime     @updatedAt
 }
 
-model Counseller{
+model Counsellor{
   id                Int          @id @default(autoincrement())
   clerkId           String       @unique
   email             String       @unique
@@ -83,7 +83,7 @@ model Ticket {
   student      User   @relation("StudentTickets", fields: [studentId], references: [id])
   studentId    Int
 
-  counsellor   Counseller?   @relation("CounsellorTickets", fields: [counsellorId], references: [id])
+  counsellor   Counsellor?   @relation("CounsellorTickets", fields: [counsellorId], references: [id])
   counsellorId Int?
 
   createdAt    DateTime @default(now())

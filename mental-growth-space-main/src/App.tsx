@@ -23,6 +23,7 @@ import CounsellorSignIn from "./pages/CounsellorSignIn";
 import StudentDashboard from "./pages/StudentDashboard";
 import CounsellorDashboard from "./pages/CounsellorDashboard";
 import CustomSignUp from "./components/Sign-up/CustomSignUp";
+import SSOCallback from "./pages/SSOCallback";
 
 const queryClient = new QueryClient();
 
@@ -52,7 +53,8 @@ const App = () => (
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
 
-          <Route path="/sign-up" element={<CustomSignUp/>} />
+          <Route path="/sign-up/*" element={<CustomSignUp/>} />
+          <Route path="/sso-callback" element={<SSOCallback />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

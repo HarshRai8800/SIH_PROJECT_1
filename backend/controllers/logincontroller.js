@@ -10,6 +10,8 @@ export const registerUser = async (req, res) => {
   const clerkId = req.auth.userId;
   const incomingRole = (req.body?.role || "").toString().toLowerCase();
 
+  console.log(incomingRole)
+
   try {
 
     const clerkUser = await clerkClient.users.getUser(clerkId);
@@ -26,7 +28,7 @@ export const registerUser = async (req, res) => {
 
     // Route to proper table based on role (default to student)
     if (incomingRole === "counsellor") {
-      const counsellor = await db.counseller.upsert({
+      const counsellor = await db.counsellor.upsert({
         where: { clerkId },
         update: {
           email,
