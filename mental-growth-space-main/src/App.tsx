@@ -23,6 +23,9 @@ import CounsellorSignIn from "./pages/CounsellorSignIn";
 import StudentDashboard from "./pages/StudentDashboard";
 import CounsellorDashboard from "./pages/CounsellorDashboard";
 
+// ✅ NEW: Edit profile page
+import EditProfilePage from "./pages/EditProfilePage";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -49,6 +52,9 @@ const App = () => (
           {/* ✅ Dashboards after login */}
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
+
+          {/* ✅ Edit Profile route */}
+          <Route path="/edit-profile" element={<EditProfilePage />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

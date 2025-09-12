@@ -1,12 +1,12 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  User, 
-  Calendar, 
-  Trophy, 
-  Target, 
-  Heart, 
+import {
+  User,
+  Calendar,
+  Trophy,
+  Target,
+  Heart,
   Brain,
   TrendingUp,
   CheckCircle,
@@ -18,15 +18,17 @@ import { ProgressRing } from '@/components/Profile/ProgressRing';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';   // ✅ added
 
 const ProfilePage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();                // ✅ added
 
   const userData = {
-    name: "Alex Johnson",
-    email: "alex.johnson@university.edu",
-    studentId: "STU2024789",
-    joinDate: "September 2024",
+    name: 'Alex Johnson',
+    email: 'alex.johnson@university.edu',
+    studentId: 'STU2024789',
+    joinDate: 'September 2024',
     wellnessScore: 70,
     currentStreak: 12,
     totalSessions: 24,
@@ -129,7 +131,7 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      
+
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -138,7 +140,9 @@ const ProfilePage = () => {
               <User className="w-4 h-4" />
               <span>{t('Personal Dashboard')}</span>
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">{t('Your Wellness Journey')}</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              {t('Your Wellness Journey')}
+            </h1>
             <p className="text-muted-foreground">
               {t('Track your progress and celebrate your mental health achievements')}
             </p>
@@ -153,16 +157,20 @@ const ProfilePage = () => {
                   <ProgressRing progress={userData.wellnessScore} size={120} strokeWidth={8} />
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <User className="w-8 h-8 text-primary mb-1" />
-                    <span className="text-xs font-medium text-muted-foreground">{t('Wellness')}</span>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {t('Wellness')}
+                    </span>
                   </div>
                 </div>
-                
+
                 <h2 className="text-xl font-bold text-foreground mb-2">{userData.name}</h2>
                 <p className="text-sm text-muted-foreground mb-4">{userData.email}</p>
-                
+
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
-                    <div className="text-2xl font-bold text-primary">{userData.wellnessScore}%</div>
+                    <div className="text-2xl font-bold text-primary">
+                      {userData.wellnessScore}%
+                    </div>
                     <div className="text-xs text-muted-foreground">{t('Wellness Score')}</div>
                   </div>
                   <div>
@@ -170,8 +178,13 @@ const ProfilePage = () => {
                     <div className="text-xs text-muted-foreground">{t('Day Streak')}</div>
                   </div>
                 </div>
-                
-                <Button className="w-full mt-6" variant="outline">
+
+                {/* ✅ Navigate to edit profile page */}
+                <Button
+                  className="w-full mt-6"
+                  variant="outline"
+                  onClick={() => navigate('/edit-profile')}
+                >
                   <Settings className="w-4 h-4 mr-2" />
                   {t('Edit Profile')}
                 </Button>
@@ -210,15 +223,9 @@ const ProfilePage = () => {
                     <div key={achievement.id} className="flex items-start space-x-3">
                       <div className="text-2xl">{achievement.icon}</div>
                       <div className="space-y-1 flex-1">
-                        <h4 className="font-medium text-sm text-foreground">
-                          {achievement.title}
-                        </h4>
-                        <p className="text-xs text-muted-foreground">
-                          {achievement.description}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {achievement.date}
-                        </p>
+                        <h4 className="font-medium text-sm text-foreground">{achievement.title}</h4>
+                        <p className="text-xs text-muted-foreground">{achievement.description}</p>
+                        <p className="text-xs text-muted-foreground">{achievement.date}</p>
                       </div>
                     </div>
                   ))}
@@ -253,14 +260,14 @@ const ProfilePage = () => {
                             {goal.target}
                           </Badge>
                         </div>
-                        
+
                         <div className="space-y-2">
                           <div className="flex justify-between text-xs">
                             <span className="text-muted-foreground">{t('Progress')}</span>
                             <span className="font-medium text-foreground">{goal.progress}%</span>
                           </div>
                           <div className="w-full bg-muted rounded-full h-2">
-                            <div 
+                            <div
                               className="bg-wellness h-2 rounded-full transition-all duration-500"
                               style={{ width: `${goal.progress}%` }}
                             />
@@ -284,12 +291,15 @@ const ProfilePage = () => {
                   <Clock className="w-5 h-5 mr-2 text-secondary" />
                   {t('Recent Activity')}
                 </h3>
-                
+
                 <div className="space-y-4">
                   {recentActivities.map((activity) => {
                     const Icon = activity.icon;
                     return (
-                      <div key={activity.id} className="flex items-start space-x-4 p-4 rounded-lg border border-border/50">
+                      <div
+                        key={activity.id}
+                        className="flex items-start space-x-4 p-4 rounded-lg border border-border/50"
+                      >
                         <div className={`p-2 rounded-lg bg-${activity.color}/10`}>
                           <Icon className={`w-5 h-5 text-${activity.color}`} />
                         </div>
@@ -302,7 +312,7 @@ const ProfilePage = () => {
                     );
                   })}
                 </div>
-                
+
                 <Button variant="outline" className="w-full mt-4">
                   {t('View All Activity')}
                 </Button>
@@ -314,7 +324,7 @@ const ProfilePage = () => {
                   <Calendar className="w-5 h-5 mr-2 text-accent" />
                   {t("This Week's Summary")}
                 </h3>
-                
+
                 <div className="grid md:grid-cols-4 gap-4">
                   <div className="text-center p-4 rounded-lg bg-primary/5">
                     <div className="text-2xl font-bold text-primary mb-1">5</div>
@@ -338,7 +348,7 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );
