@@ -24,6 +24,12 @@ import StudentDashboard from "./pages/StudentDashboard";
 import CounsellorDashboard from "./pages/CounsellorDashboard";
 import CustomSignUp from "./components/Sign-up/CustomSignUp";
 
+// ✅ NEW: Edit profile page
+import EditProfilePage from "./pages/EditProfilePage";
+
+//counsellorProfile
+import CounsellorProfile from "@/pages/CounsellorProfile";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -51,8 +57,11 @@ const App = () => (
           {/* ✅ Dashboards after login */}
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
+          {/* ✅ Edit Profile route */}
+          <Route path="/edit-profile" element={<EditProfilePage />} />
 
-          <Route path="/sign-up" element={<CustomSignUp/>} />
+          //CounsellorProfile
+          <Route path="/counsellor/profile" element={<CounsellorProfile />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
