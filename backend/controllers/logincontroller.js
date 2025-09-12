@@ -49,6 +49,7 @@ export const registerUser = async (req, res) => {
           allRatings: [],
         },
       });
+      console.log(counsellor)
       return res.json({ role: "counsellor", data: counsellor });
     }
 
@@ -70,6 +71,8 @@ export const registerUser = async (req, res) => {
         languages: [],
       },
     });
+
+    console.log(user)
 
     return res.json({ role: "student", data: user });
   } catch (err) {
