@@ -23,6 +23,7 @@ import CounsellorSignIn from "./pages/CounsellorSignIn";
 import StudentDashboard from "./pages/StudentDashboard";
 import CounsellorDashboard from "./pages/CounsellorDashboard";
 import CustomSignUp from "./components/Sign-up/CustomSignUp";
+import SSOCallback from "./pages/SSOCallback";
 
 // ✅ NEW: Edit profile page
 import EditProfilePage from "./pages/EditProfilePage";
@@ -60,9 +61,8 @@ const App = () => (
           {/* ✅ Edit Profile route */}
           <Route path="/edit-profile" element={<EditProfilePage />} />
 
-          //CounsellorProfile
-          <Route path="/counsellor/profile" element={<CounsellorProfile />} />
-
+          <Route path="/sign-up/*" element={<CustomSignUp/>} />
+          <Route path="/sso-callback" element={<SSOCallback />} />
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>
