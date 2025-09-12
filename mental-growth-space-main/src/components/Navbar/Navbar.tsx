@@ -25,12 +25,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// ✅ Import i18n hook
+// ✅ i18n
 import { useTranslation } from "react-i18next";
+// ✅ NEW: import user profile context
+import { useUserProfile } from "@/context/UserProfileContext";
 
 const Navbar = () => {
   const location = useLocation();
   const { t, i18n } = useTranslation();
+  const { profile } = useUserProfile(); // ✅ counsellor profile data
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -48,16 +51,12 @@ const Navbar = () => {
   useEffect(() => {
     const syncUser = async () => {
       if (!isSignedIn) return;
-
       const token = await getToken();
       await fetch("http://localhost:5000/api/register", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
     };
-
     syncUser();
   }, [isSignedIn, getToken]);
 
@@ -153,8 +152,11 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* Profile Section */}
-          <Link to="/profile" className="flex items-center space-x-3">
+          {/* ✅ Profile Section - dynamic counsellor info + conditional link */}
+          <Link
+            to={profile?.role === "counsellor" ? "/counsellor/profile" : "/profile"}
+            className="flex items-center space-x-3"
+          >
             <div className="relative">
               <ProgressRing progress={70} size={40} strokeWidth={3} />
               <div className="absolute inset-0 flex items-center justify-center">
@@ -163,10 +165,14 @@ const Navbar = () => {
             </div>
             <div className="hidden sm:block">
               <div className="text-sm font-medium text-foreground">
-                Alex Johnson
+                {profile?.role === "counsellor"
+                  ? profile.fullName
+                  : "Guest"}
               </div>
               <div className="text-xs text-muted-foreground">
-                {t("wellness")}: 70%
+                {profile?.role === "counsellor"
+                  ? `${profile.specialization} (${profile.yearsExperience} yrs)`
+                  : `${t("wellness")}: 70%`}
               </div>
             </div>
           </Link>

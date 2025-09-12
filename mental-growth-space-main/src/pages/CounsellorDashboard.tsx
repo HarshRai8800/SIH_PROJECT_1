@@ -1,7 +1,8 @@
-// src/pages/CounsellorDashboard.tsx
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
+import { useUserProfile } from "@/context/UserProfileContext";
 
 type CounsellorFormData = {
   fullName: string;
@@ -11,6 +12,9 @@ type CounsellorFormData = {
 };
 
 const CounsellorDashboard = () => {
+  const navigate = useNavigate();
+  const { setProfile } = useUserProfile(); // <-- from our context
+
   const {
     register,
     handleSubmit,
@@ -19,10 +23,23 @@ const CounsellorDashboard = () => {
   } = useForm<CounsellorFormData>();
 
   const onSubmit = (data: CounsellorFormData) => {
-    console.log("Counsellor Data:", data);
-    // Replace this with your API call
-    alert("Form submitted successfully!");
-    reset(); // optional: clear form after submission
+    // 1️⃣ Save to global context so Navbar can show counsellor info
+    setProfile({
+      role: "counsellor",
+      fullName: data.fullName,
+      email: data.email,
+      specialization: data.specialization,
+      yearsExperience: String(data.experience),
+    });
+
+    // 2️⃣ Optional: send to backend here
+    // await fetch("/api/counsellor", { method: "POST", body: JSON.stringify(data) });
+
+    // 3️⃣ Redirect to homepage
+    navigate("/", { replace: true });
+
+    // (optional) clear form
+    reset();
   };
 
   return (

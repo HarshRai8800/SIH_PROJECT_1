@@ -26,6 +26,9 @@ import CounsellorDashboard from "./pages/CounsellorDashboard";
 // ✅ NEW: Edit profile page
 import EditProfilePage from "./pages/EditProfilePage";
 
+//counsellorProfile
+import CounsellorProfile from "@/pages/CounsellorProfile";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -55,6 +58,9 @@ const App = () => (
 
           {/* ✅ Edit Profile route */}
           <Route path="/edit-profile" element={<EditProfilePage />} />
+
+          //CounsellorProfile
+          <Route path="/counsellor/profile" element={<CounsellorProfile />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
