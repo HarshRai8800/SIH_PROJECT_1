@@ -17,6 +17,7 @@ import {
   SignInButton,
   UserButton,
   useAuth,
+  useUser,
 } from "@clerk/clerk-react";
 import {
   DropdownMenu,
@@ -43,22 +44,33 @@ const Navbar = () => {
   ];
 
   const { getToken, isSignedIn } = useAuth();
+  const { user } = useUser();
 
   useEffect(() => {
     const syncUser = async () => {
       if (!isSignedIn) return;
 
       const token = await getToken();
-      await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const roleFromClerk = (user?.unsafeMetadata as any)?.role as string | undefined;
+      const roleFromStorage = localStorage.getItem("selectedRole") || undefined;
+      const role = roleFromClerk || roleFromStorage || undefined;
+
+      try {
+        await fetch("http://localhost:5000/api/registerUser", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ role }),
+        });
+      } catch (e) {
+        // do nothing; avoid blocking UI
+      }
     };
 
     syncUser();
-  }, [isSignedIn, getToken]);
+  }, [isSignedIn, getToken, user]);
 
   return (
     <nav className="bg-card/95 backdrop-blur-lg border-b border-border sticky top-0 z-50 shadow-sm">
@@ -127,11 +139,14 @@ const Navbar = () => {
 
           {/* Sign-in / Sign-out */}
           <SignedOut>
-            <SignInButton />
+            <Link to="/sign-up">
+              <button>Sign-up</button>
+            </Link>
           </SignedOut>
           <SignedIn>
             <UserButton />
           </SignedIn>
+
 
           {/* Navigation Links - Desktop */}
           <div className="hidden md:flex items-center space-x-1">
@@ -183,18 +198,16 @@ const Navbar = () => {
                   className="flex flex-col items-center py-2 px-1"
                 >
                   <Icon
-                    className={`w-5 h-5 ${
-                      isActive(item.path)
+                    className={`w-5 h-5 ${isActive(item.path)
                         ? "text-primary"
                         : "text-muted-foreground"
-                    }`}
+                      }`}
                   />
                   <span
-                    className={`text-xs mt-1 ${
-                      isActive(item.path)
+                    className={`text-xs mt-1 ${isActive(item.path)
                         ? "text-primary font-medium"
                         : "text-muted-foreground"
-                    }`}
+                      }`}
                   >
                     {item.label}
                   </span>

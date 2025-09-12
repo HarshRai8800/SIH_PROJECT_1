@@ -8,6 +8,7 @@ export const registerUser = async (req, res) => {
   }
 
   const clerkId = req.auth.userId;
+  const incomingRole = (req.body?.role || "").toString().toLowerCase();
 
   try {
 
@@ -23,7 +24,33 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ error: "Unable to resolve user email from Clerk" });
     }
 
+    // Route to proper table based on role (default to student)
+    if (incomingRole === "counsellor") {
+      const counsellor = await db.counseller.upsert({
+        where: { clerkId },
+        update: {
+          email,
+          firstName: firstName || "",
+          lastName: lastName || "",
+          imageUrl: imageUrl || "",
+        },
+        create: {
+          clerkId,
+          email,
+          firstName: firstName || "",
+          lastName: lastName || "",
+          imageUrl: imageUrl || "",
+          // required array fields – initialize empty
+          relatedSkills: [],
+          speciality: [],
+          languages: [],
+          allRatings: [],
+        },
+      });
+      return res.json({ role: "counsellor", data: counsellor });
+    }
 
+    // Student (default)
     const user = await db.user.upsert({
       where: { clerkId },
       update: {
@@ -38,10 +65,11 @@ export const registerUser = async (req, res) => {
         firstName,
         lastName,
         imageUrl,
+        languages: [],
       },
     });
 
-    return res.json(user);
+    return res.json({ role: "student", data: user });
   } catch (err) {
     console.log(err.message)
     return res.status(500).json({ error: err.message });
