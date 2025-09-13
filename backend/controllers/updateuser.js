@@ -6,7 +6,7 @@ export const updateUser = async(req,res)=>{
     return res.status(401).send("Unauthorized");
   }
 
-  const {clerkId} = req.auth.userId;
+  const {clerkId} = req.body;
 
    const user = await db.user.findUnique({
       where: { clerkId },
@@ -16,7 +16,6 @@ export const updateUser = async(req,res)=>{
       return res.status(404).json({ error: "User not found" });
     }
   try {
-   const { clerkId } = req.body;
     const {
       firstName,
       lastName,

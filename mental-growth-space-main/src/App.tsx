@@ -25,6 +25,7 @@ import StudentDashboard from "./pages/StudentDashboard";
 import CounsellorDashboard from "./pages/CounsellorDashboard";
 import CustomSignUp from "./components/Sign-up/CustomSignUp";
 import SSOCallback from "./pages/SSOCallback";
+import EditProfilePage from "./pages/EditProfilePage";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/forum" element={<ForumPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/editProfile" element={<EditProfilePage/>} />
           <Route path="/success-stories" element={<SuccessStoriesPage />} />
           <Route path="/counse" element={<Counse />} />
       

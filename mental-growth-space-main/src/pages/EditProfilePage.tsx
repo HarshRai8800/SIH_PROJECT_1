@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
 import { useAuth, useUser } from "@clerk/clerk-react";
 
@@ -8,13 +8,21 @@ import { Input } from "@/components/ui/input";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import { Check } from "lucide-react";
+
 interface UserProfile {
   firstName: string;
   lastName: string;
-  email: string;
   imageUrl: string;
-  languages: string; // comma-separated for easy input
+  languages: string[];
 }
+
+const languagesList = ["English", "Hindi", "Urdu", "Dogri", "Punjabi"];
 
 const EditProfilePage = () => {
   const { user } = useUser();
@@ -23,48 +31,37 @@ const EditProfilePage = () => {
   const [formData, setFormData] = useState<UserProfile>({
     firstName: "",
     lastName: "",
-    email: "",
     imageUrl: "",
-    languages: "",
+    languages: [],
   });
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string>("");
 
-  // ✅ Fetch user data once on mount
+  // ✅ Fetch user data
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = await getToken();
-      const res = await axios.post(
-  "http://localhost:5000/api/user/getUser",
-  {
-    clerkId: user.id,           // ✅ body data
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  }
-);
-console.log("Profile data:", res.data); // Debug log
+        const res = await axios.get("http://localhost:5000/api/get/user", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            clerkId: "user_32ZxHU5GC9Ophf0mmFLm4J1IJfA",
+          },
+        });
 
-        const data = res.data as {
-          firstName?: string;
-          lastName?: string;
-          email: string;
-          imageUrl?: string;
-          languages: string[];
-        };
-
+        const data = res.data.user as UserProfile;
+        console.log(res.data.user)
         setFormData({
           firstName: data.firstName || "",
           lastName: data.lastName || "",
-          email: data.email || "",
           imageUrl: data.imageUrl || "",
-          languages: data.languages?.join(", ") || "",
+          languages: data.languages || [],
         });
+        setPreviewImage(data.imageUrl || "");
       } catch (err) {
         console.error("Error fetching profile:", err);
       } finally {
@@ -75,9 +72,30 @@ console.log("Profile data:", res.data); // Debug log
     if (user) fetchProfile();
   }, [user, getToken]);
 
-  // ✅ Handle form input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ✅ Handle input changes
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // ✅ Handle language toggle
+  const toggleLanguage = (lang: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      languages: prev.languages.includes(lang)
+        ? prev.languages.filter((l) => l !== lang)
+        : [...prev.languages, lang],
+    }));
+  };
+
+  // ✅ Handle image upload
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const imageUrl = URL.createObjectURL(file);
+      setPreviewImage(imageUrl);
+      // For backend upload, you would normally send `file`
+      setFormData({ ...formData, imageUrl: imageUrl });
+    }
   };
 
   // ✅ Submit updates
@@ -89,18 +107,14 @@ console.log("Profile data:", res.data); // Debug log
     try {
       const token = await getToken();
 
-      await axios.put(
+      const res = await axios.put(
         "http://localhost:5000/api/user/update",
         {
-          clerkId: user.id,
+          clerkId: "user_32ZxHU5GC9Ophf0mmFLm4J1IJfA",
           firstName: formData.firstName,
           lastName: formData.lastName,
-          email: formData.email,
           imageUrl: formData.imageUrl,
-          languages: formData.languages
-            .split(",")
-            .map((lang) => lang.trim())
-            .filter(Boolean),
+          languages: formData.languages,
         },
         {
           headers: {
@@ -109,11 +123,11 @@ console.log("Profile data:", res.data); // Debug log
           },
         }
       );
+      console.log(res.data)
 
       alert("Profile updated successfully!");
     } catch (err) {
       console.error("Error updating profile:", err);
-      alert("Something went wrong while saving.");
     } finally {
       setSaving(false);
     }
@@ -124,12 +138,38 @@ console.log("Profile data:", res.data); // Debug log
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-rose-50 to-pink-100">
       <Navbar />
       <div className="flex-1 container mx-auto px-4 py-8">
-        <Card className="max-w-md mx-auto p-6 space-y-4">
-          <h1 className="text-2xl font-bold">Edit Profile</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <Card className="max-w-3xl mx-auto p-8 flex gap-8 items-center">
+          {/* Profile Image Section */}
+          <div className="flex flex-col items-center space-y-3">
+         <div className="relative w-32 h-32 flex items-center justify-center rounded-full border-2 border-rose-300 bg-rose-50">
+  {previewImage ? (
+                  <img
+      src={previewImage}
+      alt="Profile"
+      className="w-32 h-32 rounded-full object-cover"
+    />
+  ) : (
+    <span className="text-gray-500 text-sm font-medium">Profile</span>
+  )}
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleImageChange}
+    className="absolute inset-0 opacity-0 cursor-pointer"
+  />
+</div>
+
+            <p className="text-sm text-gray-600">Click image to change</p>
+          </div>
+
+          {/* Form Section */}
+          <form
+            onSubmit={handleSubmit}
+            className="flex-1 space-y-4 flex flex-col justify-center"
+          >
             <Input
               name="firstName"
               placeholder="First Name"
@@ -142,25 +182,41 @@ console.log("Profile data:", res.data); // Debug log
               value={formData.lastName}
               onChange={handleChange}
             />
-            <Input
-              name="email"
-              placeholder="Email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            <Input
-              name="imageUrl"
-              placeholder="Image URL"
-              value={formData.imageUrl}
-              onChange={handleChange}
-            />
-            <Input
-              name="languages"
-              placeholder="Languages (comma separated)"
-              value={formData.languages}
-              onChange={handleChange}
-            />
+
+            {/* Languages Dropdown */}
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                Languages
+              </label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-full justify-between">
+                    {formData.languages.length > 0
+                      ? `${formData.languages.length} selected`
+                      : "Select languages"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px] p-2 space-y-1">
+                  {languagesList.map((lang) => (
+                    <div
+                      key={lang}
+                      className="flex items-center cursor-pointer px-2 py-1 rounded-md hover:bg-rose-50"
+                      onClick={() => toggleLanguage(lang)}
+                    >
+                      <Check
+                        className={`mr-2 h-4 w-4 ${
+                          formData.languages.includes(lang)
+                            ? "opacity-100 text-rose-500"
+                            : "opacity-0"
+                        }`}
+                      />
+                      {lang}
+                    </div>
+                  ))}
+                </PopoverContent>
+              </Popover>
+            </div>
+
             <Button type="submit" className="w-full" disabled={saving}>
               {saving ? "Saving..." : "Save Changes"}
             </Button>
@@ -173,3 +229,5 @@ console.log("Profile data:", res.data); // Debug log
 };
 
 export default EditProfilePage;
+
+

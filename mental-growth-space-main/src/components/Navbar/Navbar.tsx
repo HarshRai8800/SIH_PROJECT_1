@@ -53,10 +53,10 @@ const Navbar = () => {
     const syncUser = async () => {
       if (!isSignedIn) return;
       const token = await getToken();
-      await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // await fetch("http://localhost:5000/api/register", {
+      //   method: "POST",
+      //   headers: { Authorization: `Bearer ${token}` },
+      // });
     };
     syncUser();
   }, [isSignedIn, getToken, user]);

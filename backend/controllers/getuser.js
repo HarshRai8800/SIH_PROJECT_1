@@ -8,9 +8,12 @@ export const getUser = async(req,res)=>{
   }
 
   try {
-
-    const user = await db.user.findUnique({where:{clerkId}});
-    if(counseller){
+    const { clerkId } = req.query;
+    console.log(clerkId );
+    const user = await db.user.findUnique({
+        where:{clerkId}
+    });
+    if(!user){
         return res.status(401).send("user not found");
     }
     return res.status(201).json({user})

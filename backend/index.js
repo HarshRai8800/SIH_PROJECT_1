@@ -8,6 +8,7 @@ import http from "http";
 import socketConfig from "./socket-io/socket-io.js";
 import ticket from "./routes/createticket.js"
 import counseller from "./routes/counseller.js"
+import getUser from "./routes/getUser.js"
 dotenv.config();
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/api", router);
 app.use("/api/user",updateUserRoute)
 app.use("/api/ticket",ticket)
 app.use("/api/counseller",counseller)
+app.use("/api/get",getUser)
 
 socketConfig(server);
 
