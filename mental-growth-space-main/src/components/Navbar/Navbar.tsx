@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   MessageSquare,
@@ -14,10 +14,7 @@ import { useEffect } from "react";
 import {
   SignedIn,
   SignedOut,
-  SignInButton,
-  UserButton,
-  useAuth,
-  useUser,
+  UserButton
 } from "@clerk/clerk-react";
 import {
   DropdownMenu,
@@ -33,7 +30,6 @@ import { useUserProfile } from "@/context/UserProfileContext";
 const Navbar = () => {
   const location = useLocation();
   const { t, i18n } = useTranslation();
-  const { profile } = useUserProfile(); // ✅ counsellor profile data
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -46,20 +42,8 @@ const Navbar = () => {
     { path: "/admin", label: t("dashboard"), icon: BarChart3 },
   ];
 
-  const { getToken, isSignedIn } = useAuth();
-  const { user } = useUser();
 
-  useEffect(() => {
-    const syncUser = async () => {
-      if (!isSignedIn) return;
-      const token = await getToken();
-      await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-    };
-    syncUser();
-  }, [isSignedIn, getToken, user]);
+ 
 
   return (
     <nav className="bg-card/95 backdrop-blur-lg border-b border-border sticky top-0 z-50 shadow-sm">
@@ -156,7 +140,7 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* ✅ Profile Section - dynamic counsellor info + conditional link */}
+          {/* ✅ Profile Section - dynamic counsellor info + conditional link
           <Link
             to={profile?.role === "counsellor" ? "/counsellor/profile" : "/profile"}
             className="flex items-center space-x-3"
@@ -179,7 +163,7 @@ const Navbar = () => {
                   : `${t("wellness")}: 70%`}
               </div>
             </div>
-          </Link>
+          </Link> */}
         </div>
 
         {/* Mobile Navigation */}
@@ -195,14 +179,14 @@ const Navbar = () => {
                 >
                   <Icon
                     className={`w-5 h-5 ${isActive(item.path)
-                        ? "text-primary"
-                        : "text-muted-foreground"
+                      ? "text-primary"
+                      : "text-muted-foreground"
                       }`}
                   />
                   <span
                     className={`text-xs mt-1 ${isActive(item.path)
-                        ? "text-primary font-medium"
-                        : "text-muted-foreground"
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground"
                       }`}
                   >
                     {item.label}
