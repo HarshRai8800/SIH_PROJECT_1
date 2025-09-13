@@ -14,7 +14,7 @@ import ProfilePage from "./pages/ProfilePage";
 import AdminDashboard from "./pages/AdminDashboard";
 import SuccessStoriesPage from "./pages/SuccessStoriesPage";
 import NotFound from "./pages/NotFound";
-import Counse from "./pages/Counselling";
+
 
 // ✅ New role-based sign-in pages
 import StudentSignIn from "./pages/StudentSignIn";
@@ -46,7 +46,7 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/editProfile" element={<EditProfilePage/>} />
           <Route path="/success-stories" element={<SuccessStoriesPage />} />
-          <Route path="/counse" element={<Counse />} />
+
       
 
           {/* ✅ New role-based routes */}
