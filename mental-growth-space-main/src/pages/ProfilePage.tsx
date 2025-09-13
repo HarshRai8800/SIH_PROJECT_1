@@ -48,7 +48,7 @@ const ProfilePage = () => {
 
         console.log("Profile data:", res.data);
 
-        setProfile(res.data);
+        setProfile(res.data.user);
       } catch (err) {
         console.error("Error fetching profile:", err);
       } finally {

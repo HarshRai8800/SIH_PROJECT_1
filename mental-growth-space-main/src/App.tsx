@@ -24,8 +24,7 @@ import CounsellorSignIn from "./pages/CounsellorSignIn";
 import StudentDashboard from "./pages/StudentDashboard";
 import CounsellorDashboard from "./pages/CounsellorDashboard";
 import CustomSignUp from "./components/Sign-up/CustomSignUp";
-import SSOCallback from "./pages/SSOCallback";
-import EditProfilePage from "./pages/EditProfilePage";
+import RouteProtection from "./components/RouteProtection"
 
 const queryClient = new QueryClient();
 
@@ -38,27 +37,25 @@ const App = () => (
         <Routes>
           {/* Existing routes */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/chatbot" element={<ChatbotPage />} />
-          <Route path="/counselling" element={<CounsellingPage />} />
-          <Route path="/resources" element={<ResourcesPage />} />
-          <Route path="/forum" element={<ForumPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/editProfile" element={<EditProfilePage/>} />
-          <Route path="/success-stories" element={<SuccessStoriesPage />} />
-          <Route path="/counse" element={<Counse />} />
-      
-
-          {/* ✅ New role-based routes */}
           <Route path="/student" element={<StudentSignIn />} />
           <Route path="/counsellor" element={<CounsellorSignIn />} />
-
-          {/* ✅ Dashboards after login */}
-          <Route path="/student/dashboard" element={<StudentDashboard />} />
-          <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
-
           <Route path="/sign-up/*" element={<CustomSignUp/>} />
-          <Route path="/sso-callback" element={<SSOCallback />} />
+
+          {/* Protected routes */}
+          <Route element={<RouteProtection/>}>
+            <Route path="/chatbot" element={<ChatbotPage />} />
+            <Route path="/counselling" element={<CounsellingPage />} />
+            <Route path="/resources" element={<ResourcesPage />} />
+            <Route path="/forum" element={<ForumPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/success-stories" element={<SuccessStoriesPage />} />
+            <Route path="/counse" element={<Counse />} />
+            
+            {/* ✅ Dashboards after login */}
+            <Route path="/student/dashboard" element={<StudentDashboard />} />
+            <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
+          </Route>
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

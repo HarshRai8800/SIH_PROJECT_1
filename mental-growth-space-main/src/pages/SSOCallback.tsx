@@ -4,32 +4,19 @@ import { useAuth, AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
 
 const SSOCallback = () => {
   const navigate = useNavigate();
-  const { isLoaded, isSignedIn, getToken } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
     const finalize = async () => {
       if (!isLoaded || !isSignedIn) return;
-      try {
-        const token = await getToken();
-        const role = localStorage.getItem("selectedRole") || undefined;
-        if (token) {
-          await fetch("http://localhost:5000/api/registerUser", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ role }),
-          });
-        }
-      } catch {}
-
-      // Redirect to home as requested
+      
+      // The role is already stored in localStorage from the CustomSignUp component
+      // No need to call any backend API, just redirect to home
       navigate("/", { replace: true });
     };
 
     finalize();
-  }, [isLoaded, isSignedIn, getToken, navigate]);
+  }, [isLoaded, isSignedIn, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -40,5 +27,3 @@ const SSOCallback = () => {
 };
 
 export default SSOCallback;
-
-

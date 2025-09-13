@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSignUp, useSignIn, useAuth } from "@clerk/clerk-react";
+import { useSignUp, useSignIn, useClerk, useAuth } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,8 @@ const CustomSignUp = () => {
   const navigate = useNavigate();
   const { isLoaded: isSignUpLoaded, signUp, setActive } = useSignUp();
   const { isLoaded: isSignInLoaded, signIn } = useSignIn();
-  const { getToken } = useAuth();
+  const { signOut } = useClerk();
+  const { isSignedIn } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +35,6 @@ const CustomSignUp = () => {
       await signUp.create({
         emailAddress: email,
         password,
-        unsafeMetadata: { role },
       });
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setPendingVerification(true);
@@ -58,20 +58,8 @@ const CustomSignUp = () => {
       const result = await signUp.attemptEmailAddressVerification({ code });
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        try {
-          // Persist chosen role for navbar sync fallback
-          localStorage.setItem("selectedRole", role);
-          // Hit backend to register with role immediately
-          const token = await getToken();
-          await fetch("http://localhost:5000/api/registerUser", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ role }),
-          });
-        } catch {}
+        // Save role to localStorage
+        localStorage.setItem("selectedRole", role);
         navigate("/");
       } else {
         setError("Verification incomplete. Please try again.");
@@ -85,9 +73,18 @@ const CustomSignUp = () => {
 
   const handleGoogle = async () => {
     if (!isSignInLoaded) return;
+
     try {
-      // Store role before redirect so we can sync on return
+      // Store role before redirect so we can use it after Google OAuth
       localStorage.setItem("selectedRole", role);
+      
+      // If user is already signed in, sign them out first
+      if (isSignedIn) {
+        await signOut();
+        // Wait a moment for the sign out to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sso-callback",

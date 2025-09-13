@@ -11,7 +11,11 @@ export const getUser = async(req,res)=>{
     const { clerkId } = req.query;
     console.log(clerkId );
     const user = await db.user.findUnique({
-        where:{clerkId}
+      where: { clerkId },
+      include: {
+        ticketsAsStudent: true,
+        testResults: true,    
+      },
     });
     if(!user){
         return res.status(401).send("user not found");
