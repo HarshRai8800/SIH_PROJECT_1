@@ -26,12 +26,6 @@ import CounsellorDashboard from "./pages/CounsellorDashboard";
 import CustomSignUp from "./components/Sign-up/CustomSignUp";
 import SSOCallback from "./pages/SSOCallback";
 
-// ✅ NEW: Edit profile page
-import EditProfilePage from "./pages/EditProfilePage";
-
-//counsellorProfile
-import CounsellorProfile from "@/pages/CounsellorProfile";
-
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -50,7 +44,7 @@ const App = () => (
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/success-stories" element={<SuccessStoriesPage />} />
-          <Route path="/counse" element={<Counselling />} />
+          <Route path="/counse" element={<Counse />} />
       
 
           {/* ✅ New role-based routes */}
@@ -60,11 +54,10 @@ const App = () => (
           {/* ✅ Dashboards after login */}
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
-          {/* ✅ Edit Profile route */}
-          <Route path="/edit-profile" element={<EditProfilePage />} />
 
           <Route path="/sign-up/*" element={<CustomSignUp/>} />
           <Route path="/sso-callback" element={<SSOCallback />} />
+
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>
