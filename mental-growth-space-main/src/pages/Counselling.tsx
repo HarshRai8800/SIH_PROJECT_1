@@ -11,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import Navbar from '@/components/Navbar/Navbar';
+import Footer from '@/components/Footer/Footer';
 
 const textData = {
   form: {
@@ -139,6 +141,9 @@ export default function CounsellingForm() {
   }
 
   return (
+     <div className="min-h-screen flex flex-col bg-background">
+          <Navbar />
+    
     <div className="min-h-screen flex items-center justify-center py-10 px-4 bg-background">
       <Card className="max-w-3xl w-full p-8 card-gradient">
         <h1 className="text-2xl font-bold text-foreground mb-6">{data.form.title}</h1>
@@ -330,5 +335,9 @@ export default function CounsellingForm() {
         </form>
       </Card>
     </div>
+      <Footer />
+    </div>
   );
 }
+
+
