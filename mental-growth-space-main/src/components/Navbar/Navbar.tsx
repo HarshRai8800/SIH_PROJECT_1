@@ -36,6 +36,7 @@ const Navbar = () => {
     { path: "/resources", label: t("resources"), icon: BookOpen },
     { path: "/forum", label: t("forum"), icon: Users },
     { path: "/admin", label: t("dashboard"), icon: BarChart3 },
+    {path:"/profile",label:t("profile"),icon:User}
   ];
 
   return (

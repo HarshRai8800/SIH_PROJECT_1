@@ -14,7 +14,7 @@ import ProfilePage from "./pages/ProfilePage";
 import AdminDashboard from "./pages/AdminDashboard";
 import SuccessStoriesPage from "./pages/SuccessStoriesPage";
 import NotFound from "./pages/NotFound";
-import Counse from "./pages/Counselling";
+
 
 // ✅ New role-based sign-in pages
 import StudentSignIn from "./pages/StudentSignIn";
@@ -25,6 +25,7 @@ import StudentDashboard from "./pages/StudentDashboard";
 import CounsellorDashboard from "./pages/CounsellorDashboard";
 import CustomSignUp from "./components/Sign-up/CustomSignUp";
 import RouteProtection from "./components/RouteProtection"
+import EditProfilePage from "./pages/EditProfilePage";
 
 const queryClient = new QueryClient();
 
@@ -47,10 +48,13 @@ const App = () => (
             <Route path="/counselling" element={<CounsellingPage />} />
             <Route path="/resources" element={<ResourcesPage />} />
             <Route path="/forum" element={<ForumPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile" element={<ProfilePage />} />   
+            <Route path="/edit-profile" element={<EditProfilePage/>} />
+
+
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/success-stories" element={<SuccessStoriesPage />} />
-            <Route path="/counse" element={<Counse />} />
+            
             
             {/* ✅ Dashboards after login */}
             <Route path="/student/dashboard" element={<StudentDashboard />} />

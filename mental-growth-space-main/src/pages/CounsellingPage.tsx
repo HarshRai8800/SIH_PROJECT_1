@@ -1,342 +1,589 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import React, { useEffect, useRef, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import { Calendar, Clock, User, Shield, CheckCircle } from 'lucide-react';
-import Navbar from '@/components/Navbar/Navbar';
-import Footer from '@/components/Footer/Footer';
-import { useToast } from '@/hooks/use-toast';
-import { socketconnection } from '@/lib/socketconnection';
+  SelectValue,
+} from "@/components/ui/select";
+import { Search, X } from "lucide-react";
+import Navbar from "@/components/Navbar/Navbar";
+import Footer from "@/components/Footer/Footer";
 
+const textData = {
+  form: {
+    title: "Counselling Form",
+    description: {
+      label: "Description",
+      required: "Required",
+      placeholder: "Write a detailed description of your issue or problem...",
+      helperText:
+        "Please provide as much detail as possible so the counsellor can better assist you.",
+    },
+    phone: {
+      label: "Phone Number",
+      required: "Required",
+      placeholder: "Enter your phone number",
+      helperText: "Provide a valid phone number for communication.",
+    },
+    status: {
+      label: "Status",
+      options: ["OPEN", "CLOSED", "PENDING"],
+      helperText: "Defines the current state of the ticket.",
+    },
+    level: {
+      label: "Level",
+      options: ["GENERAL", "URGENT", "CRITICAL"],
+      helperText: "Indicates the priority level of the ticket.",
+    },
+    meetingLocation: {
+      label: "Meeting Location",
+      optional: "(Optional)",
+      placeholder: "e.g., Room 202 or Google Meet link",
+      helperText:
+        "You can specify a location for the counselling session if needed.",
+    },
+    timing: {
+      label: "Timing",
+      required: "Required",
+      helperText:
+        "Select your preferred date and time for the counselling session.",
+    },
+    concerns: {
+      legend: "Concerns",
+      required: "Required",
+      helperText: "Select one or more psychological concerns you are facing.",
+      options: ["ANXIETY", "DEPRESSION", "STRESS", "ACADEMIC", "RELATIONSHIP"],
+    },
+    severity: {
+      label: "Severity",
+      required: "Required",
+      defaultOption: "Select severity",
+      helperText: "Defines the intensity/seriousness of the issue.",
+      options: ["LOW", "MEDIUM", "HIGH"],
+    },
+    counsellorType: {
+      label: "Counsellor Type",
+      optional: "(Optional)",
+      defaultOption: "Select counsellor type",
+      helperText: "Choose what type of counsellor you prefer.",
+      options: ["PSYCHOLOGIST", "THERAPIST", "MENTOR"],
+    },
+    buttons: {
+      submit: "Submit Ticket",
+      reset: "Reset Form",
+    },
+    submission: {
+      initialMessage:
+        "Fill the form and click submit to create a counselling ticket.",
+      successTitle: "Form submitted successfully!",
+      successDescription:
+        "Your ticket has been created with the following details:",
+      errorMessage: "There was an error submitting the form. Please try again.",
+    },
+  },
+};
 
-const CounsellingPage = () => {
-  const { t } = useTranslation();
-  const { toast } = useToast();
-  const [briefmsg, setbriefmsg] = useState("");
-  const [isConnected, setIsConnected] = useState(false);
+type SubmissionResult =
+  | { success: true; payload: Record<string, unknown> }
+  | { success: false; message: string }
+  | null;
 
-  useEffect(() => {
-    // Connection event listeners
-    const handleConnect = () => {
-      console.log("CounsellingPage: Connected to server");
-      setIsConnected(true);
-    };
+export default function CounsellingForm() {
+  const data = textData;
 
-    const handleDisconnect = () => {
-      console.log("CounsellingPage: Disconnected from server");
-      setIsConnected(false);
-    };
+  const [description, setDescription] = useState("");
+  const [phone, setPhone] = useState("");
+  const [status, setStatus] = useState(data.form.status.options[0]);
+  const [level, setLevel] = useState(data.form.level.options[0]);
+  const [meetingLocation, setMeetingLocation] = useState("");
+  const [timing, setTiming] = useState("");
+  const [concerns, setConcerns] = useState<string[]>([]);
+  const [severity, setSeverity] = useState("");
+  const [counsellorType, setCounsellorType] = useState("");
+  const [submitted, setSubmitted] = useState<SubmissionResult>(null);
 
-    const handleConnectError = (error: any) => {
-      console.error("CounsellingPage: Connection error:", error);
-      setIsConnected(false);
-    };
+  // Track mode
+  const [mode, setMode] = useState<"ai" | "custom" | null>(null);
 
-    const handleBrief = (msg: string) => {
-      console.log("Received counselling summary:", msg);
-      setbriefmsg(msg);
-    };
-
-    // Add event listeners
-    socketconnection.on("connect", handleConnect);
-    socketconnection.on("disconnect", handleDisconnect);
-    socketconnection.on("connect_error", handleConnectError);
-    socketconnection.on("book_counselling", handleBrief);
-
-    // Check if already connected
-    if (socketconnection.connected) {
-      setIsConnected(true);
-    }
-
-    return () => {
-      // Remove event listeners but don't disconnect the global connection
-      socketconnection.off("connect", handleConnect);
-      socketconnection.off("disconnect", handleDisconnect);
-      socketconnection.off("connect_error", handleConnectError);
-      socketconnection.off("book_counselling", handleBrief);
-    };
-  }, []);
-
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    studentId: '',
-    preferredTime: '',
-    counsellor: '',
-    reason: briefmsg,
-    urgency: ''
-  });
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  // Search state
+  const [showSearch, setShowSearch] = useState(false);
+  const [query, setQuery] = useState("");
 
   const counsellors = [
-    { id: 'dr-smith', name: 'Dr. Sarah Smith', specialty: t('Anxiety & Stress Management') },
-    { id: 'dr-johnson', name: 'Dr. Michael Johnson', specialty: t('Depression & Mood Disorders') },
-    { id: 'dr-williams', name: 'Dr. Lisa Williams', specialty: t('Academic Stress & Performance') },
-    { id: 'dr-brown', name: 'Dr. David Brown', specialty: t('Relationship & Social Issues') }
+    "John Doe",
+    "Jane Smith",
+    "Michael Johnson",
+    "Emily Davis",
+    "Chris Wilson",
   ];
 
-  const timeSlots = [
-    '9:00 AM - 10:00 AM',
-    '10:00 AM - 11:00 AM',
-    '11:00 AM - 12:00 PM',
-    '1:00 PM - 2:00 PM',
-    '2:00 PM - 3:00 PM',
-    '3:00 PM - 4:00 PM',
-    '4:00 PM - 5:00 PM'
-  ];
+  const filtered = counsellors.filter((c) =>
+    c.toLowerCase().includes(query.toLowerCase())
+  );
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  const searchRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitted(true);
-    toast({
-      title: t('Appointment Request Submitted'),
-      description: t("We'll contact you within 24 hours to confirm your appointment.")
-    });
-  };
+  // Focus input when it opens
+  useEffect(() => {
+    if (showSearch) {
+      setTimeout(() => inputRef.current?.focus(), 0);
+    }
+  }, [showSearch]);
 
-  if (isSubmitted) {
-    return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Navbar />
-        <div className="flex-1 container mx-auto px-4 py-16 flex items-center justify-center">
-          <Card className="card-gradient max-w-md w-full p-8 text-center">
-            <div className="w-16 h-16 bg-wellness/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-8 h-8 text-wellness" />
-            </div>
-            <h2 className="text-2xl font-bold text-foreground mb-4">{t('Request Submitted Successfully')}</h2>
-            <p className="text-muted-foreground mb-6 leading-relaxed">
-              {t("Thank you for reaching out. Our counselling team will review your request and contact you within 24 hours to schedule your appointment.")}
-            </p>
-            <div className="space-y-3 text-sm text-muted-foreground">
-              <div className="flex items-center justify-center space-x-2">
-                <Shield className="w-4 h-4 text-wellness" />
-                <span>{t('All appointments are confidential')}</span>
-              </div>
-              <div className="flex items-center justify-center space-x-2">
-                <Clock className="w-4 h-4 text-wellness" />
-                <span>{t('Response within 24 hours')}</span>
-              </div>
-            </div>
-            <Button onClick={() => window.location.href = '/'} className="w-full mt-6">
-              {t('Return Home')}
-            </Button>
-          </Card>
-        </div>
-        <Footer />
-      </div>
+  // Close on outside click
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (!searchRef.current) return;
+      if (!searchRef.current.contains(e.target as Node)) {
+        setShowSearch(false);
+        setQuery("");
+      }
+    }
+
+    if (showSearch) document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, [showSearch]);
+
+  function toggleConcern(value: string) {
+    setConcerns((prev) =>
+      prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
     );
+  }
+
+  function validate() {
+    if (!description.trim())
+      return {
+        ok: false,
+        message: `${data.form.description.label} is required.`,
+      };
+    if (!phone.trim())
+      return {
+        ok: false,
+        message: `${data.form.phone.label} is required.`,
+      };
+    if (!timing)
+      return { ok: false, message: `${data.form.timing.label} is required.` };
+    if (concerns.length === 0)
+      return {
+        ok: false,
+        message: `Select at least one ${data.form.concerns.legend}.`,
+      };
+    if (!severity)
+      return { ok: false, message: `${data.form.severity.label} is required.` };
+    return { ok: true };
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const v = validate();
+    if (!("ok" in v) || !v.ok) {
+      setSubmitted({ success: false, message: v.message ?? "Invalid form" });
+      return;
+    }
+
+    const payload = {
+      description: description.trim(),
+      phone: phone.trim(),
+      status,
+      level,
+      meetingLocation: meetingLocation.trim() || null,
+      timing,
+      concerns,
+      severity,
+      counsellorType: mode === "custom" ? null : counsellorType || null,
+      createdAt: new Date().toISOString(),
+    };
+    setSubmitted({ success: true, payload });
+  }
+
+  function handleSelectCounsellor(name: string) {
+    setQuery(name);
+    setShowSearch(false);
+  }
+
+  // Handle AI and Custom button clicks
+  function handleAiSelection() {
+    setMode("ai");
+    setDescription(
+      "This form is filled automatically by AI based on your profile."
+    );
+    setPhone("9876543210");
+    setStatus("OPEN");
+    setLevel("GENERAL");
+    setMeetingLocation("Google Meet link will be shared");
+    setTiming(new Date().toISOString().slice(0, 16));
+    setConcerns(["STRESS"]);
+    setSeverity("MEDIUM");
+    setCounsellorType("PSYCHOLOGIST");
+  }
+
+  function handleCustomSelection() {
+    setMode("custom");
+    setDescription("");
+    setPhone("");
+    setStatus(data.form.status.options[0]);
+    setLevel(data.form.level.options[0]);
+    setMeetingLocation("");
+    setTiming("");
+    setConcerns([]);
+    setSeverity("");
+    setCounsellorType("");
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Navbar />
-      <div className="flex-1 container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center space-x-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-medium mb-4">
-              <Calendar className="w-4 h-4" />
-              <span>{t('Professional Counselling')}</span>
-              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+      <Navbar/>
+      <div className="min-h-screen flex items-center justify-center py-10 px-4 bg-background">
+        <Card className="max-w-3xl w-full p-8 card-gradient">
+          {/* Header: buttons left, search right */}
+          <div className="flex items-center justify-between mb-4">
+            {/* Buttons on the left */}
+            <div className="flex gap-[40px]">
+              <Button type="button" onClick={handleAiSelection}>
+                Ai Counsellor Selection
+              </Button>
+              <Button type="button" onClick={handleCustomSelection}>
+                Custom Counsellor Selection
+              </Button>
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">{t('Book a Counselling Session')}</h1>
-            <p className="text-muted-foreground">{t('Schedule a confidential appointment with our licensed mental health professionals')}</p>
-            {!isConnected && (
-              <p className="text-yellow-600 text-sm mt-2">
-                Connecting to server... Please wait
+
+            {/* Search container */}
+            <div className="relative" ref={searchRef}>
+              <div className="flex items-center gap-2">
+                {showSearch && (
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    placeholder="Search counsellors..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="border rounded-xl px-3 py-1 outline-none"
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") {
+                        setShowSearch(false);
+                        setQuery("");
+                      }
+                    }}
+                  />
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSearch((s) => !s);
+                    if (showSearch) setQuery("");
+                  }}
+                  className="p-2 rounded-full hover:bg-gray-100"
+                >
+                  {showSearch ? (
+                    <X className="h-6 w-6 text-gray-600" />
+                  ) : (
+                    <Search className="h-6 w-6 text-gray-600" />
+                  )}
+                </button>
+              </div>
+              {showSearch && (
+                <div className="absolute right-0 top-full mt-2 bg-white shadow-md rounded-lg w-64 max-h-48 overflow-y-auto border z-50">
+                  {query ? (
+                    filtered.length > 0 ? (
+                      filtered.map((c, i) => (
+                        <div
+                          key={i}
+                          onClick={() => handleSelectCounsellor(c)}
+                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        >
+                          {c}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-4 py-2 text-gray-500">
+                        No counsellor found
+                      </div>
+                    )
+                  ) : (
+                    <div className="px-4 py-2 text-gray-500">
+                      Type to search counsellors
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <h1 className="text-2xl font-bold text-foreground mb-6">
+            {data.form.title}
+          </h1>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description">
+                {data.form.description.label}{" "}
+                <span className="text-red-500">
+                  {data.form.description.required}
+                </span>
+              </Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder={data.form.description.placeholder}
+                className="min-h-[120px]"
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                {data.form.description.helperText}
               </p>
-            )}
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Booking Form */}
-            <div className="lg:col-span-2">
-              <Card className="card-gradient p-6">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Personal Information */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground flex items-center">
-                      <User className="w-5 h-5 mr-2 text-primary" />
-                      {t('Personal Information')}
-                    </h3>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">{t('Full Name')}</Label>
-                        <Input
-                          id="name"
-                          value={formData.name}
-                          onChange={(e) => handleInputChange('name', e.target.value)}
-                          placeholder={t('Enter your full name')}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">{t('Email Address')}</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange('email', e.target.value)}
-                          placeholder={t('your.email@university.edu')}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="studentId">{t('Student ID')}</Label>
-                      <Input
-                        id="studentId"
-                        value={formData.studentId}
-                        onChange={(e) => handleInputChange('studentId', e.target.value)}
-                        placeholder={t('Enter your student ID')}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Appointment Preferences */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground flex items-center">
-                      <Calendar className="w-5 h-5 mr-2 text-secondary" />
-                      {t('Appointment Preferences')}
-                    </h3>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>{t('Preferred Time Slot')}</Label>
-                        <Select onValueChange={(value) => handleInputChange('preferredTime', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('Select a time slot')} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {timeSlots.map(slot => (
-                              <SelectItem key={slot} value={slot}>{slot}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>{t('Counsellor Preference')}</Label>
-                        <Select onValueChange={(value) => handleInputChange('counsellor', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder={t('Select a counsellor')} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {counsellors.map(c => (
-                              <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>{t('Urgency Level')}</Label>
-                      <Select onValueChange={(value) => handleInputChange('urgency', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('How urgent is your need for support?')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="low">{t('Low - General support (within a week)')}</SelectItem>
-                          <SelectItem value="medium">{t('Medium - Moderate concern (within 3 days)')}</SelectItem>
-                          <SelectItem value="high">{t('High - Urgent support (within 24 hours)')}</SelectItem>
-                          <SelectItem value="crisis">{t('Crisis - Immediate help needed')}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Additional Information */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground">{t('Additional Information')}</h3>
-                    {briefmsg && (
-                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm text-blue-800 font-medium mb-1">AI Chat Summary:</p>
-                        <p className="text-sm text-blue-700">{briefmsg}</p>
-                      </div>
-                    )}
-                    <div className="space-y-2">
-                      <Label htmlFor="reason">{t("What would you like to discuss? (Optional)")}</Label>
-                      <Textarea
-                        id="reason"
-                        value={formData.reason}
-                        onChange={(e) => handleInputChange('reason', e.target.value)}
-                        placeholder={t("Briefly describe what you'd like support with...")}
-                        className="min-h-[100px]"
-                      />
-                      <p className="text-xs text-muted-foreground">{t("This helps us assign the most suitable counsellor for your needs.")}</p>
-                    </div>
-                  </div>
-
-                  <Button type="submit" className="w-full">{t('Submit Appointment Request')}</Button>
-                </form>
-              </Card>
             </div>
 
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Counsellors */}
-              <Card className="card-gradient p-6">
-                <h3 className="font-semibold text-foreground mb-4">{t('Our Counsellors')}</h3>
-                <div className="space-y-4">
-                  {counsellors.map(c => (
-                    <div key={c.id} className="space-y-1">
-                      <h4 className="font-medium text-sm text-foreground">{c.name}</h4>
-                      <p className="text-xs text-muted-foreground">{c.specialty}</p>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              {/* Important Info */}
-              <Card className="card-gradient p-6">
-                <h3 className="font-semibold text-foreground mb-4">{t('Important Information')}</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-start space-x-2">
-                    <Shield className="w-4 h-4 text-wellness mt-0.5" />
-                    <span className="text-muted-foreground">{t('All sessions are completely confidential and HIPAA compliant')}</span>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <Clock className="w-4 h-4 text-primary mt-0.5" />
-                    <span className="text-muted-foreground">{t('Sessions are typically 50 minutes long')}</span>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <Calendar className="w-4 h-4 text-secondary mt-0.5" />
-                    <span className="text-muted-foreground">{t("We'll confirm your appointment within 24 hours")}</span>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Crisis */}
-              <Card className="bg-destructive/10 border-destructive/20 p-6">
-                <h3 className="font-semibold text-destructive mb-2">{t('Crisis Support')}</h3>
-                <p className="text-sm text-destructive mb-3">{t("If you're experiencing a mental health emergency:")}</p>
-                <div className="space-y-2 text-sm">
-                  <div className="font-medium text-destructive">{t('Call 988')}</div>
-                  <div className="text-destructive/80">{t('Suicide & Crisis Lifeline')}</div>
-                  <div className="font-medium text-destructive">{t('Call (555) 123-4567')}</div>
-                  <div className="text-destructive/80">{t('Campus Crisis Line')}</div>
-                </div>
-              </Card>
+            {/* Phone Number */}
+            <div className="space-y-2">
+              <Label htmlFor="phone">
+                {data.form.phone.label}{" "}
+                <span className="text-red-500">
+                  {data.form.phone.required}
+                </span>
+              </Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder={data.form.phone.placeholder}
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                {data.form.phone.helperText}
+              </p>
             </div>
-          </div>
-        </div>
+
+            {/* Status + Level */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{data.form.status.label}</Label>
+                <Select value={status} onValueChange={setStatus}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data.form.status.options.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  {data.form.status.helperText}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label>{data.form.level.label}</Label>
+                <Select value={level} onValueChange={setLevel}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data.form.level.options.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  {data.form.level.helperText}
+                </p>
+              </div>
+            </div>
+
+            {/* Meeting Location */}
+            <div className="space-y-2">
+              <Label htmlFor="meetingLocation">
+                {data.form.meetingLocation.label}{" "}
+                <span className="text-muted-foreground">
+                  {data.form.meetingLocation.optional}
+                </span>
+              </Label>
+              <Input
+                id="meetingLocation"
+                value={meetingLocation}
+                onChange={(e) => setMeetingLocation(e.target.value)}
+                placeholder={data.form.meetingLocation.placeholder}
+              />
+              <p className="text-xs text-muted-foreground">
+                {data.form.meetingLocation.helperText}
+              </p>
+            </div>
+
+            {/* Timing */}
+            <div className="space-y-2">
+              <Label htmlFor="timing">
+                {data.form.timing.label}{" "}
+                <span className="text-red-500">
+                  {data.form.timing.required}
+                </span>
+              </Label>
+              <Input
+                id="timing"
+                type="datetime-local"
+                value={timing}
+                onChange={(e) => setTiming(e.target.value)}
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                {data.form.timing.helperText}
+              </p>
+            </div>
+
+            {/* Concerns */}
+            <div className="space-y-2">
+              <Label>
+                {data.form.concerns.legend}{" "}
+                <span className="text-red-500">
+                  {data.form.concerns.required}
+                </span>
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                {data.form.concerns.helperText}
+              </p>
+              <div className="grid sm:grid-cols-2 gap-2">
+                {data.form.concerns.options.map((c) => (
+                  <label
+                    key={c}
+                    className="flex items-center space-x-2 border rounded-md p-2 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={concerns.includes(c)}
+                      onChange={() => toggleConcern(c)}
+                    />
+                    <span className="text-sm">{c}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Severity + Counsellor Type */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{data.form.severity.label}</Label>
+                <Select value={severity} onValueChange={setSeverity}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={data.form.severity.defaultOption} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data.form.severity.options.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  {data.form.severity.helperText}
+                </p>
+              </div>
+
+              {mode !== "custom" && (
+                <div className="space-y-2">
+                  <Label>
+                    {data.form.counsellorType.label}{" "}
+                    <span className="text-muted-foreground">
+                      {data.form.counsellorType.optional}
+                    </span>
+                  </Label>
+                  <Select
+                    value={counsellorType}
+                    onValueChange={setCounsellorType}
+                  >
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={data.form.counsellorType.defaultOption}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {data.form.counsellorType.options.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    {data.form.counsellorType.helperText}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-4">
+              <Button type="submit" className="flex-1">
+                {data.form.buttons.submit}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setDescription("");
+                  setPhone("");
+                  setStatus(data.form.status.options[0]);
+                  setLevel(data.form.level.options[0]);
+                  setMeetingLocation("");
+                  setTiming("");
+                  setConcerns([]);
+                  setSeverity("");
+                  setCounsellorType("");
+                  setSubmitted(null);
+                  setMode(null);
+                }}
+              >
+                {data.form.buttons.reset}
+              </Button>
+            </div>
+
+            {/* Submission Preview */}
+            <div className="pt-4">
+              {submitted === null ? (
+                <p className="text-sm text-muted-foreground">
+                  {data.form.submission.initialMessage}
+                </p>
+              ) : submitted.success ? (
+                <Card className="p-4 bg-green-50 border-green-200">
+                  <h3 className="font-semibold">
+                    {data.form.submission.successTitle}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {data.form.submission.successDescription}
+                  </p>
+                  <pre className="mt-2 p-3 bg-white border rounded-lg text-xs overflow-auto">
+                    {JSON.stringify(submitted.payload, null, 2)}
+                  </pre>
+                </Card>
+              ) : (
+                // <Card className="p-3 bg-red-50 border-red-200 text-sm text-red-700">
+                //   {submitted && !submitted.success
+                //     ? submitted.message
+                //     : data.form.submission.errorMessage}
+                // </Card>
+                <div>
+                  i dont know its just a replasement
+                </div>
+              )}
+            </div>
+          </form>
+        </Card>
       </div>
-      <Footer />
+      <Footer/>
     </div>
   );
-};
-
-export default CounsellingPage;
+}

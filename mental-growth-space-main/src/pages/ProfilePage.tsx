@@ -22,12 +22,12 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
-
+import {useUser} from "@clerk/clerk-react"
 const ProfilePage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { getToken } = useAuth();
-
+  const{ user }= useUser();
   // ✅ State for profile
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,13 +36,13 @@ const ProfilePage = () => {
     const fetchProfile = async () => {
       try {
         const token = await getToken();
-
+        console.log(user.id)
         const res = await axios.get("http://localhost:5000/api/get/user", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
           params: {
-            clerkId: "user_32ZxHU5GC9Ophf0mmFLm4J1IJfA", // for now hardcoded
+            clerkId: user.id, // for now hardcoded
           },
         });
 
@@ -57,7 +57,7 @@ const ProfilePage = () => {
     };
 
     fetchProfile();
-  }, [getToken]);
+  }, [getToken,user]);
 
   if (loading) {
     return (
@@ -239,7 +239,7 @@ const ProfilePage = () => {
                 <Button
                   className="w-full mt-6"
                   variant="outline"
-                  onClick={() => navigate("/editProfile")}
+                  onClick={() => navigate("/edit-profile")}
                 >
                   <Settings className="w-4 h-4 mr-2" />
                   {t("Edit Profile")}
