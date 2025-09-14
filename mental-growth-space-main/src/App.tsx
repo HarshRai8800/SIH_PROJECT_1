@@ -29,6 +29,9 @@ import EditProfilePage from "./pages/EditProfilePage";
 //counsellorProfile
 import CounsellorProfile from "@/pages/CounsellorProfile";
 
+//Exercises page
+import Exercises from "@/pages/Exercises";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -61,6 +64,9 @@ const App = () => (
 
           //CounsellorProfile
           <Route path="/counsellor/profile" element={<CounsellorProfile />} />
+
+          //Exercises
+          <Route path="/exercises" element={<Exercises />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

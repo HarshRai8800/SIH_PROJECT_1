@@ -191,8 +191,54 @@
   "Thank you for reaching out. Our counselling team will review your request and contact you within 24 hours to schedule your appointment.": "ਸੰਪਰਕ ਕਰਨ ਲਈ ਧੰਨਵਾਦ। ਸਾਡੀ ਸਲਾਹਕਾਰ ਟੀਮ ਤੁਹਾਡੇ ਅਰਜ਼ੀ ਦੀ ਸਮੀਖਿਆ ਕਰੇਗੀ ਅਤੇ 24 ਘੰਟਿਆਂ ਵਿੱਚ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੇਗੀ।",
   "All appointments are confidential": "ਸਾਰੇ ਮਿਲਾਪ ਗੁਪਤ ਹਨ",
   "Response within 24 hours": "24 ਘੰਟਿਆਂ ਵਿੱਚ ਜਵਾਬ",
-  "Return Home": "ਘਰ ਵਾਪਸ ਜਾਓ"
+  "Return Home": "ਘਰ ਵਾਪਸ ਜਾਓ",
+  "Activities": "ਗਤਿਵਿਧੀਆਂ",
+  "All Resources": "ਸਾਰੇ ਸਰੋਤ",
+  "Stress Management": "ਤਣਾਅ ਪ੍ਰਬੰਧਨ",
+  "Anxiety Support": "ਚਿੰਤਾ ਸਹਾਇਤਾ",
+  "Sleep Health": "ਨੀਂਦ ਦੀ ਸਿਹਤ",
+  "Academic Wellness": "ਅਕਾਦਮਿਕ ਸੁਖ-ਸਮਾਧਾਨ",
+  "Wellness Resources": "ਸਿਹਤ ਦੇ ਸਰੋਤ",
+  "Mental Health Resources": "ਮਾਨਸਿਕ ਸਿਹਤ ਦੇ ਸਰੋਤ",
+  "Explore our curated collection of articles, audio guides, and videos designed to support your mental wellness journey.": "ਸਾਡੇ ਚੁਣੇ ਹੋਏ ਲੇਖ, ਆਡੀਓ ਮਾਰਗਦਰਸ਼ਕ ਅਤੇ ਵੀਡੀਓਜ਼ ਦੇਖੋ ਜੋ ਤੁਹਾਡੇ ਮਾਨਸਿਕ ਸੁਖ-ਸਮਾਧਾਨ ਯਾਤਰਾ ਨੂੰ ਸਹਾਰਾ ਦੇਣ ਲਈ ਬਣਾਏ ਗਏ ਹਨ।",
+  "Search resources...": "ਸਰੋਤ ਖੋਜੋ...",
+  "article": "ਲੇਖ",
+  "audio": "ਆਡੀਓ",
+  "video": "ਵੀਡੀਓ",
+  "Save": "ਸੰਭਾਲੋ",
+  "By": "ਦੇ ਵੱਲੋਂ",
+  "Read Article": "ਲੇਖ ਪੜ੍ਹੋ",
+  "Listen Now": "ਹੁਣ ਸੁਣੋ",
+  "Watch Video": "ਵੀਡੀਓ ਵੇਖੋ",
+  "No resources found": "ਕੋਈ ਸਰੋਤ ਨਹੀਂ ਮਿਲੇ",
+  "Try adjusting your search terms or selecting a different category.": "ਆਪਣੇ ਖੋਜ ਸ਼ਬਦਾਂ ਨੂੰ ਢਾਲੋ ਜਾਂ ਕਿਸੇ ਵੱਖਰੇ ਸ਼੍ਰੇਣੀ ਚੁਣੋ।",
+
+  "Understanding Test Anxiety: Strategies for Success": "ਪ੍ਰੀਖਿਆ ਚਿੰਤਾ ਨੂੰ ਸਮਝਣਾ: ਸਫਲਤਾ ਲਈ ਰਣਨੀਤੀਆਂ",
+  "Learn evidence-based techniques to manage pre-exam stress and improve academic performance.": "ਪ੍ਰੀ-ਇਮਤਿਹਾਨ ਤਣਾਅ ਨੂੰ ਪ੍ਰਬੰਧਿਤ ਕਰਨ ਅਤੇ ਅਕਾਦਮਿਕ ਪ੍ਰਦਰਸ਼ਨ ਸੁਧਾਰਨ ਲਈ ਸਬੂਤ-ਅਧਾਰਤ ਤਕਨੀਕਾਂ ਸਿੱਖੋ।",
+
+  "Building Healthy Sleep Habits in College": "ਕਾਲਜ ਵਿੱਚ ਸਿਹਤਮੰਦ ਨੀਂਦ ਦੀਆਂ ਆਦਤਾਂ ਬਣਾਉਣਾ",
+  "Discover how proper sleep hygiene can transform your mental health and academic success.": "ਪਤਾ ਲਗਾਓ ਕਿ ਸਹੀ ਨੀਂਦ ਦੀ ਹਾਈਜੀਨ ਤੁਹਾਡੇ ਮਾਨਸਿਕ ਸਿਹਤ ਅਤੇ ਅਕਾਦਮਿਕ ਸਫਲਤਾ ਨੂੰ ਕਿਵੇਂ ਬਦਲ ਸਕਦੀ ਹੈ।",
+
+  "Mindfulness Techniques for Daily Stress Relief": "ਦਿਨ-ਪ੍ਰਤੀਦਿਨ ਤਣਾਅ ਘਟਾਉਣ ਲਈ ਮਨਨਮੈਥੇਡ ਤਕਨੀਕਾਂ",
+  "Simple mindfulness practices you can use anywhere to reduce stress and increase focus.": "ਸਰਲ ਮਨਨਮੈਥੇਡ ਅਭਿਆਸ ਜੋ ਤੁਸੀਂ ਕਿਸੇ ਵੀ ਥਾਂ ਕਰ ਸਕਦੇ ਹੋ, ਤਣਾਅ ਘਟਾਉਣ ਅਤੇ ਧਿਆਨ ਵਧਾਉਣ ਲਈ।",
+
+  "Deep Breathing Exercise for Anxiety": "ਚਿੰਤਾ ਲਈ ਡੀਪ ਬਰੀਦਿੰਗ ਐਕਸਰਸਾਈਜ਼",
+  "Guided breathing meditation to help calm anxiety and promote relaxation.": "ਮਾਰਗਦਰਸ਼ਿਤ ਸਾਸ ਲੈਣ ਦੀ ਧਿਆਨ ਜੋ ਚਿੰਤਾ ਨੂੰ ਸ਼ਾਂਤ ਕਰਨ ਅਤੇ ਆਰਾਮ ਨੂੰ ਵਧਾਉਣ ਵਿੱਚ ਸਹਾਇਕ ਹੈ।",
+
+  "Progressive Muscle Relaxation": "ਪ੍ਰੋਗਰੈਸੀਵ ਮਾਸਲ ਰਿਲੈਕਸੇਸ਼ਨ",
+  "Complete body scan meditation to release physical tension and mental stress.": "ਪੂਰਾ ਬਾਡੀ ਸਕੈਨ ਧਿਆਨ ਜਿਸ ਨਾਲ ਸਰੀਰਕ ਤਣਾਅ ਅਤੇ ਮਾਨਸਿਕ ਤਣਾਅ ਘਟਦਾ ਹੈ।",
+
+  "Sleep Stories: Peaceful Forest": "ਨੀੰਦ ਦੀਆਂ ਕਹਾਣੀਆਂ: ਸ਼ਾਂਤ ਜੰਗਲ",
+  "Calming bedtime story to help you drift off to restful sleep.": "ਸ਼ਾਂਤਿਮਯ ਸੌਣ ਦੀ ਕਹਾਣੀ ਜੋ ਤੁਹਾਨੂੰ ਆਰਾਮਦਾਇਕ ਨੀਂਦ ਵਿੱਚ ਲੈ ਜਾਂਦੀ ਹੈ।",
+
+  "Study Break Yoga: 10-Minute Desk Stretches": "ਅਧਿਐਨ ਦੇ ਵਿਚਕਾਰ ਯੋਗਾ: 10 ਮਿੰਟ ਦੀ ਡੈਸਕ ਸਟਰੈਚ",
+  "Simple yoga movements you can do at your desk to relieve study stress.": "ਸਰਲ ਯੋਗਾ ਅਭਿਆਸ ਜੋ ਤੁਸੀਂ ਆਪਣੀ ਡੈਸਕ 'ਤੇ ਕਰ ਸਕਦੇ ਹੋ, ਅਧਿਐਨ ਦੇ ਤਣਾਅ ਨੂੰ ਘਟਾਉਣ ਲਈ।",
+
+  "Time Management Strategies for Students": "ਵਿਦਿਆਰਥੀਆਂ ਲਈ ਸਮਾਂ ਪ੍ਰਬੰਧਨ ਰਣਨੀਤੀਆਂ",
+  "Practical techniques to organize your schedule and reduce academic overwhelm.": "ਆਪਣੇ ਸਮਾਂ-ਸੂਚੀ ਨੂੰ ਪ੍ਰਬੰਧਿਤ ਕਰਨ ਅਤੇ ਅਕਾਦਮਿਕ ਤਣਾਅ ਘਟਾਉਣ ਲਈ ਕਾਰਗਰ ਤਕਨੀਕਾਂ।"
 }
+
+
 
 
 

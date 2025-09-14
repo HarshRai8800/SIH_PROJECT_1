@@ -29,11 +29,11 @@ const ChatbotPage = () => {
   const [inputMessage, setInputMessage] = useState('');
 
   const mockResponses = [
-    t("I understand that can be really challenging. Can you tell me more about what's been on your mind?"),
-    t("It sounds like you're dealing with a lot right now. Remember, it's okay to feel overwhelmed sometimes."),
-    t("That's a great step in taking care of yourself. Have you tried any relaxation techniques that work for you?"),
-    t("I'm here to support you. Would you like me to suggest some coping strategies that other students have found helpful?"),
-    t("Thank you for sharing that with me. Your feelings are valid, and seeking support shows real strength."),
+    "I understand that can be really challenging. Can you tell me more about what's been on your mind?",
+    "It sounds like you're dealing with a lot right now. Remember, it's okay to feel overwhelmed sometimes.",
+    // "That's a great step in taking care of yourself. Have you tried any relaxation techniques that work for you?"),
+    // "I'm here to support you. Would you like me to suggest some coping strategies that other students have found helpful?"),
+    // "Thank you for sharing that with me. Your feelings are valid, and seeking support shows real strength."),
   ];
 
   const handleSendMessage = () => {
@@ -112,7 +112,7 @@ const ChatbotPage = () => {
                       ? 'bg-primary text-primary-foreground ml-auto'
                       : 'bg-muted text-foreground'
                   }`}>
-                    <p className="text-sm leading-relaxed">{message.text}</p>
+                    <p className="text-sm leading-relaxed">{t(message.text)}</p>
                     <span className="text-xs opacity-70 mt-2 block">
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
