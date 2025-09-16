@@ -12,6 +12,7 @@ import ResourcesPage from "./pages/ResourcesPage";
 import ForumPage from "./pages/ForumPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminDashboard from "./pages/AdminDashboard";
+// import CounsellorDashboard from "./pages/CounsellorDashboard";
 import SuccessStoriesPage from "./pages/SuccessStoriesPage";
 import NotFound from "./pages/NotFound";
 
@@ -24,6 +25,7 @@ import StudentSignIn from "./pages/StudentSignIn";
 import CounsellorSignIn from "./pages/CounsellorSignIn";
 
 // ✅ New dashboards for roles
+
 import StudentDashboard from "./pages/StudentDashboard";
 import CounsellorDashboard from "./pages/CounsellorDashboard";
 import CustomSignUp from "./components/Sign-up/CustomSignUp";
@@ -65,7 +67,8 @@ const App = () => (
             <Route path="/profile" element={<ProfilePage />} />   
             <Route path="/edit-profile" element={<EditProfilePage/>} />
 
-
+            <Route path="/counsellor-dashboard" element={<CounsellorDashboard />} />
+            <Route path="/student-dashboard" element={<StudentDashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/success-stories" element={<SuccessStoriesPage />} />
             

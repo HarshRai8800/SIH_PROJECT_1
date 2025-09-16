@@ -237,7 +237,7 @@ const HeroSection = () => {
                           <p className="text-muted-foreground leading-relaxed mb-4">{feature.description}</p>
                         </div>
                       </div>
-                      <div className="space-y-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                      <div className="space-y-2">
                         {feature.benefits.map((benefit, idx) => (
                           <div key={idx} className="flex items-center space-x-2 text-sm text-muted-foreground">
                             <CheckCircle className="w-4 h-4 text-wellness" />
