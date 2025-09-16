@@ -19,8 +19,10 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const HeroSection = () => {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   const [animatedStats, setAnimatedStats] = useState({
     students: 0,
@@ -30,7 +32,6 @@ const HeroSection = () => {
 
   useEffect(() => {
     setIsVisible(true);
-    // Animate stats
     const timer = setTimeout(() => {
       setAnimatedStats({
         students: 2500,
@@ -44,43 +45,43 @@ const HeroSection = () => {
   const features = [
     {
       icon: MessageSquare,
-      title: "AI Chatbot",
-      description: "24/7 support with our intelligent wellness assistant powered by advanced AI",
+      title: t("AI Chatbot"),
+      description: t("24/7 support with our intelligent wellness assistant powered by advanced AI"),
       href: "/chatbot",
       color: "primary",
-      benefits: ["Instant responses", "Personalized guidance", "Available anytime"]
+      benefits: [t("Instant responses"), t("Personalized guidance"), t("Available anytime")]
     },
     {
       icon: Calendar,
-      title: "Counselling",
-      description: "Book confidential sessions with licensed mental health professionals",
+      title: t("Counselling"),
+      description: t("Book confidential sessions with licensed mental health professionals"),
       href: "/counselling",
       color: "secondary",
-      benefits: ["Licensed therapists", "Flexible scheduling", "Complete privacy"]
+      benefits: [t("Licensed therapists"), t("Flexible scheduling"), t("Complete privacy")]
     },
     {
       icon: BookOpen,
-      title: "Resources",
-      description: "Comprehensive library of articles, videos, and relaxation tools",
+      title: t("Resources"),
+      description: t("Comprehensive library of articles, videos, and relaxation tools"),
       href: "/resources",
       color: "accent",
-      benefits: ["Evidence-based content", "Interactive tools", "Self-paced learning"]
+      benefits: [t("Evidence-based content"), t("Interactive tools"), t("Self-paced learning")]
     },
     {
       icon: Users,
-      title: "Peer Support",
-      description: "Connect with fellow students in our moderated safe community",
+      title: t("Peer Support"),
+      description: t("Connect with fellow students in our moderated safe community"),
       href: "/forum",
       color: "wellness",
-      benefits: ["Peer connections", "Moderated discussions", "Safe environment"]
+      benefits: [t("Peer connections"), t("Moderated discussions"), t("Safe environment")]
     },
     {
       icon: Trophy,
-      title: "Success Stories",
-      description: "Be inspired by others' wellness journeys and transformations",
+      title: t("Success Stories"),
+      description: t("Be inspired by others' wellness journeys and transformations"),
       href: "/success-stories",
       color: "primary",
-      benefits: ["Real experiences", "Inspiring journeys", "Hope and motivation"]
+      benefits: [t("Real experiences"), t("Inspiring journeys"), t("Hope and motivation")]
     }
   ];
 
@@ -88,74 +89,38 @@ const HeroSection = () => {
     {
       name: "Sarah M.",
       year: "Junior, Psychology",
-      quote: "This platform helped me navigate my anxiety during finals week. The AI chatbot was like having a friend available 24/7.",
+      quote: t("This platform helped me navigate my anxiety during finals week. The AI chatbot was like having a friend available 24/7."),
       rating: 5,
       image: "👩‍🎓"
     },
     {
       name: "Alex K.",
       year: "Senior, Engineering",
-      quote: "The counselling sessions were game-changing. I learned coping strategies that I still use today.",
+      quote: t("The counselling sessions were game-changing. I learned coping strategies that I still use today."),
       rating: 5,
       image: "👨‍🎓"
     },
     {
       name: "Maya P.",
       year: "Sophomore, Art",
-      quote: "Finding peers who understood my struggles made all the difference. I'm not alone anymore.",
+      quote: t("Finding peers who understood my struggles made all the difference. I'm not alone anymore."),
       rating: 5,
       image: "👩‍🎨"
     }
   ];
 
   const howItWorks = [
-    {
-      step: 1,
-      title: "Sign Up",
-      description: "Create your secure, anonymous profile",
-      icon: CheckCircle
-    },
-    {
-      step: 2,
-      title: "Explore",
-      description: "Browse resources, chat with AI, or book counselling",
-      icon: Lightbulb
-    },
-    {
-      step: 3,
-      title: "Connect",
-      description: "Join peer discussions and share experiences",
-      icon: Users
-    },
-    {
-      step: 4,
-      title: "Grow",
-      description: "Track progress and celebrate your wellness journey",
-      icon: Target
-    }
+    { step: 1, title: t("Sign Up"), description: t("Create your secure, anonymous profile"), icon: CheckCircle },
+    { step: 2, title: t("Explore"), description: t("Browse resources, chat with AI, or book counselling"), icon: Lightbulb },
+    { step: 3, title: t("Connect"), description: t("Join peer discussions and share experiences"), icon: Users },
+    { step: 4, title: t("Grow"), description: t("Track progress and celebrate your wellness journey"), icon: Target }
   ];
 
   const whyChooseUs = [
-    {
-      title: "100% Confidential",
-      description: "Your privacy is our top priority with end-to-end encryption",
-      icon: Shield
-    },
-    {
-      title: "Available 24/7",
-      description: "Support when you need it most, day or night",
-      icon: Clock
-    },
-    {
-      title: "Evidence-Based",
-      description: "All resources backed by psychological research and best practices",
-      icon: Star
-    },
-    {
-      title: "Student-Focused",
-      description: "Designed specifically for college student challenges and lifestyle",
-      icon: Zap
-    }
+    { title: t("100% Confidential"), description: t("Your privacy is our top priority with end-to-end encryption"), icon: Shield },
+    { title: t("Available 24/7"), description: t("Support when you need it most, day or night"), icon: Clock },
+    { title: t("Evidence-Based"), description: t("All resources backed by psychological research and best practices"), icon: Star },
+    { title: t("Student-Focused"), description: t("Designed specifically for college student challenges and lifestyle"), icon: Zap }
   ];
 
   return (
@@ -168,7 +133,7 @@ const HeroSection = () => {
           onClick={() => window.open('tel:988', '_blank')}
         >
           <Phone className="w-5 h-5 mr-2" />
-          Crisis Support
+          {t("Crisis Support")}
         </Button>
       </div>
 
@@ -179,32 +144,31 @@ const HeroSection = () => {
             <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               <div className="inline-flex items-center space-x-2 bg-wellness/10 text-wellness px-4 py-2 rounded-full text-sm font-medium mb-6">
                 <Heart className="w-4 h-4 animate-pulse" />
-                <span>Your Mental Health Matters</span>
+                <span>{t("Your Mental Health Matters")}</span>
               </div>
               
               <h1 className="text-5xl md:text-7xl font-bold text-foreground leading-tight mb-6">
-                Digital Wellness
+                {t("Digital Wellness")}
                 <br />
                 <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  Support System
+                  {t("Support System")}
                 </span>
               </h1>
               
               <p className="text-xl text-muted-foreground leading-relaxed mb-8">
-                Empowering college students with personalized mental health resources, 
-                AI-powered support, and a caring community dedicated to your well-being and success.
+                {t("Empowering college students with personalized mental health resources, AI-powered support, and a caring community dedicated to your well-being and success.")}
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link to="/chatbot">
                   <Button size="lg" className="group min-w-[200px] bg-primary hover:bg-primary/90 hover:scale-105 transition-all duration-300">
-                    Start Wellness Chat
+                    {t("Start Wellness Chat")}
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform duration-300" />
                   </Button>
                 </Link>
                 <Link to="/counselling">
                   <Button variant="outline" size="lg" className="min-w-[200px] hover:scale-105 hover:bg-primary/10 transition-all duration-300">
-                    Book Counseling
+                    {t("Book Counseling")}
                   </Button>
                 </Link>
               </div>
@@ -217,11 +181,11 @@ const HeroSection = () => {
       <div className="bg-background py-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { number: `${animatedStats.students}+`, label: "Students Helped", icon: Users },
-              { number: `${animatedStats.satisfaction}%`, label: "Satisfaction Rate", icon: Star },
-              { number: `${animatedStats.sessions}+`, label: "Support Sessions", icon: MessageSquare },
-              { number: "24/7", label: "Available Support", icon: Clock }
+            {[ 
+              { number: `${animatedStats.students}+`, label: t("Students Helped"), icon: Users },
+              { number: `${animatedStats.satisfaction}%`, label: t("Satisfaction Rate"), icon: Star },
+              { number: `${animatedStats.sessions}+`, label: t("Support Sessions"), icon: MessageSquare },
+              { number: "24/7", label: t("Available Support"), icon: Clock }
             ].map((stat, index) => {
               const Icon = stat.icon;
               return (
@@ -242,27 +206,25 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Feature Cards with Enhanced Hover Effects */}
+      {/* Feature Cards */}
       <div className="bg-muted/30 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
-              Comprehensive Support <span className="text-primary">Services</span>
+              {t("Comprehensive Support")} <span className="text-primary">{t("Services")}</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to support your mental wellness journey in one place
+              {t("Everything you need to support your mental wellness journey in one place")}
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => {
+            {features.map((feature) => {
               const Icon = feature.icon;
               return (
                 <Link key={feature.href} to={feature.href}>
                   <Card className="relative p-8 text-left group cursor-pointer border-0 bg-card hover:bg-card/80 transition-all duration-500 hover:scale-105 hover:rotate-1 hover:shadow-2xl overflow-hidden">
-                    {/* Hover gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    
                     <div className="relative z-10">
                       <div className="flex items-start space-x-4 mb-6">
                         <div className={`p-4 rounded-2xl bg-${feature.color}/10 group-hover:bg-${feature.color}/20 group-hover:scale-110 transition-all duration-300`}>
@@ -272,14 +234,10 @@ const HeroSection = () => {
                           <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300 mb-2">
                             {feature.title}
                           </h3>
-                          <p className="text-muted-foreground leading-relaxed mb-4">
-                            {feature.description}
-                          </p>
+                          <p className="text-muted-foreground leading-relaxed mb-4">{feature.description}</p>
                         </div>
                       </div>
-
-                      {/* Benefits list - appears on hover */}
-                      <div className="space-y-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                      <div className="space-y-2">
                         {feature.benefits.map((benefit, idx) => (
                           <div key={idx} className="flex items-center space-x-2 text-sm text-muted-foreground">
                             <CheckCircle className="w-4 h-4 text-wellness" />
@@ -287,7 +245,6 @@ const HeroSection = () => {
                           </div>
                         ))}
                       </div>
-
                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-2 transition-all duration-300 mt-4" />
                     </div>
                   </Card>
@@ -303,18 +260,17 @@ const HeroSection = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
-              How It <span className="text-secondary">Works</span>
+              {t("How It")} <span className="text-secondary">{t("Works")}</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Getting started with your wellness journey is simple and secure
+              {t("Getting started with your wellness journey is simple and secure")}
             </p>
           </div>
-          
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {howItWorks.map((step, index) => {
+            {howItWorks.map((step) => {
               const Icon = step.icon;
               return (
-                <div key={index} className="text-center group hover:scale-105 transition-all duration-300">
+                <div key={step.step} className="text-center group hover:scale-105 transition-all duration-300">
                   <div className="relative mb-6">
                     <div className="bg-primary/10 w-20 h-20 rounded-full mx-auto flex items-center justify-center group-hover:bg-primary/20 group-hover:rotate-12 transition-all duration-300">
                       <Icon className="w-10 h-10 text-primary" />
@@ -323,12 +279,8 @@ const HeroSection = () => {
                       {step.step}
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
-                    {step.title}
-                  </h3>
-                  <p className="text-muted-foreground">
-                    {step.description}
-                  </p>
+                  <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">{step.title}</h3>
+                  <p className="text-muted-foreground">{step.description}</p>
                 </div>
               );
             })}
@@ -341,27 +293,22 @@ const HeroSection = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
-              Student <span className="text-wellness">Testimonials</span>
+              {t("Student")} <span className="text-wellness">{t("Testimonials")}</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Real stories from students who found support and healing
+              {t("Real stories from students who found support and healing")}
             </p>
           </div>
-          
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <Card key={index} className="p-8 text-center group cursor-pointer border-0 bg-card hover:bg-card/80 transition-all duration-500 hover:scale-105 hover:-rotate-1 hover:shadow-xl">
-                <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {testimonial.image}
-                </div>
+                <div className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">{testimonial.image}</div>
                 <div className="flex justify-center mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <blockquote className="text-muted-foreground italic mb-6 leading-relaxed">
-                  "{testimonial.quote}"
-                </blockquote>
+                <blockquote className="text-muted-foreground italic mb-6 leading-relaxed">"{testimonial.quote}"</blockquote>
                 <div>
                   <div className="font-semibold text-foreground">{testimonial.name}</div>
                   <div className="text-sm text-muted-foreground">{testimonial.year}</div>
@@ -377,13 +324,12 @@ const HeroSection = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-foreground mb-4">
-              Why Choose <span className="text-accent">MindCare</span>
+              {t("Why Choose")} <span className="text-accent">MindCare</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Designed with your privacy, accessibility, and success in mind
+              {t("Designed with your privacy, accessibility, and success in mind")}
             </p>
           </div>
-          
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {whyChooseUs.map((reason, index) => {
               const Icon = reason.icon;
@@ -392,12 +338,8 @@ const HeroSection = () => {
                   <div className="bg-accent/10 w-16 h-16 rounded-full mx-auto flex items-center justify-center group-hover:bg-accent/20 group-hover:rotate-12 transition-all duration-300">
                     <Icon className="w-8 h-8 text-accent" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors">
-                    {reason.title}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {reason.description}
-                  </p>
+                  <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition-colors">{reason.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{reason.description}</p>
                 </div>
               );
             })}
@@ -405,25 +347,23 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Final CTA Section */}
+      {/* Final CTA */}
       <div className="bg-gradient-to-r from-primary/10 to-secondary/10 py-20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-foreground mb-6">
-            Ready to Start Your Wellness Journey?
-          </h2>
+          <h2 className="text-4xl font-bold text-foreground mb-6">{t("Ready to Start Your Wellness Journey?")}</h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join thousands of students who have found support, healing, and growth through our platform.
+            {t("Join thousands of students who have found support, healing, and growth through our platform.")}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link to="/chatbot">
               <Button size="lg" className="group min-w-[250px] bg-primary hover:bg-primary/90 hover:scale-105 transition-all duration-300">
-                Start Free Today
+                {t("Start Free Today")}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform duration-300" />
               </Button>
             </Link>
             <Link to="/resources">
               <Button variant="outline" size="lg" className="min-w-[250px] hover:scale-105 hover:bg-primary/10 transition-all duration-300">
-                Explore Resources
+                {t("Explore Resources")}
               </Button>
             </Link>
           </div>

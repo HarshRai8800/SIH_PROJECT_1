@@ -1,5 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import {
   MessageSquare,
   Calendar,
@@ -7,71 +7,99 @@ import {
   Users,
   User,
   Brain,
-  BarChart3
-} from 'lucide-react';
-import { ProgressRing } from '@/components/Profile/ProgressRing';
-import { useEffect } from 'react';
-import { SignedIn, SignedOut, SignInButton, UserButton , useAuth } from '@clerk/clerk-react';
+  BarChart3,
+} from "lucide-react";
+import {
+  SignedIn,
+  SignedOut,
+  UserButton
+} from "@clerk/clerk-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { useTranslation } from "react-i18next";
 
 const Navbar = () => {
   const location = useLocation();
+  const { t, i18n } = useTranslation();
 
   const isActive = (path: string) => location.pathname === path;
 
-  const navItems = [
-    { path: '/', label: 'Home', icon: Brain },
-    { path: '/chatbot', label: 'Chatbot', icon: MessageSquare },
-    { path: '/counselling', label: 'Counselling', icon: Calendar },
-    { path: '/resources', label: 'Resources', icon: BookOpen },
-    { path: '/forum', label: 'Forum', icon: Users },
-    { path: '/admin', label: 'Dashboard', icon: BarChart3 },
+  const languageNames: Record<string, string> = {
+    en: "English",
+    hi: "हिन्दी",
+    ks: "کٲشُر / ڈوگری",
+    ur: "اردو",
+    pa: "ਪੰਜਾਬੀ",
+  };
+
+  // Nav items for everyone
+  const commonItems = [
+    { path: "/", label: t("home"), icon: Brain },
+    { path: "/profile", label: t("profile"), icon: User },
   ];
 
-  const { getToken, isSignedIn } = useAuth();
+  // Nav items only for signed-in users
+  const privateItems = [
+    { path: "/chatbot", label: t("chatbot"), icon: MessageSquare },
+    { path: "/counselling", label: t("counselling"), icon: Calendar },
+    { path: "/resources", label: t("resources"), icon: BookOpen },
+    { path: "/forum", label: t("forum"), icon: Users },
 
+    { path:"student-dashboard", label: t("dashboard"), icon: BarChart3 },
+    // { path:"/counsellor-dashboard", label: t("dashboard"), icon: BarChart3 },
 
-  useEffect(() => {
-    const syncUser = async () => {
-      if (!isSignedIn) return;
-
-      const token = await getToken();
-
-      const result = await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log(result)
-    };
-
-    syncUser();
-  }, [isSignedIn, getToken]);
+    // { path: "/admin", label: t("dashboard"), icon: BarChart3 },
+  ];
 
   return (
     <nav className="bg-card/95 backdrop-blur-lg border-b border-border sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
-              <Brain className="w-6 h-6 text-white" />
-            </div>
-            <span className="font-bold text-xl text-foreground">MindCare</span>
-          </Link>
+          {/* Left section: Language toggle + Logo */}
+          <div className="flex items-center space-x-2">
+            {/* Language Toggle */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  {languageNames[i18n.language] || i18n.language.toUpperCase()}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem onClick={() => i18n.changeLanguage("en")}>English</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => i18n.changeLanguage("hi")}>हिन्दी</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => i18n.changeLanguage("ks")}>کٲشُر / ڈوگری</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => i18n.changeLanguage("ur")}>اردو</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => i18n.changeLanguage("pa")}>ਪੰਜਾਬੀ</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          {/* sigin sigin out */}
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <span className="font-bold text-xl text-foreground">MindSpark</span>
+            </Link>
+          </div>
+
+          {/* Right section: Sign-in / Sign-out */}
           <SignedOut>
-            <SignInButton />
+            <Link to="/sign-up">
+              <button>Sign-up</button>
+            </Link>
           </SignedOut>
           <SignedIn>
             <UserButton />
           </SignedIn>
 
-          {/* Navigation Links - Desktop */}
+          {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => {
+            {commonItems.map((item) => {
               const Icon = item.icon;
               return (
                 <Link key={item.path} to={item.path}>
@@ -86,10 +114,31 @@ const Navbar = () => {
                 </Link>
               );
             })}
+
+            <SignedIn>
+              {privateItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link key={item.path} to={item.path}>
+                    <Button
+                      variant={isActive(item.path) ? "default" : "ghost"}
+                      size="sm"
+                      className="flex items-center space-x-2"
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{item.label}</span>
+                    </Button>
+                  </Link>
+                );
+              })}
+            </SignedIn>
           </div>
 
-          {/* Profile Section */}
-          <Link to="/profile" className="flex items-center space-x-3">
+          {/* ✅ Profile Section - dynamic counsellor info + conditional link
+          <Link
+            to={profile?.role === "counsellor" ? "/counsellor/profile" : "/profile"}
+            className="flex items-center space-x-3"
+          >
             <div className="relative">
               <ProgressRing progress={70} size={40} strokeWidth={3} />
               <div className="absolute inset-0 flex items-center justify-center">
@@ -97,16 +146,24 @@ const Navbar = () => {
               </div>
             </div>
             <div className="hidden sm:block">
-              <div className="text-sm font-medium text-foreground">Alex Johnson</div>
-              <div className="text-xs text-muted-foreground">Wellness: 70%</div>
+              <div className="text-sm font-medium text-foreground">
+                {profile?.role === "counsellor"
+                  ? profile.fullName
+                  : "Guest"}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {profile?.role === "counsellor"
+                  ? `${profile.specialization} (${profile.yearsExperience} yrs)`
+                  : `${t("wellness")}: 70%`}
+              </div>
             </div>
-          </Link>
+          </Link> */}
         </div>
 
         {/* Mobile Navigation */}
         <div className="md:hidden border-t border-border">
           <div className="grid grid-cols-3 py-2">
-            {navItems.slice(0, 6).map((item) => {
+            {commonItems.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
@@ -115,16 +172,46 @@ const Navbar = () => {
                   className="flex flex-col items-center py-2 px-1"
                 >
                   <Icon
-                    className={`w-5 h-5 ${isActive(item.path) ? 'text-primary' : 'text-muted-foreground'
-                      }`}
+                    className={`w-5 h-5 ${isActive(item.path)
+                      ? "text-primary"
+                      : "text-muted-foreground"}`}
                   />
-                  <span className={`text-xs mt-1 ${isActive(item.path) ? 'text-primary font-medium' : 'text-muted-foreground'
-                    }`}>
+                  <span
+                    className={`text-xs mt-1 ${isActive(item.path)
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground"}`}
+                  >
                     {item.label}
                   </span>
                 </Link>
               );
             })}
+
+            <SignedIn>
+              {privateItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className="flex flex-col items-center py-2 px-1"
+                  >
+                    <Icon
+                      className={`w-5 h-5 ${isActive(item.path)
+                        ? "text-primary"
+                        : "text-muted-foreground"}`}
+                    />
+                    <span
+                      className={`text-xs mt-1 ${isActive(item.path)
+                        ? "text-primary font-medium"
+                        : "text-muted-foreground"}`}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </SignedIn>
           </div>
         </div>
       </div>

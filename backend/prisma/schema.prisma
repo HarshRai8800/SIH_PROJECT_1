@@ -21,21 +21,38 @@ model User {
   firstName         String?
   lastName          String?
   imageUrl          String?
-  role              Role         @default(STUDENT)
-
-  bio               String?
-  expertise         String[]
-  experience        String?
-  averageRating     Float? 
-  allRatings        Int[]
-  languages         String[]
+  languages String[]
 
   testResults       TestResult[]
-  ticketsAsCounsellor Ticket[]   @relation("CounsellorTickets")
   ticketsAsStudent    Ticket[]   @relation("StudentTickets")
 
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
+}
+
+model Counsellor{
+  id                Int          @id @default(autoincrement())
+  clerkId           String       @unique
+  email             String       @unique
+  firstName         String
+  lastName          String
+  imageUrl          String
+
+
+  bio  String?
+  relatedSkills   String[]
+  speciality CounselorType[]
+  averageRating Float?
+  allRatings Int[]
+  languages String[]
+
+
+  assignedUser Ticket[] @relation("CounsellorTickets")
+
+  createdAt DateTime @default(now())
+  updateAt DateTime  @updatedAt
+
+
 }
 
 model TestResult {
@@ -54,23 +71,55 @@ model TestResult {
 
 model Ticket {
   id           Int    @id @default(autoincrement())
-  issue        String
+  discription        String
   status       TicketStatus @default(OPEN)
-
+  level        Level?        @default(GENERAL)  
+  meetingLocation String?  
+  timing    DateTime
+  consern  Concern[]
+  severity Severity
+  counsellerType CounselorType?
   // Relations
   student      User   @relation("StudentTickets", fields: [studentId], references: [id])
   studentId    Int
 
-  counsellor   User   @relation("CounsellorTickets", fields: [counsellorId], references: [id])
-  counsellorId Int
+  counsellor   Counsellor?   @relation("CounsellorTickets", fields: [counsellorId], references: [id])
+  counsellorId Int?
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
-
+enum Severity {
+  Normal
+  MEDIUM
+  Emergency
+}
+enum Level {
+  GENERAL
+  SPECIALASKING
+  EMERGENCY
+}
+enum Concern {
+  MOOD_EMOTIONS        // sadness, hopelessness, loss of interest
+  ANXIETY_STRESS       // nervousness, restlessness, worry
+  SLEEP_ENERGY         // insomnia, fatigue, oversleeping
+  ACADEMICS_PERFORMANCE // academic stress, focus issues, workload
+  SOCIAL_RELATIONSHIPS // loneliness, conflicts, isolation
+  SELF_PERCEPTION      // low self-esteem, self-criticism, body image
+  RISK_BEHAVIORS       // self-harm thoughts, substance use, impulsive actions
+  PHYSICAL_HEALTH      // body pains, appetite changes, panic-like symptoms
+}
+enum CounselorType {
+  GENERAL_COUNSELOR       // for mild issues, general guidance, stress management
+  ACADEMIC_COUNSELOR      // for study stress, academic performance, career pressure
+  CLINICAL_PSYCHOLOGIST   // for moderate to serious mental health conditions, therapy
+  PSYCHIATRIST            // for severe conditions, medical evaluation, medication
+  PEER_SUPPORT_VOLUNTEER  // trained student volunteer for peer-to-peer support
+}
 enum TicketStatus {
   OPEN
   IN_PROGRESS
+  SELECTED
   RESOLVED
   CLOSED
 }

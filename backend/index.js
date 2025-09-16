@@ -4,9 +4,15 @@ import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import router from "./routes/loginroute.js";
 import updateUserRoute from "./routes/updateUser.js";
+import http from "http";
+import socketConfig from "./socket-io/socket-io.js";
+import ticket from "./routes/createticket.js"
+import counseller from "./routes/counseller.js"
+import getUser from "./routes/getUser.js"
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
 
 app.use(cors());
 app.use(express.json());
@@ -20,8 +26,13 @@ app.get("/", (req, res) => {
 
 // Auth routes
 app.use("/api", router);
-app.use("/api.updateuser",updateUserRoute)
+app.use("/api/user",updateUserRoute)
+app.use("/api/ticket",ticket)
+app.use("/api/counseller",counseller)
+app.use("/api/get",getUser)
+
+socketConfig(server);
 
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
