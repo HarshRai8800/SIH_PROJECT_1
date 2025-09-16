@@ -1,22 +1,18 @@
 import { db } from "../prismaClient/prisma.js";
-
+import {inngest} from "../inngest/client.js"
 
 export const createTicket = async(req,res)=>{
-    if(!req.auth||!req.auth.userId){
-   return res.status(401).send("Unauthorized");
-    }
 
-    const {clerkId} = req.auth.userId;
-
+    const {clerkId} = req.body
     const user = await db.user.findUnique({
-        where:{id:clerkId}
+        where:{clerkId:clerkId}
     })
     if(!user){
         return res.status(403).send("Forbidden");
     }
    try {
-    const {mode,discription,meetingLocation,timing,conserns,severityOfCase,counsellerType} = req.body;
- 
+    const {mode,discription,meetingLocation,timing,conserns,level,severityOfCase,counsellerType} = req.body;
+    const date = new Date(timing); 
     if(mode=="offline"&&!meetingLocation){
      return res.status(401).json({error:"Meeting location not mentioned"});
     }
@@ -25,15 +21,16 @@ export const createTicket = async(req,res)=>{
      data:{
          studentId:user?.id,
         discription,     
-        level :severityOfCase,  
+        level :level,  
         meetingLocation,   
-        timing,  
+        timing:date.toISOString(),  
         consern :conserns,
         severity :severityOfCase,
         counsellerType:counsellerType?counsellerType:null
      }
     })
-    if(ticket){
+    console.log(ticket)
+    if(!ticket){
         return res.status(401).json({error:"Ticket can not be created correpted data"});
     }
 

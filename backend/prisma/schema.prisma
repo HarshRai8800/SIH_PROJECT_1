@@ -76,6 +76,7 @@ model Ticket {
   level        Level?        @default(GENERAL)  
   meetingLocation String?  
   timing    DateTime
+  phoneNumber Int 
   consern  Concern[]
   severity Severity
   counsellerType CounselorType?

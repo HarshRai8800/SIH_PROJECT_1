@@ -4,6 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner"
+import { useAuth } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-react";
 import {
   Select,
   SelectContent,
@@ -11,579 +14,378 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, X } from "lucide-react";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
+import axios from "axios";
 
-const textData = {
-  form: {
-    title: "Counselling Form",
-    description: {
-      label: "Description",
-      required: "Required",
-      placeholder: "Write a detailed description of your issue or problem...",
-      helperText:
-        "Please provide as much detail as possible so the counsellor can better assist you.",
-    },
-    phone: {
-      label: "Phone Number",
-      required: "Required",
-      placeholder: "Enter your phone number",
-      helperText: "Provide a valid phone number for communication.",
-    },
-    status: {
-      label: "Status",
-      options: ["OPEN", "CLOSED", "PENDING"],
-      helperText: "Defines the current state of the ticket.",
-    },
-    level: {
-      label: "Level",
-      options: ["GENERAL", "URGENT", "CRITICAL"],
-      helperText: "Indicates the priority level of the ticket.",
-    },
-    meetingLocation: {
-      label: "Meeting Location",
-      optional: "(Optional)",
-      placeholder: "e.g., Room 202 or Google Meet link",
-      helperText:
-        "You can specify a location for the counselling session if needed.",
-    },
-    timing: {
-      label: "Timing",
-      required: "Required",
-      helperText:
-        "Select your preferred date and time for the counselling session.",
-    },
-    concerns: {
-      legend: "Concerns",
-      required: "Required",
-      helperText: "Select one or more psychological concerns you are facing.",
-      options: ["ANXIETY", "DEPRESSION", "STRESS", "ACADEMIC", "RELATIONSHIP"],
-    },
-    severity: {
-      label: "Severity",
-      required: "Required",
-      defaultOption: "Select severity",
-      helperText: "Defines the intensity/seriousness of the issue.",
-      options: ["LOW", "MEDIUM", "HIGH"],
-    },
-    counsellorType: {
-      label: "Counsellor Type",
-      optional: "(Optional)",
-      defaultOption: "Select counsellor type",
-      helperText: "Choose what type of counsellor you prefer.",
-      options: ["PSYCHOLOGIST", "THERAPIST", "MENTOR"],
-    },
-    buttons: {
-      submit: "Submit Ticket",
-      reset: "Reset Form",
-    },
-    submission: {
-      initialMessage:
-        "Fill the form and click submit to create a counselling ticket.",
-      successTitle: "Form submitted successfully!",
-      successDescription:
-        "Your ticket has been created with the following details:",
-      errorMessage: "There was an error submitting the form. Please try again.",
-    },
-  },
-};
-
-type SubmissionResult =
-  | { success: true; payload: Record<string, unknown> }
-  | { success: false; message: string }
-  | null;
+const counsellorList = [
+  "John Doe",
+  "Jane Smith",
+  "Michael Johnson",
+  "Emily Davis",
+  "Chris Wilson",
+];
 
 export default function CounsellingForm() {
-  const data = textData;
-
   const [description, setDescription] = useState("");
   const [phone, setPhone] = useState("");
-  const [status, setStatus] = useState(data.form.status.options[0]);
-  const [level, setLevel] = useState(data.form.level.options[0]);
+  const [level, setLevel] = useState("GENERAL");
+  const [meetingType, setMeetingType] = useState<"online" | "offline" | null>(
+    null
+  );
+  const {user} = useUser();
+  const{ getToken }= useAuth();
   const [meetingLocation, setMeetingLocation] = useState("");
   const [timing, setTiming] = useState("");
   const [concerns, setConcerns] = useState<string[]>([]);
   const [severity, setSeverity] = useState("");
-  const [counsellorType, setCounsellorType] = useState("");
-  const [submitted, setSubmitted] = useState<SubmissionResult>(null);
-
-  // Track mode
+  const [counsellor, setCounsellor] = useState("");
   const [mode, setMode] = useState<"ai" | "custom" | null>(null);
+  const [submitted, setSubmitted] = useState<null | any>(null);
 
-  // Search state
-  const [showSearch, setShowSearch] = useState(false);
   const [query, setQuery] = useState("");
-
-  const counsellors = [
-    "John Doe",
-    "Jane Smith",
-    "Michael Johnson",
-    "Emily Davis",
-    "Chris Wilson",
-  ];
-
-  const filtered = counsellors.filter((c) =>
+  const filteredCounsellors = counsellorList.filter((c) =>
     c.toLowerCase().includes(query.toLowerCase())
   );
 
-  const searchRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
-  // Focus input when it opens
-  useEffect(() => {
-    if (showSearch) {
-      setTimeout(() => inputRef.current?.focus(), 0);
-    }
-  }, [showSearch]);
-
-  // Close on outside click
-  useEffect(() => {
-    function onDocClick(e: MouseEvent) {
-      if (!searchRef.current) return;
-      if (!searchRef.current.contains(e.target as Node)) {
-        setShowSearch(false);
-        setQuery("");
-      }
-    }
-
-    if (showSearch) document.addEventListener("mousedown", onDocClick);
-    return () => document.removeEventListener("mousedown", onDocClick);
-  }, [showSearch]);
-
-  function toggleConcern(value: string) {
+  const toggleConcern = (value: string) => {
     setConcerns((prev) =>
       prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
     );
-  }
+  };
 
-  function validate() {
-    if (!description.trim())
-      return {
-        ok: false,
-        message: `${data.form.description.label} is required.`,
-      };
-    if (!phone.trim())
-      return {
-        ok: false,
-        message: `${data.form.phone.label} is required.`,
-      };
-    if (!timing)
-      return { ok: false, message: `${data.form.timing.label} is required.` };
-    if (concerns.length === 0)
-      return {
-        ok: false,
-        message: `Select at least one ${data.form.concerns.legend}.`,
-      };
-    if (!severity)
-      return { ok: false, message: `${data.form.severity.label} is required.` };
+  const validate = () => {
+    if (!description.trim()) return { ok: false, message: "Description required" };
+    if (!phone.trim()) return { ok: false, message: "Phone required" };
+    if (!timing) return { ok: false, message: "Timing required" };
+    if (concerns.length === 0) return { ok: false, message: "Select concerns" };
+    if (!severity) return { ok: false, message: "Severity required" };
     return { ok: true };
-  }
+  };
 
-  function handleSubmit(e: React.FormEvent) {
+  const handleSubmit =async (e: React.FormEvent) => {
     e.preventDefault();
     const v = validate();
-    if (!("ok" in v) || !v.ok) {
-      setSubmitted({ success: false, message: v.message ?? "Invalid form" });
-      return;
-    }
-
+    const token =await getToken();
     const payload = {
-      description: description.trim(),
-      phone: phone.trim(),
-      status,
+      discription:description,
+      phone,
       level,
-      meetingLocation: meetingLocation.trim() || null,
+      meetingType,
+      meetingLocation: meetingType === "offline" ? meetingLocation : null,
       timing,
       concerns,
       severity,
-      counsellorType: mode === "custom" ? null : counsellorType || null,
+      counsellor: mode === "custom" ? counsellor : "AI Suggested",
       createdAt: new Date().toISOString(),
     };
-    setSubmitted({ success: true, payload });
-  }
 
-  function handleSelectCounsellor(name: string) {
-    setQuery(name);
-    setShowSearch(false);
-  }
-
-  // Handle AI and Custom button clicks
-  function handleAiSelection() {
-    setMode("ai");
-    setDescription(
-      "This form is filled automatically by AI based on your profile."
-    );
-    setPhone("9876543210");
-    setStatus("OPEN");
-    setLevel("GENERAL");
-    setMeetingLocation("Google Meet link will be shared");
-    setTiming(new Date().toISOString().slice(0, 16));
-    setConcerns(["STRESS"]);
-    setSeverity("MEDIUM");
-    setCounsellorType("PSYCHOLOGIST");
-  }
-
-  function handleCustomSelection() {
-    setMode("custom");
-    setDescription("");
-    setPhone("");
-    setStatus(data.form.status.options[0]);
-    setLevel(data.form.level.options[0]);
-    setMeetingLocation("");
-    setTiming("");
-    setConcerns([]);
-    setSeverity("");
-    setCounsellorType("");
-  }
+ try {
+  console.log("inside submit"+` ${token}`)
+   const {data}= await axios.post(
+   "http://localhost:5000/api/ticket/create_ticket",
+   {
+    clerkId:user.id,
+     discription:description,
+     meetingLocation:meetingType==="offline"?meetingLocation:undefined,
+     timing,
+     level,
+     conserns:concerns,
+     severityOfCase:severity,
+   },
+   {
+     headers: {
+       Authorization: `Bearer ${token}`, // your token here
+     },
+   }
+ );
+      console.log(data)
+     setSubmitted({ success: true, payload });
+ } catch (error) {
+  
+ }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Navbar/>
-      <div className="min-h-screen flex items-center justify-center py-10 px-4 bg-background">
-        <Card className="max-w-3xl w-full p-8 card-gradient">
-          {/* Header: buttons left, search right */}
-          <div className="flex items-center justify-between mb-4">
-            {/* Buttons on the left */}
-            <div className="flex gap-[40px]">
-              <Button type="button" onClick={handleAiSelection}>
-                Ai Counsellor Selection
+    <div className="bg-background min-h-screen mt-16 flex flex-col bg-slate-200">
+      <Navbar />
+
+      <div className="flex flex-1 px-4 py-6 gap-6">
+        {/* Form */}
+        <div className="flex-1">
+          <Card className="p-8 max-w-3xl mx-auto">
+            {/* AI / Custom buttons */}
+            <div className="flex gap-4 mb-6">
+              <Button
+                type="button"
+                variant={mode === "ai" ? "default" : "outline"}
+                className="flex-1"
+                onClick={() => {
+                  setMode("ai");
+                  setDescription("Give me detailed descriptiomn of your problem expaining all yours issues .");
+                  setPhone("9876543210");
+                  setLevel("Normal");
+                  setMeetingType("online");
+                  setTiming(new Date().toISOString().slice(0, 16));
+                  setConcerns(["ANXIETY_STRESS"]);
+                  setSeverity("Medium");
+                  setCounsellor("");
+                }}
+              >
+                AI Counsellor Selection
               </Button>
-              <Button type="button" onClick={handleCustomSelection}>
+              <Button
+                type="button"
+                variant={mode === "custom" ? "default" : "outline"}
+                className="flex-1"
+                onClick={() => {
+                  setMode("custom");
+                  setDescription("");
+                  setPhone("");
+                  setLevel("Normal");
+                  setMeetingType(null);
+                  setTiming("");
+                  setConcerns([]);
+                  setSeverity("");
+                  setCounsellor("");
+                }}
+              >
                 Custom Counsellor Selection
               </Button>
             </div>
 
-            {/* Search container */}
-            <div className="relative" ref={searchRef}>
-              <div className="flex items-center gap-2">
-                {showSearch && (
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="Search counsellors..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="border rounded-xl px-3 py-1 outline-none"
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") {
-                        setShowSearch(false);
-                        setQuery("");
-                      }
-                    }}
-                  />
-                )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowSearch((s) => !s);
-                    if (showSearch) setQuery("");
-                  }}
-                  className="p-2 rounded-full hover:bg-gray-100"
-                >
-                  {showSearch ? (
-                    <X className="h-6 w-6 text-gray-600" />
-                  ) : (
-                    <Search className="h-6 w-6 text-gray-600" />
-                  )}
-                </button>
-              </div>
-              {showSearch && (
-                <div className="absolute right-0 top-full mt-2 bg-white shadow-md rounded-lg w-64 max-h-48 overflow-y-auto border z-50">
-                  {query ? (
-                    filtered.length > 0 ? (
-                      filtered.map((c, i) => (
-                        <div
-                          key={i}
-                          onClick={() => handleSelectCounsellor(c)}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                        >
-                          {c}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="px-4 py-2 text-gray-500">
-                        No counsellor found
-                      </div>
-                    )
-                  ) : (
-                    <div className="px-4 py-2 text-gray-500">
-                      Type to search counsellors
+            {mode === "custom" && (
+              <div className="mb-4 relative">
+                <Label>Choose Counsellor</Label>
+                <Input
+                  type="text"
+                  placeholder="Type to filter..."
+                  value={counsellor}
+                  onChange={(e) => setCounsellor(e.target.value)}
+                />
+                {counsellor &&
+                  filteredCounsellors.length > 0 &&
+                  filteredCounsellors.map((c) => (
+                    <div
+                      key={c}
+                      onClick={() => setCounsellor(c)}
+                      className="absolute bg-white border w-full px-4 py-2 cursor-pointer hover:bg-gray-100 z-50"
+                    >
+                      {c}
                     </div>
-                  )}
+                  ))}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Description */}
+              <div className="space-y-2">
+                <Label>
+                  Description <span className="text-red-500">*</span>
+                </Label>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Write your issue..."
+                  className="min-h-[120px]"
+                  required
+                />
+              </div>
+
+              {/* Phone */}
+              <div className="space-y-2">
+                <Label>
+                  Phone <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                />
+              </div>
+
+              {/* Online / Offline toggle */}
+              <div className="space-y-2">
+                <Label>Meeting Type</Label>
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant={meetingType === "online" ? "default" : "outline"}
+                    onClick={() => setMeetingType("online")}
+                  >
+                    Online
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={meetingType === "offline" ? "default" : "outline"}
+                    onClick={() => setMeetingType("offline")}
+                  >
+                    Offline
+                  </Button>
+                </div>
+              </div>
+
+              {/* Meeting Location (only offline) */}
+              {meetingType === "offline" && (
+                <div className="space-y-2">
+                  <Label>Meeting Address</Label>
+                  <Input
+                    value={meetingLocation}
+                    onChange={(e) => setMeetingLocation(e.target.value)}
+                    placeholder="Enter meeting address"
+                    required
+                  />
                 </div>
               )}
-            </div>
-          </div>
 
-          <h1 className="text-2xl font-bold text-foreground mb-6">
-            {data.form.title}
-          </h1>
+              {/* Timing */}
+          <div className="space-y-2">
+  <Label>
+    Date & Time <span className="text-red-500">*</span>
+  </Label>
+  <Input
+    type="datetime-local"
+    value={timing}
+    onChange={(e) => {
+      const value = e.target.value;
+      setTiming(value);
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">
-                {data.form.description.label}{" "}
-                <span className="text-red-500">
-                  {data.form.description.required}
-                </span>
-              </Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder={data.form.description.placeholder}
-                className="min-h-[120px]"
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                {data.form.description.helperText}
-              </p>
-            </div>
+      const date = new Date(value);
+      const hours = date.getHours();
 
-            {/* Phone Number */}
-            <div className="space-y-2">
-              <Label htmlFor="phone">
-                {data.form.phone.label}{" "}
-                <span className="text-red-500">
-                  {data.form.phone.required}
-                </span>
-              </Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder={data.form.phone.placeholder}
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                {data.form.phone.helperText}
-              </p>
-            </div>
+      if (hours < 10 || hours > 16) {
+        toast("Timing invalid", {
+          description: "Counseller timing should be between 9Am to 4 Pm",
+        })
+        setTiming(""); 
+      }
+    }}
+    required
+  />
+</div>
 
-            {/* Status + Level */}
-            <div className="grid md:grid-cols-2 gap-4">
+              {/* Concerns */}
               <div className="space-y-2">
-                <Label>{data.form.status.label}</Label>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {data.form.status.options.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  {data.form.status.helperText}
-                </p>
+                <Label>
+                  Concerns <span className="text-red-500">*</span>
+                </Label>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  {[
+                    "MOOD_EMOTIONS",
+                    "ANXIETY_STRESS",
+                    "SLEEP_ENERGY",
+                    "ACADEMICS_PERFORMANCE",
+                    "SOCIAL_RELATIONSHIPS",
+                    "SELF_PERCEPTION",
+                    "RISK_BEHAVIORS",
+                    "PHYSICAL_HEALTH",
+                  ].map((c) => (
+                    <label
+                      key={c}
+                      className="flex items-center space-x-2 border rounded-md p-2 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={concerns.includes(c)}
+                        onChange={() => toggleConcern(c)}
+                      />
+                      <span className="text-sm">{c}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
 
+              {/* Severity */}
               <div className="space-y-2">
-                <Label>{data.form.level.label}</Label>
-                <Select value={level} onValueChange={setLevel}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select level" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {data.form.level.options.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  {data.form.level.helperText}
-                </p>
-              </div>
-            </div>
-
-            {/* Meeting Location */}
-            <div className="space-y-2">
-              <Label htmlFor="meetingLocation">
-                {data.form.meetingLocation.label}{" "}
-                <span className="text-muted-foreground">
-                  {data.form.meetingLocation.optional}
-                </span>
-              </Label>
-              <Input
-                id="meetingLocation"
-                value={meetingLocation}
-                onChange={(e) => setMeetingLocation(e.target.value)}
-                placeholder={data.form.meetingLocation.placeholder}
-              />
-              <p className="text-xs text-muted-foreground">
-                {data.form.meetingLocation.helperText}
-              </p>
-            </div>
-
-            {/* Timing */}
-            <div className="space-y-2">
-              <Label htmlFor="timing">
-                {data.form.timing.label}{" "}
-                <span className="text-red-500">
-                  {data.form.timing.required}
-                </span>
-              </Label>
-              <Input
-                id="timing"
-                type="datetime-local"
-                value={timing}
-                onChange={(e) => setTiming(e.target.value)}
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                {data.form.timing.helperText}
-              </p>
-            </div>
-
-            {/* Concerns */}
-            <div className="space-y-2">
-              <Label>
-                {data.form.concerns.legend}{" "}
-                <span className="text-red-500">
-                  {data.form.concerns.required}
-                </span>
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                {data.form.concerns.helperText}
-              </p>
-              <div className="grid sm:grid-cols-2 gap-2">
-                {data.form.concerns.options.map((c) => (
-                  <label
-                    key={c}
-                    className="flex items-center space-x-2 border rounded-md p-2 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={concerns.includes(c)}
-                      onChange={() => toggleConcern(c)}
-                    />
-                    <span className="text-sm">{c}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Severity + Counsellor Type */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>{data.form.severity.label}</Label>
+                <Label>Severity</Label>
                 <Select value={severity} onValueChange={setSeverity}>
                   <SelectTrigger>
-                    <SelectValue placeholder={data.form.severity.defaultOption} />
+                    <SelectValue placeholder="Select severity" />
                   </SelectTrigger>
                   <SelectContent>
-                    {data.form.severity.options.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
+                    {["Normal", "MEDIUM", "Emergency"].map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground">
-                  {data.form.severity.helperText}
-                </p>
               </div>
 
-              {mode !== "custom" && (
-                <div className="space-y-2">
-                  <Label>
-                    {data.form.counsellorType.label}{" "}
-                    <span className="text-muted-foreground">
-                      {data.form.counsellorType.optional}
-                    </span>
-                  </Label>
-                  <Select
-                    value={counsellorType}
-                    onValueChange={setCounsellorType}
-                  >
-                    <SelectTrigger>
-                      <SelectValue
-                        placeholder={data.form.counsellorType.defaultOption}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {data.form.counsellorType.options.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    {data.form.counsellorType.helperText}
-                  </p>
-                </div>
-              )}
-            </div>
+              {/* Buttons */}
+              <div className="flex gap-4">
+                <Button type="submit" className="flex-1">
+                  Submit
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => {
+                    setDescription("");
+                    setPhone("");
+                    setLevel("Normal");
+                    setMeetingType(null);
+                    setMeetingLocation("");
+                    setTiming("");
+                    setConcerns([]);
+                    setSeverity("");
+                    setCounsellor("");
+                    setMode(null);
+                    setSubmitted(null);
+                  }}
+                >
+                  Reset
+                </Button>
+              </div>
 
-            {/* Buttons */}
-            <div className="flex gap-4">
-              <Button type="submit" className="flex-1">
-                {data.form.buttons.submit}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="flex-1"
-                onClick={() => {
-                  setDescription("");
-                  setPhone("");
-                  setStatus(data.form.status.options[0]);
-                  setLevel(data.form.level.options[0]);
-                  setMeetingLocation("");
-                  setTiming("");
-                  setConcerns([]);
-                  setSeverity("");
-                  setCounsellorType("");
-                  setSubmitted(null);
-                  setMode(null);
-                }}
-              >
-                {data.form.buttons.reset}
-              </Button>
-            </div>
-
-            {/* Submission Preview */}
-            <div className="pt-4">
-              {submitted === null ? (
-                <p className="text-sm text-muted-foreground">
-                  {data.form.submission.initialMessage}
-                </p>
-              ) : submitted.success ? (
-                <Card className="p-4 bg-green-50 border-green-200">
-                  <h3 className="font-semibold">
-                    {data.form.submission.successTitle}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {data.form.submission.successDescription}
-                  </p>
-                  <pre className="mt-2 p-3 bg-white border rounded-lg text-xs overflow-auto">
-                    {JSON.stringify(submitted.payload, null, 2)}
-                  </pre>
+              {submitted && (
+                <Card
+                  className={`p-4 mt-4 ${
+                    submitted.success ? "bg-green-50" : "bg-red-50"
+                  }`}
+                >
+                  {submitted.success ? (
+                    <pre className="text-xs overflow-auto">
+                      {JSON.stringify(submitted.payload, null, 2)}
+                    </pre>
+                  ) : (
+                    <p className="text-red-700">{submitted.message}</p>
+                  )}
                 </Card>
-              ) : (
-                // <Card className="p-3 bg-red-50 border-red-200 text-sm text-red-700">
-                //   {submitted && !submitted.success
-                //     ? submitted.message
-                //     : data.form.submission.errorMessage}
-                // </Card>
-                <div>
-                  i dont know its just a replasement
-                </div>
               )}
+            </form>
+          </Card>
+        </div>
+
+        {/* Right-side search bar */}
+        <div className="w-64 flex-shrink-0 ">
+          <Card className="p-4 sticky top-24 bg-green-100">
+            <Label>Search Counsellors</Label>
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Type to filter..."
+            />
+            <div className="mt-2 max-h-40 overflow-y-auto">
+              {query
+                ? filteredCounsellors.map((c) => (
+                    <div key={c} className="py-1 px-2 hover:bg-gray-100 cursor-pointer">
+                      {c}
+                    </div>
+                  ))
+                : counsellorList.map((c) => (
+                    <div key={c} className="py-1 px-2 text-gray-500 cursor-default">
+                      {c}
+                    </div>
+                  ))}
             </div>
-          </form>
-        </Card>
+          </Card>
+        </div>
       </div>
-      <Footer/>
+
+      <Footer />
     </div>
   );
 }

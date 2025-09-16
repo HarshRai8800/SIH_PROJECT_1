@@ -9,7 +9,6 @@ export const getUser = async(req,res)=>{
 
   try {
     const { clerkId } = req.query;
-    console.log(clerkId );
     const user = await db.user.findUnique({
       where: { clerkId },
       include: {

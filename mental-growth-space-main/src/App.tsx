@@ -15,7 +15,10 @@ import AdminDashboard from "./pages/AdminDashboard";
 import SuccessStoriesPage from "./pages/SuccessStoriesPage";
 import NotFound from "./pages/NotFound";
 
-
+import Counse from "./pages/Counselling";
+import AddStudentPage from "./pages/AddStudent";
+import AddCounsellorPage from "./pages/AddCounsellor";
+import BlockRequestPage from "./pages/BlockRequest"; 
 // ✅ New role-based sign-in pages
 import StudentSignIn from "./pages/StudentSignIn";
 import CounsellorSignIn from "./pages/CounsellorSignIn";
@@ -38,6 +41,17 @@ const App = () => (
         <Routes>
           {/* Existing routes */}
           <Route path="/" element={<HomePage />} />
+
+          <Route path="/chatbot" element={<ChatbotPage />} />
+          <Route path="/counselling" element={<CounsellingPage />} />
+          <Route path="/resources" element={<ResourcesPage />} />
+          <Route path="/forum" element={<ForumPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/success-stories" element={<SuccessStoriesPage />} />
+          <Route path="/add-student" element={<AddStudentPage />} />
+        <Route path="/add-counsellor" element={<AddCounsellorPage />}/>
+         <Route path="/block-request" element={<BlockRequestPage />} />
           <Route path="/student" element={<StudentSignIn />} />
           <Route path="/counsellor" element={<CounsellorSignIn />} />
           <Route path="/sign-up/*" element={<CustomSignUp/>} />
