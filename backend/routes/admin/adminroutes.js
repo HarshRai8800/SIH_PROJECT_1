@@ -1,22 +1,25 @@
 import express from "express";
 import { requireAuth } from "@clerk/express";
 import {
+  adminLogin,
   addStudent,
   deleteStudent,
   getAllStudents,
   addCounsellor,
   deleteCounsellor,
   getAllCounsellors
-} from "../controllers/admincontroller.js";
+} from "../../controllers/admin/admincontrollers.js";
 
-const router = express.Router();
+const adminRoutes = express.Router();
 
-router.post("/addStudent", requireAuth(), addStudent);
-router.delete("/deleteStudent", requireAuth(), deleteStudent);
-router.get("/getAllStudents", requireAuth(), getAllStudents);
+adminRoutes.post("/login",requireAuth(), adminLogin);
 
-router.post("/addCounsellor", requireAuth(), addCounsellor);
-router.delete("/deleteCounsellor", requireAuth(), deleteCounsellor);
-router.get("/getAllCounsellors", requireAuth(), getAllCounsellors);
+adminRoutes.post("/addStudent", requireAuth(), addStudent);
+adminRoutes.delete("/deleteStudent", requireAuth(), deleteStudent);
+adminRoutes.get("/getAllStudents", requireAuth(), getAllStudents);
 
-export default router;
+adminRoutes.post("/addCounsellor", requireAuth(), addCounsellor);
+adminRoutes.delete("/deleteCounsellor", requireAuth(), deleteCounsellor);
+adminRoutes.get("/getAllCounsellors", requireAuth(), getAllCounsellors);
+
+export default adminRoutes;

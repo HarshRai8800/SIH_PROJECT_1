@@ -30,6 +30,10 @@ import AddStudentPage from "./pages/AddStudent";
 import BlockRequestPage from "./pages/BlockRequest";
 import AddCounsellorPage from "./pages/AddCounsellor";
 
+import AdminLogin from "./components/AdminLogin/AdminLogin.tsx";
+import SSOCallback from "./pages/SSOCallback";
+import AdminRouteProtection from "./components/AdminRouteProtection.tsx";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -44,7 +48,7 @@ const App = () => (
 
           {/* Public-only routes (do not duplicate protected ones here) */}
           <Route path="/sign-up/*" element={<CustomSignUp />} />
-
+          <Route path="/sso-callback/*" element={<SSOCallback/>}/>
           {/* Protected routes */}
           <Route element={<RouteProtection />}>
             <Route path="/chatbot" element={<ChatbotPage />} />
@@ -63,11 +67,13 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
 
           {/* {admin} */}
+          <Route path="/admin/login" element={<AdminLogin/>} />
+           <Route element={<AdminRouteProtection />}>
            <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/add-student" element={<AddStudentPage />} />
           <Route path="/admin/add-counsellor" element={<AddCounsellorPage />} />
           <Route path="/admin/block-request" element={<BlockRequestPage />} />
-
+          </Route>
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

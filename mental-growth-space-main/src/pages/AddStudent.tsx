@@ -76,6 +76,7 @@ export default function AddStudentPage() {
     e.preventDefault();
     setIsAdding(true);
     setError(null);
+    console.log(formData)
     try {
       const token = await getToken();
       const res = await fetch(`${apiBaseUrl}/addStudent`, {
