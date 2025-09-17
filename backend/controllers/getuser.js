@@ -9,17 +9,17 @@ export const getUser = async(req,res)=>{
 
   try {
     const { clerkId } = req.query;
-    const user = await db.user.findUnique({
+    const student = await db.students.findUnique({
       where: { clerkId },
       include: {
         ticketsAsStudent: true,
         testResults: true,    
       },
     });
-    if(!user){
-        return res.status(401).send("user not found");
+    if(!student){
+        return res.status(401).send("student not found");
     }
-    return res.status(201).json({user})
+    return res.status(201).json({student})
 }
     catch(err){
         console.log(err.message)

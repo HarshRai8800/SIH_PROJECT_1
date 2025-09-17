@@ -23,11 +23,13 @@ const RouteProtection = () => {
                         return;
                     }
 
-                    // Check localStorage for role
-                    const role = localStorage.getItem('selectedRole');
-                    console.log(role)
+                    // Determine role: prefer localStorage; fallback to Clerk user public metadata
+                    let role = localStorage.getItem('selectedRole');
+                    if (!role && user?.publicMetadata?.role) {
+                        role = String(user.publicMetadata.role);
+                        localStorage.setItem('selectedRole', role);
+                    }
                     if (!role) {
-                        // No role found in localStorage, sign out user and redirect to sign-up
                         await signOut();
                         navigate('/sign-up');
                         return;
@@ -39,6 +41,7 @@ const RouteProtection = () => {
                         headers: {
                             "Content-Type": "application/json",
                             Authorization: `Bearer ${token}` },
+
                         body: JSON.stringify({ role }),
                     });
                 } catch (error) {

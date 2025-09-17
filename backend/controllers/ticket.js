@@ -3,14 +3,22 @@ import { db } from "../prismaClient/prisma.js";
 export const createTicket = async(req,res)=>{
 
     const {clerkId} = req.body
+<<<<<<< HEAD
     const user = await db.students.findUnique({
+=======
+    const student = await db.students.findUnique({
+>>>>>>> 804b0231c858174771b4a02e7df7d1c19c406ac4
         where:{clerkId:clerkId}
     })
-    if(!user){
+    if(!student){
         return res.status(403).send("Forbidden");
     }
    try {
+<<<<<<< HEAD
     const {mode,discription,meetingLocation,timing,conserns,level,severityOfCase,counsellorId} = req.body;
+=======
+    const {mode,description,meetingLocation,timing,conserns,level,severityOfCase,counsellorType,phoneNumber} = req.body;
+>>>>>>> 804b0231c858174771b4a02e7df7d1c19c406ac4
     const date = new Date(timing); 
     if(mode=="offline"&&!meetingLocation){
      return res.status(401).json({error:"Meeting location not mentioned"});
@@ -33,6 +41,7 @@ const check = await db.ticket.findFirst({
  
     const ticket = await db.ticket.create({
      data:{
+<<<<<<< HEAD
         studentId:user?.id,
         description:discription,     
         level :level,  
@@ -45,6 +54,18 @@ const check = await db.ticket.findFirst({
      include: {
     counsellor: true, 
   },
+=======
+        studentId:student?.id,
+        description: description,
+        level :level,
+        meetingLocation,
+        timing:date.toISOString(),
+        concern :conserns,
+        severity :severityOfCase,
+        counsellorType: counsellorType ? counsellorType : null,
+        phoneNumber: phoneNumber || null
+     }
+>>>>>>> 804b0231c858174771b4a02e7df7d1c19c406ac4
     })
     if(!ticket){
         return res.status(406).json({error:"Ticket can not be created correpted data"});

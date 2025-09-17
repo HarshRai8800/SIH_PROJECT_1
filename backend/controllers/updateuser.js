@@ -8,12 +8,12 @@ export const updateUser = async(req,res)=>{
 
   const {clerkId} = req.body;
 
-   const user = await db.user.findUnique({
+   const student = await db.students.findUnique({
       where: { clerkId },
     });
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
     }
   try {
     const {
@@ -30,16 +30,16 @@ export const updateUser = async(req,res)=>{
     if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
     if (languages !== undefined) updateData.languages = languages;
 
-        const updatedUser = await db.user.update({
+        const updatedStudent = await db.students.update({
         where: { clerkId },
         data: updateData,
         });
     
-        if(updatedUser!==null){
-                    return res.status(200).json(updatedUser);
+        if(updatedStudent!==null){
+                    return res.status(200).json(updatedStudent);
         }
 
-        return res.status(400).json({errro:"User cannot be updated"})
+        return res.status(400).json({errro:"Student cannot be updated"})
   } catch (error) {
     res.status(500).json({error: error.message});
     console.log(error.message)

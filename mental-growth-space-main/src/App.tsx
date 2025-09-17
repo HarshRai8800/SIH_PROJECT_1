@@ -16,18 +16,18 @@ import AdminDashboard from "./pages/AdminDashboard";
 import SuccessStoriesPage from "./pages/SuccessStoriesPage";
 import NotFound from "./pages/NotFound";
 
-import AddStudentPage from "./pages/AddStudent";
-import AddCounsellorPage from "./pages/AddCounsellor";
-import BlockRequestPage from "./pages/BlockRequest"; 
-// ✅ New role-based sign-in pages
-
-// ✅ New dashboards for roles
-
 import StudentDashboard from "./pages/StudentDashboard";
 import CounsellorDashboard from "./pages/CounsellorDashboard";
 import CustomSignUp from "./components/Sign-up/CustomSignUp";
 import RouteProtection from "./components/RouteProtection"
 import EditProfilePage from "./pages/EditProfilePage";
+import AddStudentPage from "./pages/AddStudent";
+import BlockRequestPage from "./pages/BlockRequest";
+import AddCounsellorPage from "./pages/AddCounsellor";
+
+import AdminLogin from "./components/AdminLogin/AdminLogin.tsx";
+import SSOCallback from "./pages/SSOCallback";
+import AdminRouteProtection from "./components/AdminRouteProtection.tsx";
 
 const queryClient = new QueryClient();
 
@@ -41,39 +41,34 @@ const App = () => (
           {/* Existing routes */}
           <Route path="/" element={<HomePage />} />
 
-          <Route path="/chatbot" element={<ChatbotPage />} />
-          <Route path="/counselling" element={<CounsellingPage />} />
-          <Route path="/resources" element={<ResourcesPage />} />
-          <Route path="/forum" element={<ForumPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/success-stories" element={<SuccessStoriesPage />} />
-          <Route path="/add-student" element={<AddStudentPage />} />
-        <Route path="/add-counsellor" element={<AddCounsellorPage />}/>
-         <Route path="/block-request" element={<BlockRequestPage />} />
-          <Route path="/sign-up/*" element={<CustomSignUp/>} />
-
+          {/* Public-only routes (do not duplicate protected ones here) */}
+          <Route path="/sign-up/*" element={<CustomSignUp />} />
+          <Route path="/sso-callback/*" element={<SSOCallback/>}/>
           {/* Protected routes */}
-          <Route element={<RouteProtection/>}>
+          <Route element={<RouteProtection />}>
             <Route path="/chatbot" element={<ChatbotPage />} />
             <Route path="/counselling" element={<CounsellingPage />} />
             <Route path="/resources" element={<ResourcesPage />} />
             <Route path="/forum" element={<ForumPage />} />
-            <Route path="/profile" element={<ProfilePage />} />   
-            <Route path="/edit-profile" element={<EditProfilePage/>} />
-
-            <Route path="/counsellor-dashboard" element={<CounsellorDashboard />} />
-            <Route path="/student-dashboard" element={<StudentDashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/edit-profile" element={<EditProfilePage />} />
             <Route path="/success-stories" element={<SuccessStoriesPage />} />
-            
-            
-            {/* ✅ Dashboards after login */}
+            {/* Dashboards (single canonical paths) */}
+            <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
           </Route>
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
+
+          {/* {admin} */}
+          <Route path="/admin/login" element={<AdminLogin/>} />
+           <Route element={<AdminRouteProtection />}>
+           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/add-student" element={<AddStudentPage />} />
+          <Route path="/admin/add-counsellor" element={<AddCounsellorPage />} />
+          <Route path="/admin/block-request" element={<BlockRequestPage />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

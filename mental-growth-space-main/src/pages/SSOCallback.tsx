@@ -4,14 +4,19 @@ import { useAuth, AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
 
 const SSOCallback = () => {
   const navigate = useNavigate();
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoaded, isSignedIn, getToken } = useAuth();
 
   useEffect(() => {
     const finalize = async () => {
       if (!isLoaded || !isSignedIn) return;
-      
+
       // The role is already stored in localStorage from the CustomSignUp component
       // No need to call any backend API, just redirect to home
+
+      if (localStorage.getItem("selectedRole") === "admin") {
+           navigate("/admin", { replace: true });
+      }
+
       navigate("/", { replace: true });
     };
 
