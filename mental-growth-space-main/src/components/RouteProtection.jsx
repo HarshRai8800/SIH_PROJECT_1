@@ -36,7 +36,9 @@ const RouteProtection = () => {
                     const token = await getToken();
                     await fetch("http://localhost:5000/api/registerUser", {
                         method: "POST",
-                        headers: { Authorization: `Bearer ${token}` },
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}` },
                         body: JSON.stringify({ role }),
                     });
                 } catch (error) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSignUp, useSignIn, useClerk, useAuth } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
@@ -103,14 +103,21 @@ const CustomSignUp = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <Tabs value={role} onValueChange={setRole} className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="student">Student</TabsTrigger>
-                <TabsTrigger value="counsellor">Counsellor</TabsTrigger>
-              </TabsList>
-              <TabsContent value="student" />
-              <TabsContent value="counsellor" />
-            </Tabs>
+            <Tabs 
+  value={role} 
+  onValueChange={(val) => {
+    setRole(val);
+    localStorage.setItem("selectedRole", val); // 🔥 sync immediately
+    console.log("Role saved to localStorage:", val); // debug log
+  }} 
+  className="w-full"
+>
+  <TabsList className="grid w-full grid-cols-2">
+    <TabsTrigger value="student">Student</TabsTrigger>
+    <TabsTrigger value="counsellor">Counsellor</TabsTrigger>
+  </TabsList>
+</Tabs>
+
 
             {!pendingVerification ? (
               <form className="space-y-4" onSubmit={handleEmailSignup}>

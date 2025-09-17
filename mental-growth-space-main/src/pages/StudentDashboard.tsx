@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -7,15 +8,60 @@ import {
   MessageSquare,
   CheckCircle,
   AlertTriangle,
+  Clock,
 } from 'lucide-react';
 import { WellnessChart } from '@/components/Charts/WellnessChart';
 import { StressLevelsChart } from '@/components/Charts/StressLevelsChart';
 import Navbar from '@/components/Navbar/Navbar';
 import Footer from '@/components/Footer/Footer';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+import { useUser, useAuth } from '@clerk/clerk-react';
 
-const StudentDashboard = () => {
+interface Appointment {
+  id: number;
+  description: string;
+  timing: string;
+  level: string;
+  severity: string;
+  counsellor?: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+const StudentDashboard: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useUser();
+  const { getToken } = useAuth();
+  const [upcomingAppointments, setUpcomingAppointments] = useState<Appointment[]>([]);
+
+  // Fetch appointments from backend
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const token = await getToken();
+        const { data } = await axios.post(
+          'http://localhost:5000/api/ticket/get_upcoming_tickets',
+          {
+            clerkId: user?.id ?? '',
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        setUpcomingAppointments(data || []);
+      } catch (error) {
+        console.error('Failed to fetch appointments', error);
+        setUpcomingAppointments([]);
+      }
+    };
+
+    fetchAppointments();
+
+    // Auto-refresh every 60 seconds
+    const interval = setInterval(fetchAppointments, 60000);
+    return () => clearInterval(interval);
+  }, [getToken, user?.id]);
 
   // Stats tailored for a student view
   const studentStats = [
@@ -52,9 +98,13 @@ const StudentDashboard = () => {
   ];
 
   const handleReportCounsellor = () => {
-    // Replace with actual reporting logic or API call
     alert('Your report about the counsellor has been submitted.');
   };
+
+  // Sort upcoming appointments by nearest timing
+  const sortedAppointments = [...upcomingAppointments].sort(
+    (a, b) => new Date(a.timing).getTime() - new Date(b.timing).getTime()
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -73,12 +123,10 @@ const StudentDashboard = () => {
                 {t('My Wellness Overview')}
               </h1>
               <p className="text-muted-foreground mb-4">
-                {t(
-                  'View your wellness trends, sessions, and progress over time.'
-                )}
+                {t('View your wellness trends, sessions, and progress over time.')}
               </p>
 
-              {/* 🔴 Report Counsellor Button */}
+              {/* Report Counsellor Button */}
               <Button
                 variant="destructive"
                 onClick={handleReportCounsellor}
@@ -181,6 +229,78 @@ const StudentDashboard = () => {
                   </div>
                 ))}
               </div>
+            </Card>
+
+            {/* Upcoming Appointments Section */}
+            <Card className="card-gradient p-6 mt-8">
+              <h3 className="text-lg font-semibold text-foreground mb-6">
+                {t('Upcoming Appointments')}
+              </h3>
+
+              {sortedAppointments.length === 0 ? (
+                <p className="text-muted-foreground">
+                  {t('No upcoming appointments.')}
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {sortedAppointments.slice(0, 6).map((appt) => (
+                    <div
+                      key={appt.id}
+                      className="flex flex-col md:flex-row md:justify-between md:items-center p-4 rounded-lg bg-muted/50 hover:bg-muted/70 transition-colors"
+                    >
+                      {/* Left side: Counsellor + Description */}
+                      <div className="space-y-1">
+                        <span className="font-medium text-foreground">
+                          {appt.counsellor
+                            ? `${appt.counsellor.firstName} ${appt.counsellor.lastName}`
+                            : t('Unassigned Counsellor')}
+                        </span>
+                        <p className="text-sm text-muted-foreground">
+                          {appt.description}
+                        </p>
+
+                        {/* Date & Time */}
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <Calendar className="w-4 h-4" />
+                          <span>
+                            {new Date(appt.timing).toLocaleDateString(undefined, {
+                              weekday: 'short',
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </span>
+                          <Clock className="w-4 h-4" />
+                          <span>
+                            {new Date(appt.timing).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: false, // ✅ 24-hour format
+                            })}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Right side: Level + Severity */}
+                      <div className="flex space-x-2 mt-3 md:mt-0">
+                        <Badge variant="outline" className="text-xs">
+                          {"Status"+" = "+appt.level}
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className={`text-xs ${
+                            appt.severity === 'Emergency'
+                              ? 'text-destructive'
+                              : 'text-primary'
+                          }`}
+                        >
+                          {"Severity"+ " = "+appt.severity}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
           </div>
         </div>

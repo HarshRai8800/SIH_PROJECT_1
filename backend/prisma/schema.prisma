@@ -36,7 +36,7 @@ model Students {
   lastName         String?
   imageUrl         String?
   languages        String[]
-  testResults      TestResult[]
+  testResults      TestResult[] 
   ticketsAsStudent Ticket[]     @relation("StudentTickets")
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
@@ -84,14 +84,12 @@ model Ticket {
   id              Int            @id @default(autoincrement())
   description     String
   status          TicketStatus   @default(OPEN)
-  level           Level          @default(GENERAL)
+  level           Level          @default(SPECIALASKING)
   meetingLocation String?
   timing          DateTime
   phoneNumber     String?
   concern         Concern[]
   severity        Severity
-  counsellorType  CounsellorType?
-  // Relations
   student         Students       @relation("StudentTickets", fields: [studentId], references: [id])
   studentId       Int
 
@@ -135,7 +133,6 @@ enum CounsellorType {
 
 enum TicketStatus {
   OPEN
-  IN_PROGRESS
   SELECTED
   RESOLVED
   CLOSED

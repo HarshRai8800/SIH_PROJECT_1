@@ -1,47 +1,55 @@
 import { db } from "../prismaClient/prisma.js";
-import {inngest} from "../inngest/client.js"
 
 export const createTicket = async(req,res)=>{
 
     const {clerkId} = req.body
-    const user = await db.user.findUnique({
+    const user = await db.students.findUnique({
         where:{clerkId:clerkId}
     })
     if(!user){
         return res.status(403).send("Forbidden");
     }
    try {
-    const {mode,discription,meetingLocation,timing,conserns,level,severityOfCase,counsellerType} = req.body;
+    const {mode,discription,meetingLocation,timing,conserns,level,severityOfCase,counsellorId} = req.body;
     const date = new Date(timing); 
     if(mode=="offline"&&!meetingLocation){
      return res.status(401).json({error:"Meeting location not mentioned"});
     }
+
+   const now = new Date();
+
+const check = await db.ticket.findFirst({
+  where: {
+    studentId: user?.id,
+    counsellorId: counsellorId || null,
+    timing: {
+      gt: now, // strictly in the future
+    },
+  },
+});
+    if(check){
+        return res.status(404).json({message:"ticket already exists try after counselling "})
+    }
  
     const ticket = await db.ticket.create({
      data:{
-         studentId:user?.id,
-        discription,     
+        studentId:user?.id,
+        description:discription,     
         level :level,  
         meetingLocation,   
         timing:date.toISOString(),  
-        consern :conserns,
+        concern :conserns,
         severity :severityOfCase,
-        counsellerType:counsellerType?counsellerType:null
-     }
+        counsellorId:counsellorId?counsellorId:null
+     },
+     include: {
+    counsellor: true, 
+  },
     })
-    console.log(ticket)
     if(!ticket){
-        return res.status(401).json({error:"Ticket can not be created correpted data"});
+        return res.status(406).json({error:"Ticket can not be created correpted data"});
     }
-
-    await inngest.send({
-        name:"ticket/created",
-        data:{
-            ticketId:ticket.id
-        }
-    })
-
-    res.status(201).json({message:"ticket has been created and assigned succesfully"})
+    res.status(201).json(ticket)
 
 
 
@@ -49,6 +57,43 @@ export const createTicket = async(req,res)=>{
     console.log(error.message);
      return res.status(500).json({error:"Internal server error"});
    }
+
+}
+
+export const getTickets = async(req,res)=>{
+
+try {
+  const {clerkId} = req?.body
+  console.log(clerkId+"hii")
+  const now = new Date();
+ const upcomingTickets = await db.ticket.findMany({
+  where: {
+     student: {
+      clerkId: clerkId, // filter tickets for this student
+    },
+    timing: {
+      gte: now, 
+    },
+  },
+  orderBy: {
+    timing: 'asc', 
+  },
+  take: 6, 
+  include: {
+    student: true,
+    counsellor: true,
+  },
+});
+console.log(upcomingTickets)
+if(!upcomingTickets){
+  return res.status(202).json({message:"no upcoming tickets found "})
+}
+
+return res.status(200).json(upcomingTickets)
+} catch (error) {
+  console.log(error.message)
+  return res.status(500).json({message:"the tickets are not found "})
+}
 
 }
         

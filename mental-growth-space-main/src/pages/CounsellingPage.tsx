@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import SideBar from "../components/SideBar/SideBar";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner"
-import { useAuth } from "@clerk/clerk-react";
-import { useUser } from "@clerk/clerk-react";
+import { toast } from "sonner";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import {
   Select,
   SelectContent,
@@ -18,35 +18,37 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import axios from "axios";
 
-const counsellorList = [
-  "John Doe",
-  "Jane Smith",
-  "Michael Johnson",
-  "Emily Davis",
-  "Chris Wilson",
-];
-
-export default function CounsellingForm() {
+export default function CounsellingPage() {
+  const [counsellor, setCounsellor] = useState<any | null>(null);
   const [description, setDescription] = useState("");
   const [phone, setPhone] = useState("");
   const [level, setLevel] = useState("GENERAL");
   const [meetingType, setMeetingType] = useState<"online" | "offline" | null>(
     null
   );
-  const {user} = useUser();
-  const{ getToken }= useAuth();
   const [meetingLocation, setMeetingLocation] = useState("");
   const [timing, setTiming] = useState("");
   const [concerns, setConcerns] = useState<string[]>([]);
   const [severity, setSeverity] = useState("");
-  const [counsellor, setCounsellor] = useState("");
-  const [mode, setMode] = useState<"ai" | "custom" | null>(null);
   const [submitted, setSubmitted] = useState<null | any>(null);
+  const [countdown, setCountdown] = useState<string>("");
 
-  const [query, setQuery] = useState("");
-  const filteredCounsellors = counsellorList.filter((c) =>
-    c.toLowerCase().includes(query.toLowerCase())
-  );
+  const { user } = useUser();
+  const { getToken } = useAuth();
+
+  // Load selected counsellor
+  useEffect(() => {
+    const stored = localStorage.getItem("counsellor");
+    if (stored) setCounsellor(JSON.parse(stored));
+
+    const handleChange = () => {
+      const updated = localStorage.getItem("counsellor");
+      setCounsellor(updated ? JSON.parse(updated) : null);
+    };
+
+    window.addEventListener("counsellor-changed", handleChange);
+    return () => window.removeEventListener("counsellor-changed", handleChange);
+  }, []);
 
   const toggleConcern = (value: string) => {
     setConcerns((prev) =>
@@ -55,333 +57,371 @@ export default function CounsellingForm() {
   };
 
   const validate = () => {
-    if (!description.trim()) return { ok: false, message: "Description required" };
-    if (!phone.trim()) return { ok: false, message: "Phone required" };
+    if (!description.trim())
+      return { ok: false, message: "Description required" };
+
+    // Phone validation
+    const phoneRegex = /^[5-9]\d{9,11}$/;
+    if (!phoneRegex.test(phone)) {
+      return {
+        ok: false,
+        message:
+          "Phone must be 10–12 digits and start with a number between 5 and 9",
+      };
+    }
+
     if (!timing) return { ok: false, message: "Timing required" };
-    if (concerns.length === 0) return { ok: false, message: "Select concerns" };
+    if (concerns.length === 0)
+      return { ok: false, message: "Select concerns" };
     if (!severity) return { ok: false, message: "Severity required" };
+    if (!counsellor) return { ok: false, message: "Select a counsellor first" };
     return { ok: true };
   };
 
-  const handleSubmit =async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const v = validate();
-    const token =await getToken();
-    const payload = {
-      discription:description,
-      phone,
-      level,
-      meetingType,
-      meetingLocation: meetingType === "offline" ? meetingLocation : null,
+    if (!v.ok) return toast(v.message);
+    const token = await getToken();
+try {
+  const { data } = await axios.post(
+    "http://localhost:5000/api/ticket/create_ticket",
+    {
+      clerkId: user.id,
+      discription: description,
+      meetingLocation:
+        meetingType === "offline" ? meetingLocation : undefined,
       timing,
-      concerns,
-      severity,
-      counsellor: mode === "custom" ? counsellor : "AI Suggested",
-      createdAt: new Date().toISOString(),
-    };
+      level,
+      conserns: concerns,
+      severityOfCase: severity,
+      counsellorId: counsellor.id,
+    },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
 
- try {
-  console.log("inside submit"+` ${token}`)
-   const {data}= await axios.post(
-   "http://localhost:5000/api/ticket/create_ticket",
-   {
-    clerkId:user.id,
-     discription:description,
-     meetingLocation:meetingType==="offline"?meetingLocation:undefined,
-     timing,
-     level,
-     conserns:concerns,
-     severityOfCase:severity,
-   },
-   {
-     headers: {
-       Authorization: `Bearer ${token}`, // your token here
-     },
-   }
- );
-      console.log(data)
-     setSubmitted({ success: true, payload });
- } catch (error) {
-  
- }
+  setSubmitted({ success: true, payload: data });
+} catch (err) {
+  toast(
+  "⚠️ You already have a pending appointment!\nPlease finish your current session before booking a new one.",
+  {
+    
+    description: "You can only have one active appointment at a time.",
+    action: {
+      label: "View Appointments",
+      onClick: () => {
+        // optional: navigate to user's appointments page
+        window.location.href = "/student-dashboard";
+      },
+    },
+    duration: 8000,         // show for 8 seconds
+  }
+);
+  setSubmitted({ success: false, payload: null });
+}
   };
 
+  // Countdown updater
+useEffect(() => {
+  if (submitted?.success && submitted.payload?.timing) {
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const eventTime = new Date(submitted.payload.timing).getTime();
+      const diff = eventTime - now;
+
+      if (diff <= 0) {
+        setCountdown("✅ Session time has started!");
+        clearInterval(interval);
+      } else {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        setCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s remaining`);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }
+}, [submitted]);
+
+
+
   return (
-    <div className="bg-background min-h-screen mt-16 flex flex-col bg-slate-200">
+    <div className="bg-blue-50 min-h-screen pt-14 flex flex-col">
       <Navbar />
 
-      <div className="flex flex-1 px-4 py-6 gap-6">
-        {/* Form */}
-        <div className="flex-1">
-          <Card className="p-8 max-w-3xl mx-auto">
-            {/* AI / Custom buttons */}
-            <div className="flex gap-4 mb-6">
-              <Button
-                type="button"
-                variant={mode === "ai" ? "default" : "outline"}
-                className="flex-1"
-                onClick={() => {
-                  setMode("ai");
-                  setDescription("Give me detailed descriptiomn of your problem expaining all yours issues .");
-                  setPhone("9876543210");
-                  setLevel("Normal");
-                  setMeetingType("online");
-                  setTiming(new Date().toISOString().slice(0, 16));
-                  setConcerns(["ANXIETY_STRESS"]);
-                  setSeverity("Medium");
-                  setCounsellor("");
-                }}
-              >
-                AI Counsellor Selection
-              </Button>
-              <Button
-                type="button"
-                variant={mode === "custom" ? "default" : "outline"}
-                className="flex-1"
-                onClick={() => {
-                  setMode("custom");
-                  setDescription("");
-                  setPhone("");
-                  setLevel("Normal");
-                  setMeetingType(null);
-                  setTiming("");
-                  setConcerns([]);
-                  setSeverity("");
-                  setCounsellor("");
-                }}
-              >
-                Custom Counsellor Selection
-              </Button>
+      <div className="flex flex-1 flex-col lg:flex-row py-4">
+        {/* Sidebar on large screens */}
+        <div className="hidden lg:flex flex-shrink-0">
+          <SideBar />
+        </div>
+
+        {/* Search bar on small screens */}
+        <div className="lg:hidden px-4 mb-4">
+          <Input placeholder="Search counsellors..." />
+        </div>
+
+        {/* Main content / Form */}
+        <div className="flex-grow mr-8">
+          {!counsellor ? (
+            <div className="flex justify-center items-center h-full min-h-[50vh]">
+              <Card className="p-12 bg-white rounded-lg shadow-lg animate-fade-in mt-6">
+                <h2 className="text-2xl font-bold text-blue-700 mb-4 text-center">
+                  Please select a counsellor
+                </h2>
+                <p className="text-blue-600 text-center">
+                  You need to choose a counsellor from the sidebar to proceed
+                  with the form.
+                </p>
+              </Card>
             </div>
+          ) : submitted?.success ? (
+            <Card className="p-8 max-w-2xl mx-auto bg-white rounded-lg shadow-lg animate-fade-in mt-6">
+              <h2 className="text-2xl font-bold text-green-700 mb-4">
+                🎉 Ticket Created Successfully
+              </h2>
+              <p className="text-blue-700">{countdown}</p>
 
-            {mode === "custom" && (
-              <div className="mb-4 relative">
-                <Label>Choose Counsellor</Label>
-                <Input
-                  type="text"
-                  placeholder="Type to filter..."
-                  value={counsellor}
-                  onChange={(e) => setCounsellor(e.target.value)}
-                />
-                {counsellor &&
-                  filteredCounsellors.length > 0 &&
-                  filteredCounsellors.map((c) => (
-                    <div
-                      key={c}
-                      onClick={() => setCounsellor(c)}
-                      className="absolute bg-white border w-full px-4 py-2 cursor-pointer hover:bg-gray-100 z-50"
-                    >
-                      {c}
-                    </div>
-                  ))}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Description */}
-              <div className="space-y-2">
-                <Label>
-                  Description <span className="text-red-500">*</span>
-                </Label>
-                <Textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Write your issue..."
-                  className="min-h-[120px]"
-                  required
-                />
+              <div className="mt-2 text-sm text-blue-600">
+                <p>
+                  <strong>Counsellor:</strong>{" "}
+                  {submitted.payload.counsellor?.firstName}{" "}
+                  {submitted.payload.counsellor?.lastName}
+                </p>
+                {submitted.payload.meetingLocation && (
+                  <p>
+                    <strong>📍 Location:</strong>{" "}
+                    {submitted.payload.meetingLocation}
+                  </p>
+                )}
               </div>
 
-              {/* Phone */}
-              <div className="space-y-2">
-                <Label>
-                  Phone <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
-                />
-              </div>
-
-              {/* Online / Offline toggle */}
-              <div className="space-y-2">
-                <Label>Meeting Type</Label>
-                <div className="flex gap-4">
-                  <Button
-                    type="button"
-                    variant={meetingType === "online" ? "default" : "outline"}
-                    onClick={() => setMeetingType("online")}
-                  >
-                    Online
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={meetingType === "offline" ? "default" : "outline"}
-                    onClick={() => setMeetingType("offline")}
-                  >
-                    Offline
-                  </Button>
-                </div>
-              </div>
-
-              {/* Meeting Location (only offline) */}
-              {meetingType === "offline" && (
-                <div className="space-y-2">
-                  <Label>Meeting Address</Label>
-                  <Input
-                    value={meetingLocation}
-                    onChange={(e) => setMeetingLocation(e.target.value)}
-                    placeholder="Enter meeting address"
-                    required
-                  />
-                </div>
-              )}
-
-              {/* Timing */}
-          <div className="space-y-2">
-  <Label>
-    Date & Time <span className="text-red-500">*</span>
-  </Label>
-  <Input
-    type="datetime-local"
-    value={timing}
-    onChange={(e) => {
-      const value = e.target.value;
-      setTiming(value);
-
-      const date = new Date(value);
-      const hours = date.getHours();
-
-      if (hours < 10 || hours > 16) {
-        toast("Timing invalid", {
-          description: "Counseller timing should be between 9Am to 4 Pm",
-        })
-        setTiming(""); 
-      }
-    }}
-    required
-  />
-</div>
-
-              {/* Concerns */}
-              <div className="space-y-2">
-                <Label>
-                  Concerns <span className="text-red-500">*</span>
-                </Label>
-                <div className="grid sm:grid-cols-2 gap-2">
-                  {[
-                    "MOOD_EMOTIONS",
-                    "ANXIETY_STRESS",
-                    "SLEEP_ENERGY",
-                    "ACADEMICS_PERFORMANCE",
-                    "SOCIAL_RELATIONSHIPS",
-                    "SELF_PERCEPTION",
-                    "RISK_BEHAVIORS",
-                    "PHYSICAL_HEALTH",
-                  ].map((c) => (
-                    <label
-                      key={c}
-                      className="flex items-center space-x-2 border rounded-md p-2 cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={concerns.includes(c)}
-                        onChange={() => toggleConcern(c)}
-                      />
-                      <span className="text-sm">{c}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Severity */}
-              <div className="space-y-2">
-                <Label>Severity</Label>
-                <Select value={severity} onValueChange={setSeverity}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select severity" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {["Normal", "MEDIUM", "Emergency"].map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {s}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-4">
-                <Button type="submit" className="flex-1">
-                  Submit
+              <div className="mt-3 flex gap-8">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    window.location.href = "/student-dashboard"; // Replace with your route
+                  }}
+                >
+                  Go to Dashboard
                 </Button>
                 <Button
                   type="button"
-                  variant="outline"
-                  className="flex-1"
                   onClick={() => {
-                    setDescription("");
-                    setPhone("");
-                    setLevel("Normal");
-                    setMeetingType(null);
-                    setMeetingLocation("");
-                    setTiming("");
-                    setConcerns([]);
-                    setSeverity("");
-                    setCounsellor("");
-                    setMode(null);
-                    setSubmitted(null);
+                    setSubmitted(false);
+                    setSeverity(null)
+                    setTiming("")
+                    setDescription("")
+                    setMeetingType(null)
+                    setPhone(null)
+                     // Replace with your route
                   }}
                 >
-                  Reset
+                  Add another appointment
+                </Button>
+              </div>
+            </Card>
+          ) : (
+            <Card className="p-8 max-w-2xl mx-auto bg-white rounded-lg shadow-lg animate-fade-in mt-6">
+              {/* Change Counsellor Button */}
+              <div className="flex justify-end mb-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    localStorage.removeItem("counsellor");
+                    setCounsellor(null);
+                    toast("Counsellor removed, please choose another one.");
+                  }}
+                >
+                  Change Counsellor
                 </Button>
               </div>
 
-              {submitted && (
-                <Card
-                  className={`p-4 mt-4 ${
-                    submitted.success ? "bg-green-50" : "bg-red-50"
-                  }`}
-                >
-                  {submitted.success ? (
-                    <pre className="text-xs overflow-auto">
-                      {JSON.stringify(submitted.payload, null, 2)}
-                    </pre>
-                  ) : (
-                    <p className="text-red-700">{submitted.message}</p>
-                  )}
-                </Card>
-              )}
-            </form>
-          </Card>
-        </div>
+              <h2 className="text-2xl font-bold text-blue-700 mb-4">
+                Counselling Form for {counsellor.firstName}{" "}
+                {counsellor.lastName}
+              </h2>
 
-        {/* Right-side search bar */}
-        <div className="w-64 flex-shrink-0 ">
-          <Card className="p-4 sticky top-24 bg-green-100">
-            <Label>Search Counsellors</Label>
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Type to filter..."
-            />
-            <div className="mt-2 max-h-40 overflow-y-auto">
-              {query
-                ? filteredCounsellors.map((c) => (
-                    <div key={c} className="py-1 px-2 hover:bg-gray-100 cursor-pointer">
-                      {c}
-                    </div>
-                  ))
-                : counsellorList.map((c) => (
-                    <div key={c} className="py-1 px-2 text-gray-500 cursor-default">
-                      {c}
-                    </div>
-                  ))}
-            </div>
-          </Card>
+              <form onSubmit={handleSubmit} className="space-y-3">
+                {/* Description */}
+                <div className="space-y-1">
+                  <Label>
+                    Description <span className="text-red-500">*</span>
+                  </Label>
+                  <Textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Write your issue..."
+                    className="min-h-[120px]"
+                    required
+                  />
+                </div>
+
+                {/* Phone */}
+                <div className="space-y-1">
+                  <Label>
+                    Phone <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required
+                  />
+                </div>
+
+                {/* Meeting Type */}
+                <div className="space-y-1">
+                  <Label>Meeting Type</Label>
+                  <div className="flex gap-4">
+                    <Button
+                      type="button"
+                      variant={meetingType === "online" ? "default" : "outline"}
+                      onClick={() => setMeetingType("online")}
+                    >
+                      Online
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={meetingType === "offline" ? "default" : "outline"}
+                      onClick={() => setMeetingType("offline")}
+                    >
+                      Offline
+                    </Button>
+                  </div>
+                </div>
+
+                {meetingType === "offline" && (
+                  <div className="space-y-1">
+                    <Label>Meeting Address</Label>
+                    <Input
+                      value={meetingLocation}
+                      onChange={(e) => setMeetingLocation(e.target.value)}
+                      placeholder="Enter meeting address"
+                      required
+                    />
+                  </div>
+                )}
+
+                {/* Timing */}
+                <div className="space-y-1">
+                  <Label>
+                    Date & Time <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    type="datetime-local"
+                    value={timing}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setTiming(val);
+
+                      if (val) {
+                        const selected = new Date(val);
+                        const now = new Date();
+
+                        // At least 1 day later
+                        const minDate = new Date();
+                        minDate.setDate(now.getDate() + 1);
+
+                        if (selected < minDate) {
+                          toast("Please select a date at least 1 day from now");
+                          setTiming("");
+                          return;
+                        }
+
+                        // Must be between 10 AM and 4 PM
+                        const hours = selected.getHours();
+                        if (hours < 10 || hours >= 16) {
+                          toast(
+                            "Please select a time between 10:00 AM and 4:00 PM"
+                          );
+                          setTiming("");
+                        }
+                      }
+                    }}
+                    required
+                  />
+                </div>
+
+                {/* Concerns */}
+                <div className="space-y-1">
+                  <Label>
+                    Concerns <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="grid sm:grid-cols-2 gap-2">
+                    {[
+                      "MOOD_EMOTIONS",
+                      "ANXIETY_STRESS",
+                      "SLEEP_ENERGY",
+                      "ACADEMICS_PERFORMANCE",
+                      "SOCIAL_RELATIONSHIPS",
+                      "SELF_PERCEPTION",
+                      "RISK_BEHAVIORS",
+                      "PHYSICAL_HEALTH",
+                    ].map((c) => (
+                      <label
+                        key={c}
+                        className="flex items-center space-x-2 border rounded-md p-2 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={concerns.includes(c)}
+                          onChange={() => toggleConcern(c)}
+                        />
+                        <span className="text-sm">{c}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Severity */}
+                <div className="space-y-1">
+                  <Label>Severity</Label>
+                  <Select value={severity} onValueChange={setSeverity}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select severity" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["Normal", "MEDIUM", "Emergency"].map((s) => (
+                        <SelectItem key={s} value={s}>
+                          {s}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Buttons */}
+                <div className="flex gap-4">
+                  <Button type="submit" className="flex-1">
+                    Submit
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => {
+                      setDescription("");
+                      setPhone("");
+                      setLevel("GENERAL");
+                      setMeetingType(null);
+                      setMeetingLocation("");
+                      setTiming("");
+                      setConcerns([]);
+                      setSeverity("");
+                      setSubmitted(null);
+                    }}
+                  >
+                    Reset
+                  </Button>
+                </div>
+              </form>
+            </Card>
+          )}
         </div>
       </div>
 

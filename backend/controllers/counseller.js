@@ -1,3 +1,4 @@
+import e from "express";
 import { db } from "../prismaClient/prisma.js";
 
 
@@ -107,6 +108,7 @@ export const getCounseller = async(req,res)=>{
   }
 
   try {
+    const clerkId = req?.auth?.userId
 
     const counseller = await db.counseller.findUnique({where:{clerkId}});
     if(counseller){
@@ -118,4 +120,58 @@ export const getCounseller = async(req,res)=>{
         console.log(err.message)
         return res.status(500).json({message:"internal server error"})
     }
+}
+
+export const filterCounseller = async(req,res)=>{
+  // if(!req.auth||!req.auth.id){
+  //   return res.status(401).json({message:"clerk authorization has failed"})
+  // }
+  try {
+    console.log("called")
+ const search = req.body?.search || "";
+console.log(search)
+// build where condition
+const whereCondition = search
+  ? {
+      OR: [
+        {
+          firstName: {
+            startsWith: search,
+            mode: "insensitive", // case-insensitive search
+          },
+        },
+        {
+          lastName: {
+            startsWith: search,
+            mode: "insensitive",
+          },
+        },
+      ],
+    }
+  : {};
+
+const [counsellors, totalCount] = await Promise.all([
+  db.counsellor.findMany({
+    where: whereCondition,
+    take: 11, // limit to 11 results
+  }),
+  db.counsellor.count({
+    where: whereCondition,
+  }),
+]);
+
+if(!res){
+  return res.status(401).json({message:"counsellors not found"});
+}
+console.log(counsellors)
+
+return res.status(200).json({
+  totalCount,
+  counsellors,
+});
+
+  } catch (error) {
+    console.log("errorInFilterCounseller"+" "+error.message);
+    return res.status(500).json({message:error})
+  }
 }
