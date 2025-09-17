@@ -72,7 +72,7 @@ export const registerUser = async (req, res) => {
 
     // Student (default)
     console.log("Creating/updating student...");
-    const user = await db.user.upsert({
+    const student = await db.students.upsert({
       where: { email },
       update: {
         email,
@@ -90,8 +90,8 @@ export const registerUser = async (req, res) => {
       },
     });
 
-    console.log("User created/updated:", user);
-    return res.json({ role: "student", data: user });
+    console.log("Student created/updated:", student);
+    return res.json({ role: "student", data: student });
   } catch (err) {
     console.error("ERROR in registerUser:", err);
     console.error("Error details:", {

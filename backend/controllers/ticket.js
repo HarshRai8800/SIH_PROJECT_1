@@ -4,14 +4,14 @@ import {inngest} from "../inngest/client.js"
 export const createTicket = async(req,res)=>{
 
     const {clerkId} = req.body
-    const user = await db.user.findUnique({
+    const student = await db.students.findUnique({
         where:{clerkId:clerkId}
     })
-    if(!user){
+    if(!student){
         return res.status(403).send("Forbidden");
     }
    try {
-    const {mode,discription,meetingLocation,timing,conserns,level,severityOfCase,counsellerType} = req.body;
+    const {mode,description,meetingLocation,timing,conserns,level,severityOfCase,counsellorType,phoneNumber} = req.body;
     const date = new Date(timing); 
     if(mode=="offline"&&!meetingLocation){
      return res.status(401).json({error:"Meeting location not mentioned"});
@@ -19,14 +19,15 @@ export const createTicket = async(req,res)=>{
  
     const ticket = await db.ticket.create({
      data:{
-         studentId:user?.id,
-        discription,     
-        level :level,  
-        meetingLocation,   
-        timing:date.toISOString(),  
-        consern :conserns,
+        studentId:student?.id,
+        description: description,
+        level :level,
+        meetingLocation,
+        timing:date.toISOString(),
+        concern :conserns,
         severity :severityOfCase,
-        counsellerType:counsellerType?counsellerType:null
+        counsellorType: counsellorType ? counsellorType : null,
+        phoneNumber: phoneNumber || null
      }
     })
     console.log(ticket)

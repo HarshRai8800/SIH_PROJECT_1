@@ -1,4 +1,4 @@
-import { db } from "../prismaClient/prisma";
+import { db } from "../prismaClient/prisma.js";
 
 
 export const updatedForm = async (req, res) => {
@@ -10,12 +10,12 @@ export const updatedForm = async (req, res) => {
 
     const clerkId = req.auth.userId;
 
-    const user = await db.user.findUnique({
+    const student = await db.students.findUnique({
       where: { clerkId },
     });
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
     }
 
     const {
@@ -34,7 +34,7 @@ export const updatedForm = async (req, res) => {
     if (interpretation !== undefined) updateData.interpretation = interpretation;
 
     const updatedTest = await db.testResult.updateMany({
-      where: { userId: user.id },
+      where: { userId: student.id },
       data: updateData,
     });
 
