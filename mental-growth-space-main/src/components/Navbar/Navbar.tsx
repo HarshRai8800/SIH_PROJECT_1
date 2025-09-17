@@ -8,6 +8,7 @@ import {
   User,
   Brain,
   BarChart3,
+  Dumbbell,
 } from "lucide-react";
 import {
   SignedIn,
@@ -61,11 +62,12 @@ const Navbar = () => {
     { path: "/counselling", label: t("counselling"), icon: Calendar, role: "student" },
     { path: "/resources", label: t("resources"), icon: BookOpen, role: "student" },
     { path: "/forum", label: t("forum"), icon: Users, role: "student" },
-    { path: "/student-dashboard", label: t("dashboard"), icon: BarChart3, role: "student" },
+    { path: "/student/dashboard", label: t("dashboard"), icon: BarChart3, role: "student" },
     { path: "/admin", label: t("dashboard"), icon: BarChart3, role: "admin" },
     { path: "/admin/add-student", label: t("add student"), icon: BarChart3, role: "admin" },
     { path: "/admin/add-counsellor", label: t("add counsellor"), icon: BarChart3, role: "admin" },
     { path: "/admin/block-request", label: t("block request"), icon: BarChart3, role: "admin" },
+    { path: "/exercises", label: t("Activities"), icon: Dumbbell }, 
   ];
 
   // 🌐 Language dropdown

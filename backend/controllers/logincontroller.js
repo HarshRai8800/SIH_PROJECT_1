@@ -63,12 +63,9 @@ export const registerUser = async (req, res) => {
     }
 
     // Student (default)
-<<<<<<< HEAD
+
     const user = await db.students.upsert({
-=======
-    console.log("Creating/updating student...");
-    const student = await db.students.upsert({
->>>>>>> 804b0231c858174771b4a02e7df7d1c19c406ac4
+
       where: { email },
       update: {
 
@@ -93,12 +90,8 @@ export const registerUser = async (req, res) => {
       },
     });
 
-<<<<<<< HEAD
     return res.json({ role: "student", data: user });
-=======
-    console.log("Student created/updated:", student);
-    return res.json({ role: "student", data: student });
->>>>>>> 804b0231c858174771b4a02e7df7d1c19c406ac4
+
   } catch (err) {
     console.error("ERROR in registerUser:", err);
     console.error("Error details:", {

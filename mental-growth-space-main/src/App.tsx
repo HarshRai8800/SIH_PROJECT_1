@@ -15,7 +15,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 // import CounsellorDashboard from "./pages/CounsellorDashboard";
 import SuccessStoriesPage from "./pages/SuccessStoriesPage";
 import NotFound from "./pages/NotFound";
-
+import Exercises from "./pages/Excersices.tsx";
 import StudentDashboard from "./pages/StudentDashboard";
 import CounsellorDashboard from "./pages/CounsellorDashboard";
 import CustomSignUp from "./components/Sign-up/CustomSignUp";
@@ -54,6 +54,7 @@ const App = () => (
             <Route path="/edit-profile" element={<EditProfilePage />} />
             <Route path="/success-stories" element={<SuccessStoriesPage />} />
             {/* Dashboards (single canonical paths) */}
+            <Route path="/exercises" element={<Exercises />} />
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
           </Route>
