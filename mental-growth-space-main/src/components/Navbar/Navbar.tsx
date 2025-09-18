@@ -9,6 +9,10 @@ import {
   Brain,
   BarChart3,
   Dumbbell,
+  LayoutDashboard,
+  UserPlus,
+  UserCog,
+  ShieldAlert,
 } from "lucide-react";
 import {
   SignedIn,
@@ -63,10 +67,11 @@ const Navbar = () => {
     { path: "/resources", label: t("resources"), icon: BookOpen, role: "student" },
     { path: "/forum", label: t("forum"), icon: Users, role: "student" },
     { path: "/student/dashboard", label: t("dashboard"), icon: BarChart3, role: "student" },
-    { path: "/admin", label: t("dashboard"), icon: BarChart3, role: "admin" },
-    { path: "/admin/add-student", label: t("add student"), icon: BarChart3, role: "admin" },
-    { path: "/admin/add-counsellor", label: t("add counsellor"), icon: BarChart3, role: "admin" },
-    { path: "/admin/block-request", label: t("block request"), icon: BarChart3, role: "admin" },
+    { path: "/admin", label: t("dashboard"), icon: LayoutDashboard, role: "admin" },
+    { path: "/admin/add-student", label: t("add student"), icon: UserPlus, role: "admin" },
+    { path: "/admin/add-counsellor", label: t("add counsellor"), icon: UserCog, role: "admin" },
+    { path: "/admin/block-request", label: t("block request"), icon: ShieldAlert, role: "admin" },
+    { path: "/counsellor/dashboard", label: t("dashboard"), icon: BarChart3, role: "counsellor" },
     { path: "/exercises", label: t("Activities"), icon: Dumbbell }, 
   ];
 
@@ -164,7 +169,7 @@ const Navbar = () => {
                   variant={isActive("/sign-up") ? "default" : "ghost"}
                   size="sm"
                 >
-                  <span>{t("sign_up") || "Sign Up"}</span>
+                  <span>{t("Sign-Up") || "Sign Up"}</span>
                 </Button>
               </Link>
             </SignedOut>
