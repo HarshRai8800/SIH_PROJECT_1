@@ -7,7 +7,7 @@ export const createTicket = async(req,res)=>{
 
         where:{clerkId:clerkId}
     })
-    if(!student){
+    if(!user){
         return res.status(403).send("Forbidden");
     }
    try {
@@ -98,7 +98,148 @@ return res.status(200).json(upcomingTickets)
 }
 
 }
-        
+
+export const getCounsellorTickets = async(req,res)=>{
+  try {
+    if(!req.auth||!req.auth.userId){
+      return res.status(400).json({message:"Authorization token not found"})
+    }
+
+    const clerkId = req.auth.userId
+
+    const counsellor = await db.counsellor.findUnique({
+      where:{
+        clerkId:clerkId
+      }
+    })
+    if(!counsellor){
+      return res.status(404).json({message:"clerkId not found in database"})
+    }
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000); // 1 hour ago
+
+const tickets = await db.ticket.findMany({
+  where: {
+    counsellorId: counsellor.id,
+    timing: {
+      gt: oneHourAgo,
+    },
+  },
+  orderBy: {
+    timing: "asc",
+  },
+  take: 12, 
+});
+
+const totalCount = await db.ticket.count({
+  where: {
+    counsellorId: counsellor.id,
+    timing: {
+      gt: oneHourAgo,
+    },
+  },
+});
+
+    return res.status(200).json({tickets,totalCount})
+
+  } catch (error) {
+      console.log(error.message)
+      return res.status(404).json({message:error.message})
+  }
+}
+
+export const getTodayCounsellorTickets = async (req, res) => {
+  try {
+    if (!req.auth || !req.auth.userId) {
+      return res.status(400).json({ message: "Authorization token not found" });
+    }
+
+    const clerkId = req.auth.userId;
+
+    const counsellor = await db.counsellor.findUnique({
+      where: { clerkId },
+    });
+
+    if (!counsellor) {
+      return res.status(404).json({ message: "clerkId not found in database" });
+    }
+
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000); // current - 1 hour
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999); // end of today
+
+    const tickets = await db.ticket.findMany({
+      where: {
+        counsellorId: counsellor.id,
+        timing: {
+          gt: oneHourAgo,
+          lte: endOfDay,
+        },
+      },
+      orderBy: { timing: "asc" },
+    });
+
+    const totalCount = await db.ticket.count({
+      where: {
+        counsellorId: counsellor.id,
+        timing: {
+          gt: oneHourAgo,
+          lte: endOfDay,
+        },
+      },
+    });
+
+    return res.status(200).json({ tickets, totalCount });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getPastCounsellorTickets = async (req, res) => {
+  try {
+    if (!req.auth || !req.auth.userId) {
+      return res.status(400).json({ message: "Authorization token not found" });
+    }
+
+    const clerkId = req.auth.userId;
+
+    const counsellor = await db.counsellor.findUnique({
+      where: { clerkId },
+    });
+
+    if (!counsellor) {
+      return res.status(404).json({ message: "clerkId not found in database" });
+    }
+
+    const now = new Date();
+
+    const tickets = await db.ticket.findMany({
+      where: {
+        counsellorId: counsellor.id,
+        timing: {
+          lt: now, // strictly before now
+        },
+      },
+      orderBy: { timing: "desc" }, // latest past first
+    });
+
+    const totalCount = await db.ticket.count({
+      where: {
+        counsellorId: counsellor.id,
+        timing: {
+          lt: now,
+        },
+      },
+    });
+
+    return res.status(200).json({ tickets, totalCount });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
    
 
 

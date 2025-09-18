@@ -63,6 +63,7 @@ const Navbar = () => {
     { path: "/resources", label: t("resources"), icon: BookOpen, role: "student" },
     { path: "/forum", label: t("forum"), icon: Users, role: "student" },
     { path: "/student/dashboard", label: t("dashboard"), icon: BarChart3, role: "student" },
+     { path: "/counsellor/dashboard", label: t("dashboard"), icon: BarChart3, role: "counsellor" },
     { path: "/admin", label: t("dashboard"), icon: BarChart3, role: "admin" },
     { path: "/admin/add-student", label: t("add student"), icon: BarChart3, role: "admin" },
     { path: "/admin/add-counsellor", label: t("add counsellor"), icon: BarChart3, role: "admin" },
