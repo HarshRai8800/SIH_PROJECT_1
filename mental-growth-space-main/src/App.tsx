@@ -34,7 +34,8 @@ import BreathingExercisePage from "./pages/BreathingExercisePage.tsx";
 import BreathingExerciseDetail from "./components/BreathingExercise/BreathingExerciseDetail.tsx";
 import PhysicalExercisePage from "./pages/PhysicalExercisePage.tsx";
 import PhysicalExerciseDetail from "./components/PhysicalExercise/PhysicalExerciseDetail.tsx";
-import FunGames from "@/pages/FunGames";
+import FunGamesPage from "./pages/exercises/FunGamesPage";
+import FunGameDetail from "./components/FunGames/FunGameDetail";
 
 const queryClient = new QueryClient();
 
@@ -68,7 +69,8 @@ const App = () => (
             <Route path="/exercises/breathing-exercise/:exerciseId" element={<BreathingExerciseDetail/>} />
             <Route path="/exercises/physical-exercise" element={<PhysicalExercisePage />} />
             <Route path="/exercises/physical-exercise/:exerciseId" element={<PhysicalExerciseDetail/>} />
-            <Route path="/exercises/fun-games" element={<FunGames />} />
+            <Route path="/exercises/fun-games" element={<FunGamesPage />} />
+            <Route path="/exercises/fun-games/:gameId" element={<FunGameDetail />} />
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
           </Route>
