@@ -24,28 +24,28 @@ const exercisesData = [
         icon: Dumbbell,
         description:
             "Simple stretches and movements to keep your body active and energized.",
-            link:"/exercises/mind-exercise"
+            link:"/exercises/physical-exercise"
     },
     {
         title: "Mind Games",
         icon: Gamepad2,
         description:
             "Fun puzzles and brain teasers to sharpen problem-solving skills.",
-            link:"/exercises/mind-exercise"
+            link:"/exercises/mind-games"
     },
     {
         title: "Fun Games",
         icon: Smile,
         description:
             "Light-hearted activities designed to lift your mood and spark joy.",
-            link:"/exercises/mind-exercise"
+            link:"/exercises/fun-games"
     },
     {
         title: "More Coming Soon",
         icon: MoreHorizontal,
         description:
             "Stay tuned for exciting new exercises and wellness activities!",
-            link:"/exercises/mind-exercise"
+            link:"/exercises/comming-soon"
     },
 ];
 
