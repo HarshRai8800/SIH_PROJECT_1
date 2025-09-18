@@ -13,6 +13,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { Check } from "lucide-react";
+import { toast } from "sonner";
 
 interface UserProfile {
   firstName: string;
@@ -52,8 +53,8 @@ const EditProfilePage = () => {
           },
         });
 
-        const data = res.data.user as UserProfile;
-        console.log(res.data.user)
+        const data = res.data.student as UserProfile;
+        console.log(res.data.student)
         setFormData({
           firstName: data.firstName || "",
           lastName: data.lastName || "",
@@ -124,7 +125,10 @@ const EditProfilePage = () => {
       );
       console.log(res.data)
 
-      alert("Profile updated successfully!");
+      toast.success("Profile updated successfully!", {
+  duration: 3000, // 3 seconds
+  description: "Your changes have been saved successfully."
+});
     } catch (err) {
       console.error("Error updating profile:", err);
     } finally {
