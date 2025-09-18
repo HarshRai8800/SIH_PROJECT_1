@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Clock, Brain } from "lucide-react";
+import { CheckCircle, Clock, Wind } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export interface MindExerciseProps {
+export interface BreathingExerciseProps {
     id: string;
     title: string;
     description: string;
@@ -18,7 +18,7 @@ export interface MindExerciseProps {
     benefits: string[];
 }
 
-export default function MindExercise({
+export default function BreathingExercise({
     id,
     title,
     description,
@@ -26,7 +26,7 @@ export default function MindExercise({
     difficulty,
     steps,
     benefits
-}: MindExerciseProps) {
+}: BreathingExerciseProps) {
     const [currentStep, setCurrentStep] = useState(0);
     const [isCompleted, setIsCompleted] = useState(false);
     const [isStarted, setIsStarted] = useState(false);
@@ -94,7 +94,7 @@ export default function MindExercise({
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <Brain className="h-6 w-6 text-primary" />
+                        <Wind className="h-6 w-6 text-primary" />
                         <CardTitle className="text-xl font-bold">{title}</CardTitle>
                     </div>
                     <div className="flex items-center gap-2">

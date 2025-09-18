@@ -30,6 +30,8 @@ import AddCounsellorPage from "./pages/AddCounsellor";
 import AdminLogin from "./components/AdminLogin/AdminLogin.tsx";
 import SSOCallback from "./pages/SSOCallback";
 import AdminRouteProtection from "./components/AdminRouteProtection.tsx";
+import BreathingExercisePage from "./pages/BreathingExercisePage.tsx";
+import BreathingExerciseDetail from "./components/BreathingExercise/BreathingExerciseDetail.tsx";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +61,8 @@ const App = () => (
             <Route path="/exercises" element={<Exercises />} />
             <Route path="/exercises/mind-exercise" element={<MindExercisePage />} />
             <Route path="/exercises/mind-exercise/:exerciseId" element={<MindExerciseDetail />} />
+            <Route path="/exercises/breathing-exercise" element={<BreathingExercisePage />} />
+            <Route path="/exercises/breathing-exercise/:exerciseId" element={<BreathingExerciseDetail/>} />
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
           </Route>

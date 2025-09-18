@@ -17,7 +17,7 @@ const exercisesData = [
         icon: Wind,
         description:
             "Relaxing breathing techniques to reduce stress and improve lung capacity.",
-            link:"/exercises/mind-exercise"
+            link:"/exercises/breathing-exercise"
     },
     {
         title: "Physical Exercises",
