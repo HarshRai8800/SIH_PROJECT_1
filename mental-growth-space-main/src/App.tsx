@@ -15,6 +15,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 // import CounsellorDashboard from "./pages/CounsellorDashboard";
 import SuccessStoriesPage from "./pages/SuccessStoriesPage";
 import NotFound from "./pages/NotFound";
+import MindExercisePage from "./pages/MindExercisePage";
+import MindExerciseDetail from "./components/MindExercise/MindExerciseDetail";
 import Exercises from "./pages/Excersices.tsx";
 import StudentDashboard from "./pages/StudentDashboard";
 import CounsellorDashboard from "./pages/CounsellorDashboard";
@@ -43,7 +45,7 @@ const App = () => (
 
           {/* Public-only routes (do not duplicate protected ones here) */}
           <Route path="/sign-up/*" element={<CustomSignUp />} />
-          <Route path="/sso-callback/*" element={<SSOCallback/>}/>
+          <Route path="/sso-callback/*" element={<SSOCallback />} />
           {/* Protected routes */}
           <Route element={<RouteProtection />}>
             <Route path="/chatbot" element={<ChatbotPage />} />
@@ -55,6 +57,8 @@ const App = () => (
             <Route path="/success-stories" element={<SuccessStoriesPage />} />
             {/* Dashboards (single canonical paths) */}
             <Route path="/exercises" element={<Exercises />} />
+            <Route path="/exercises/mind-exercise" element={<MindExercisePage />} />
+            <Route path="/exercises/mind-exercise/:exerciseId" element={<MindExerciseDetail />} />
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
           </Route>
@@ -63,12 +67,12 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
 
           {/* {admin} */}
-          <Route path="/admin/login" element={<AdminLogin/>} />
-           <Route element={<AdminRouteProtection />}>
-           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/add-student" element={<AddStudentPage />} />
-          <Route path="/admin/add-counsellor" element={<AddCounsellorPage />} />
-          <Route path="/admin/block-request" element={<BlockRequestPage />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route element={<AdminRouteProtection />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/add-student" element={<AddStudentPage />} />
+            <Route path="/admin/add-counsellor" element={<AddCounsellorPage />} />
+            <Route path="/admin/block-request" element={<BlockRequestPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

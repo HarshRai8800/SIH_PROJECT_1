@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dumbbell, Brain, Wind, Gamepad2, Smile, MoreHorizontal } from "lucide-react";
+import { Link} from "react-router-dom";
 
 const exercisesData = [
     {
@@ -9,40 +10,47 @@ const exercisesData = [
         icon: Brain,
         description:
             "Daily cognitive workouts to enhance focus, memory, and mental agility.",
+        link:"/exercises/mind-exercise"
     },
     {
         title: "Breathing Exercises",
         icon: Wind,
         description:
             "Relaxing breathing techniques to reduce stress and improve lung capacity.",
+            link:"/exercises/mind-exercise"
     },
     {
         title: "Physical Exercises",
         icon: Dumbbell,
         description:
             "Simple stretches and movements to keep your body active and energized.",
+            link:"/exercises/mind-exercise"
     },
     {
         title: "Mind Games",
         icon: Gamepad2,
         description:
             "Fun puzzles and brain teasers to sharpen problem-solving skills.",
+            link:"/exercises/mind-exercise"
     },
     {
         title: "Fun Games",
         icon: Smile,
         description:
             "Light-hearted activities designed to lift your mood and spark joy.",
+            link:"/exercises/mind-exercise"
     },
     {
         title: "More Coming Soon",
         icon: MoreHorizontal,
         description:
             "Stay tuned for exciting new exercises and wellness activities!",
+            link:"/exercises/mind-exercise"
     },
 ];
 
 export default function Exercises() {
+
     return (
         <div className="min-h-screen mt-8 bg-gradient-to-br from-[#e0f7fa] to-[#f1f8e9]">
             <Navbar />
@@ -57,8 +65,9 @@ export default function Exercises() {
                 </p>
 
                 <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                    {exercisesData.map(({ title, icon: Icon, description }) => (
-                        <Card
+                    {exercisesData.map(({ title, icon: Icon, description ,link }) => (
+                        <Link to={link}>
+                            <Card
                             key={title}
                             className="flex flex-col justify-between h-96 hover:scale-105 transition-transform border border-border/50 bg-gradient-to-br from-[#d0f0fd] via-[#e0f7fa] to-[#dcedc8] rounded-2xl shadow-md hover:shadow-xl"
                         >
@@ -81,6 +90,7 @@ export default function Exercises() {
                                 </Button>
                             </CardContent>
                         </Card>
+                        </Link>
                     ))}
                 </div>
             </section>

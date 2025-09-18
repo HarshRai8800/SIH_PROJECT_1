@@ -72,8 +72,8 @@ const Navbar = () => {
     { path: "/admin/add-counsellor", label: t("add counsellor"), icon: UserCog, role: "admin" },
     { path: "/admin/block-request", label: t("block request"), icon: ShieldAlert, role: "admin" },
     { path: "/counsellor/dashboard", label: t("dashboard"), icon: BarChart3, role: "counsellor" },
-
-    { path: "/exercises", label: t("Activities"), icon: Dumbbell }, 
+    { path: "/exercises", label: t("Activities"), icon: Dumbbell, role: "counsellor"  }, 
+    { path: "/exercises", label: t("Activities"), icon: Dumbbell, role: "student"  }, 
   ];
 
   // 🌐 Language dropdown
