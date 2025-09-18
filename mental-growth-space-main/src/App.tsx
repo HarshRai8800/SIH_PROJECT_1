@@ -26,6 +26,7 @@ import EditProfilePage from "./pages/EditProfilePage";
 import AddStudentPage from "./pages/AddStudent";
 import BlockRequestPage from "./pages/BlockRequest";
 import AddCounsellorPage from "./pages/AddCounsellor";
+import BrainGames from "./pages/BrainGames";
 
 import AdminLogin from "./components/AdminLogin/AdminLogin.tsx";
 import SSOCallback from "./pages/SSOCallback";
@@ -73,6 +74,7 @@ const App = () => (
             <Route path="/exercises/fun-games/:gameId" element={<FunGameDetail />} />
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
+            <Route path="/braingames" element={<BrainGames />} />
           </Route>
 
           {/* Catch-all */}
