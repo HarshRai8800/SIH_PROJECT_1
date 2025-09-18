@@ -34,7 +34,7 @@ import BreathingExercisePage from "./pages/BreathingExercisePage.tsx";
 import BreathingExerciseDetail from "./components/BreathingExercise/BreathingExerciseDetail.tsx";
 import PhysicalExercisePage from "./pages/PhysicalExercisePage.tsx";
 import PhysicalExerciseDetail from "./components/PhysicalExercise/PhysicalExerciseDetail.tsx";
-import FunGamesPage from "./pages/exercises/FunGamesPage";
+import FunGamesPage from "./pages/FunGamesPage.tsx";
 import FunGameDetail from "./components/FunGames/FunGameDetail";
 
 const queryClient = new QueryClient();
