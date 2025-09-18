@@ -20,15 +20,15 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import axios from "axios";
-import {useUser} from "@clerk/clerk-react"
+
 const ProfilePage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { getToken } = useAuth();
-  const{ user }= useUser();
-  // ✅ State for profile
+  const { user } = useUser();
+
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -36,19 +36,15 @@ const ProfilePage = () => {
     const fetchProfile = async () => {
       try {
         const token = await getToken();
-        console.log(user.id)
         const res = await axios.get("http://localhost:5000/api/get/user", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
           params: {
-            clerkId: user.id, // for now hardcoded
+            clerkId: user.id,
           },
         });
-
-        console.log("Profile data:", res.data);
-
-        setProfile(res.data.user);
+        setProfile(res.data.student);
       } catch (err) {
         console.error("Error fetching profile:", err);
       } finally {
@@ -57,7 +53,7 @@ const ProfilePage = () => {
     };
 
     fetchProfile();
-  }, [getToken,user]);
+  }, [getToken, user]);
 
   if (loading) {
     return (
@@ -195,56 +191,54 @@ const ProfilePage = () => {
             {/* Profile Info */}
             <div className="lg:col-span-1 space-y-6">
               {/* Profile Card */}
-              <Card className="card-gradient p-6 text-center">
-                <div className="relative mb-6">
-                  <ProgressRing
-                    progress={profile.wellnessScore || 0}
-                    size={120}
-                    strokeWidth={8}
-                  />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <User className="w-8 h-8 text-primary mb-1" />
-                    <span className="text-xs font-medium text-muted-foreground">
-                      {t("Wellness")}
-                    </span>
-                  </div>
-                </div>
+              <Card className="card-gradient p-6 flex flex-col items-center text-center">
+  {/* Profile Image */}
+  <div className="relative mb-6">
+    <img
+      src={profile.imageUrl || "/default-avatar.png"}
+      alt={`${profile.firstName} ${profile.lastName}`}
+      className="w-24 h-24 rounded-full border-2 border-primary mb-2"
+    />
+  </div>
 
-                <h2 className="text-xl font-bold text-foreground mb-2">
-                  {profile.firstName} {profile.lastName}
-                </h2>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {profile.email}
-                </p>
+  {/* Name & Email */}
+  <h2 className="text-xl font-bold text-foreground mb-1">
+    {profile.firstName} {profile.lastName}
+  </h2>
+  <p className="text-base  text-muted-foreground mb-1">{profile.email}</p>
+  <p className="text-base text-muted-foreground mb-2">
+    {profile.collegeName || "College Not Specified"}
+  </p>
+  <p className="text-base text-muted-foreground mb-4">
+    Joined: {new Date(profile.createdAt).toLocaleDateString("en-GB")}
+  </p>
 
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-primary">
-                      {profile.wellnessScore || 0}%
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {t("Wellness Score")}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-wellness">
-                      {profile.currentStreak || 0}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {t("Day Streak")}
-                    </div>
-                  </div>
-                </div>
+  {/* Stats */}
+  <div className="flex justify-around w-full mb-6">
+    <div className="flex flex-col items-center">
+      <div className="text-2xl font-bold text-primary">
+        {profile.wellnessScore || 0}%
+      </div>
+      <div className="text-xs text-muted-foreground">Wellness Score</div>
+    </div>
+    <div className="flex flex-col items-center">
+      <div className="text-2xl font-bold text-wellness">
+        {profile.currentStreak || 0}
+      </div>
+      <div className="text-xs text-muted-foreground">Day Streak</div>
+    </div>
+  </div>
 
-                <Button
-                  className="w-full mt-6"
-                  variant="outline"
-                  onClick={() => navigate("/edit-profile")}
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  {t("Edit Profile")}
-                </Button>
-              </Card>
+  {/* Edit Profile Button */}
+  <Button
+    className="w-full"
+    variant="outline"
+    onClick={() => navigate("/edit-profile")}
+  >
+    <Settings className="w-4 h-4 mr-2" />
+    Edit Profile
+  </Button>
+</Card>
 
               {/* Quick Stats */}
               <Card className="card-gradient p-6">
@@ -274,7 +268,7 @@ const ProfilePage = () => {
                       {t("Member Since")}
                     </span>
                     <span className="font-semibold text-foreground">
-                      {profile.joinDate || "N/A"}
+                      {new Date(profile.createdAt).toLocaleDateString("en-GB")}
                     </span>
                   </div>
                 </div>
@@ -462,4 +456,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
