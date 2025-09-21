@@ -14,7 +14,7 @@ class SocketManager {
       return this.socket;
     }
 
-    this.socket = io("https://sih-project-1-1.onrender.com", {
+    this.socket = io("https://sih-project-1-9wgj.onrender.com", {
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionAttempts: 5,

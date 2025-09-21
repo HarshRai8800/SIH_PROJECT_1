@@ -44,7 +44,7 @@ const EditProfilePage = () => {
     const fetchProfile = async () => {
       try {
         const token = await getToken();
-        const res = await axios.get("https://sih-project-1-1.onrender.com/api/get/user", {
+        const res = await axios.get("https://sih-project-1-9wgj.onrender.com/api/get/user", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

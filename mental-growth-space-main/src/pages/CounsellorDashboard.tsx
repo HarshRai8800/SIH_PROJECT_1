@@ -104,7 +104,7 @@ const CounsellorDashboard = () => {
     try {
       setLoading(true);
       const { data } = await axios.post(
-        'https://sih-project-1-1.onrender.com/api/ticket/get_counsellor_pastTickets',
+        'https://sih-project-1-9wgj.onrender.com/api/ticket/get_counsellor_pastTickets',
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

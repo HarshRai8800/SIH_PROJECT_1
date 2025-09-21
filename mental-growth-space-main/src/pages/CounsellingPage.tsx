@@ -86,7 +86,7 @@ export default function CounsellingPage() {
     const token = await getToken();
 try {
   const { data } = await axios.post(
-    "https://sih-project-1-1.onrender.com/api/ticket/create_ticket",
+    "https://sih-project-1-9wgj.onrender.com/api/ticket/create_ticket",
     {
       clerkId: user.id,
       discription: description,

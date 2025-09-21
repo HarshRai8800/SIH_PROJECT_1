@@ -14,7 +14,7 @@ export default function SideBar() {
       setLoading(true);
       const token = await getToken();
       const res = await fetch(
-        "https://sih-project-1-1.onrender.com/api/counseller/filterCounseller",
+        "https://sih-project-1-9wgj.onrender.com/api/counseller/filterCounseller",
         {
           method: "POST",
           headers: {

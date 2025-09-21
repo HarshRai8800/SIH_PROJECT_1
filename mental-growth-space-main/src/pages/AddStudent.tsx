@@ -38,7 +38,7 @@ export default function AddStudentPage() {
   });
 
   const apiBaseUrl = useMemo(() => {
-    return "https://sih-project-1-1.onrender.com/api/admin";
+    return "https://sih-project-1-9wgj.onrender.com/api/admin";
   }, []);
 
   const fetchStudents = async () => {
