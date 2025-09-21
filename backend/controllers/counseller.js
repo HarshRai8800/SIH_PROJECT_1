@@ -40,7 +40,7 @@ try{
     return res.status(201).json({message:"counseller has been created"})
 
 } catch (error) {
-    console.log(error)
+  
         return res.status(501).json({message:"Internal server error "})
   }
 
@@ -95,8 +95,7 @@ export const updateCounseller  = async(req,res)=>{
 
 
   } catch (error) {
-    console.log(error.message)
-    return res.status(500).json({message:"internal server error"})
+        return res.status(500).json({message:"internal server error"})
 
   }
 }
@@ -127,9 +126,9 @@ export const filterCounseller = async(req,res)=>{
   //   return res.status(401).json({message:"clerk authorization has failed"})
   // }
   try {
-    console.log("called")
+
  const search = req.body?.search || "";
-console.log(search)
+
 // build where condition
 const whereCondition = search
   ? {
@@ -163,7 +162,6 @@ const [counsellors, totalCount] = await Promise.all([
 if(!res){
   return res.status(401).json({message:"counsellors not found"});
 }
-console.log(counsellors)
 
 return res.status(200).json({
   totalCount,
@@ -171,7 +169,7 @@ return res.status(200).json({
 });
 
   } catch (error) {
-    console.log("errorInFilterCounseller"+" "+error.message);
+
     return res.status(500).json({message:error})
   }
 }
