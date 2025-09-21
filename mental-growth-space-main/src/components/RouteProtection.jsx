@@ -36,6 +36,8 @@ const RouteProtection = () => {
                     }
 
                     const token = await getToken();
+                    localStorage.setItem('clerkToken', token);
+
                     await fetch("https://sih-project-1-9wgj.onrender.com/api/registerUser", {
                         method: "POST",
                         headers: {
@@ -45,6 +47,7 @@ const RouteProtection = () => {
                         body: JSON.stringify({ role }),
                     });
                 } catch (error) {
+                    localStorage.setItem('error', error.message);
                     await signOut();
                     navigate('/sign-up');
                     console.log(error);
