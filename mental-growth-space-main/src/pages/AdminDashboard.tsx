@@ -95,7 +95,7 @@ export default function DashboardPage() {
                     <Button
                       variant="destructive"
                       className="rounded-2xl px-6 py-3 w-full md:w-auto"
-                      onClick={() => navigate("/block-request")}
+                      onClick={() => navigate("/admin/block-request")}
                     >
                       {t("Block Request")}
                     </Button>

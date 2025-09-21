@@ -112,7 +112,7 @@ export const addStudent = async (req, res) => {
     }
 };
 
-export const deleteStudent = async (req, res) => {
+export const blockStudent = async (req, res) => {
     if (!req.auth || !req.auth.userId) {
         return res.status(401).send("Unauthorized");
     }
@@ -146,7 +146,7 @@ export const deleteStudent = async (req, res) => {
     }
 };
 
-export const deleteCounsellor = async (req, res) => {
+export const blockCounsellor = async (req, res) => {
     if (!req.auth || !req.auth.userId) {
         return res.status(401).send("Unauthorized");
     }

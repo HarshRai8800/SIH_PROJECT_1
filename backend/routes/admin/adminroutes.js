@@ -3,11 +3,11 @@ import { requireAuth } from "@clerk/express";
 import {
   adminLogin,
   addStudent,
-  deleteStudent,
   getAllStudents,
   addCounsellor,
-  deleteCounsellor,
-  getAllCounsellors
+  blockCounsellor,
+  getAllCounsellors,
+  blockStudent
 } from "../../controllers/admin/admincontrollers.js";
 
 const adminRoutes = express.Router();
@@ -15,11 +15,11 @@ const adminRoutes = express.Router();
 adminRoutes.post("/login",requireAuth(), adminLogin);
 
 adminRoutes.post("/addStudent", requireAuth(), addStudent);
-adminRoutes.delete("/deleteStudent", requireAuth(), deleteStudent);
+adminRoutes.delete("/blockStudent", requireAuth(), blockStudent);
 adminRoutes.get("/getAllStudents", requireAuth(), getAllStudents);
 
 adminRoutes.post("/addCounsellor", requireAuth(), addCounsellor);
-adminRoutes.delete("/deleteCounsellor", requireAuth(), deleteCounsellor);
+adminRoutes.delete("/blockCounsellor", requireAuth(), blockCounsellor);
 adminRoutes.get("/getAllCounsellors", requireAuth(), getAllCounsellors);
 
 export default adminRoutes;

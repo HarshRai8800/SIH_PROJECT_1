@@ -10,6 +10,7 @@ import ticket from "./routes/createticket.js"
 import counseller from "./routes/counseller.js"
 import getUser from "./routes/getUser.js"
 import adminRoutes from "./routes/admin/adminroutes.js";
+import blockrouter from "./routes/blockroute.js";
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use("/api/ticket",ticket)
 app.use("/api/counseller",counseller)
 app.use("/api/get",getUser)
 app.use("/api/admin",adminRoutes)
+app.use("/api/block",blockrouter)
 
 socketConfig(server);
 

@@ -133,7 +133,8 @@ const CounsellorDashboard = () => {
   }, [selected]);
 
   const handleBlockStudent = () => {
-    alert('Student has been blocked.');
+    alert('Student block request has been send');
+    window.location.href = '/counsellor/block-student';
   };
 
   const formatDate = (dateStr) => {

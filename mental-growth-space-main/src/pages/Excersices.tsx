@@ -27,11 +27,11 @@ const exercisesData = [
             link:"/exercises/physical-exercise"
     },
     {
-        title: "Mind Games",
+        title: "Brain Games",
         icon: Gamepad2,
         description:
             "Fun puzzles and brain teasers to sharpen problem-solving skills.",
-            link:"/exercises/mind-games"
+            link:"/exercises/brain-games"
     },
     {
         title: "Fun Games",

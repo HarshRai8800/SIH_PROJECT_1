@@ -98,7 +98,7 @@ const StudentDashboard: React.FC = () => {
   ];
 
   const handleReportCounsellor = () => {
-    alert('Your report about the counsellor has been submitted.');
+    window.location.href = '/student/block-counselor';
   };
 
   // Sort upcoming appointments by nearest timing

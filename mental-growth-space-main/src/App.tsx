@@ -24,7 +24,9 @@ import CustomSignUp from "./components/Sign-up/CustomSignUp";
 import RouteProtection from "./components/RouteProtection"
 import EditProfilePage from "./pages/EditProfilePage";
 import AddStudentPage from "./pages/AddStudent";
-import BlockRequestPage from "./pages/BlockRequest";
+import AdminBlockRequestPage from "./pages/AdminBlockRequest.tsx";
+import BlockStudentPage from "./pages/BlockStudent";
+import BlockCounselorPage from "./pages/BlockCounselor";
 import AddCounsellorPage from "./pages/AddCounsellor";
 import BrainGames from "./pages/BrainGames";
 
@@ -74,7 +76,9 @@ const App = () => (
             <Route path="/exercises/fun-games/:gameId" element={<FunGameDetail />} />
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/counsellor/dashboard" element={<CounsellorDashboard />} />
-            <Route path="/braingames" element={<BrainGames />} />
+            <Route path="/counsellor/block-student" element={<BlockStudentPage />} />
+            <Route path="/student/block-counselor" element={<BlockCounselorPage />} />
+            <Route path="/exercises/brain-games" element={<BrainGames />} />
           </Route>
 
           {/* Catch-all */}
@@ -86,7 +90,7 @@ const App = () => (
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/add-student" element={<AddStudentPage />} />
             <Route path="/admin/add-counsellor" element={<AddCounsellorPage />} />
-            <Route path="/admin/block-request" element={<BlockRequestPage />} />
+            <Route path="/admin/block-request" element={<AdminBlockRequestPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
