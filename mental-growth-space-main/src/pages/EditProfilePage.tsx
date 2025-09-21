@@ -44,7 +44,7 @@ const EditProfilePage = () => {
     const fetchProfile = async () => {
       try {
         const token = await getToken();
-        const res = await axios.get("http://localhost:5000/api/get/user", {
+        const res = await axios.get("https://sih-project-1-1.onrender.com/api/get/user", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -108,7 +108,7 @@ const EditProfilePage = () => {
       const token = await getToken();
 
       const res = await axios.put(
-        "http://localhost:5000/api/user/update",
+        "https://sih-project-1-1.onrender.com/api/user/update",
         {
           clerkId: user.id,
           firstName: formData.firstName,

@@ -65,7 +65,7 @@ const CounsellorDashboard = () => {
     try {
       setLoading(true);
       const { data } = await axios.post(
-        'http://localhost:5000/api/ticket/get_counsellor_tickets',
+        'https://sih-project-1-1.onrender.com/api/ticket/get_counsellor_tickets',
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -104,7 +104,7 @@ const CounsellorDashboard = () => {
     try {
       setLoading(true);
       const { data } = await axios.post(
-        'http://localhost:5000/api/ticket/get_counsellor_pastTickets',
+        'https://sih-project-1-1.onrender.com/api/ticket/get_counsellor_pastTickets',
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

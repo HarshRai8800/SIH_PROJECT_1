@@ -56,7 +56,6 @@ const check = await db.ticket.findFirst({
 
 
    } catch (error) {
-    console.log(error.message);
      return res.status(500).json({error:"Internal server error"});
    }
 

@@ -36,7 +36,7 @@ const ProfilePage = () => {
     const fetchProfile = async () => {
       try {
         const token = await getToken();
-        const res = await axios.get("http://localhost:5000/api/get/user", {
+        const res = await axios.get("https://sih-project-1-1.onrender.com/api/get/user", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
