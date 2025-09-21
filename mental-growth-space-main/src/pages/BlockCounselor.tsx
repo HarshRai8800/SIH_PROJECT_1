@@ -46,7 +46,7 @@ export default function BlockCounselorPage() {
       setLoading(true);
       const token = await getToken();
       const { data } = await axios.post(
-        "http://localhost:5000/api/ticket/get_student_counsellors",
+        "https://sih-project-1-1.onrender.com/api/ticket/get_student_counsellors",
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -68,7 +68,7 @@ export default function BlockCounselorPage() {
     try {
       const token = await getToken();
       await axios.post(
-        "http://localhost:5000/api/block/blockrequest",
+        "https://sih-project-1-1.onrender.com/api/block/blockrequest",
         { email, role: "counsellor", reason },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -84,7 +84,7 @@ const CounsellorDashboard = () => {
     try {
       setLoading(true);
       const { data } = await axios.post(
-        'http://localhost:5000/api/ticket/get_counsellor_todaysTicket',
+        'https://sih-project-1-1.onrender.com/api/ticket/get_counsellor_todaysTicket',
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

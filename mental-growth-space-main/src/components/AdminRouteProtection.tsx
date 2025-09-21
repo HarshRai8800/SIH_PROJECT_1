@@ -30,7 +30,7 @@ const AdminRouteProtection = () => {
 
                 const token = await getToken();
                 const response = await fetch(
-                    "http://localhost:5000/api/admin/login",
+                    "https://sih-project-1-1.onrender.com/api/admin/login",
                     {
                         method: "POST",
                         headers: {
