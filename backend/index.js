@@ -17,7 +17,11 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors());
+app.use(cors({
+    origin: "https://sih-project-1-git-main-harshrai8800s-projects.vercel.app?_vercel_share=LpGJoImaQYUvhOjX8g2cO5q2jyoIY64v", 
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,  
+  }));
 app.use(express.json());
 
 // Attach Clerk auth to all requests so req.auth is populated
