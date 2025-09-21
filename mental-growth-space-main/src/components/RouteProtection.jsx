@@ -36,7 +36,7 @@ const RouteProtection = () => {
                     }
 
                     const token = await getToken();
-                    await fetch("http://localhost:5000/api/registerUser", {
+                    await fetch("https://sih-project-1-1.onrender.com/api/registerUser", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

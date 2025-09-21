@@ -38,7 +38,7 @@ export default function AddCounsellorPage() {
   });
 
   const apiBaseUrl = useMemo(() => {
-    return "http://localhost:5000/api/admin";
+    return "https://sih-project-1-1.onrender.com/api/admin";
   }, []);
 
   const fetchCounsellors = async () => {

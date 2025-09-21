@@ -42,7 +42,7 @@ const StudentDashboard: React.FC = () => {
       try {
         const token = await getToken();
         const { data } = await axios.post(
-          'http://localhost:5000/api/ticket/get_upcoming_tickets',
+          'https://sih-project-1-1.onrender.com/api/ticket/get_upcoming_tickets',
           {
             clerkId: user?.id ?? '',
           },

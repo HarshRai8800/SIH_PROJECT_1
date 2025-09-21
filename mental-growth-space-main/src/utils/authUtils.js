@@ -10,7 +10,7 @@
  */
 export const registerUserWithCleanup = async (token, role) => {
   try {
-    const response = await fetch("http://localhost:5000/api/registerUser", {
+    const response = await fetch("https://sih-project-1-1.onrender.com/api/registerUser", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
