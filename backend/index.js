@@ -18,7 +18,11 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(cors({
-    origin: "https://sih-project-1-git-main-harshrai8800s-projects.vercel.app?_vercel_share=LpGJoImaQYUvhOjX8g2cO5q2jyoIY64v", 
+    origin: ["https://sih-project-1-git-main-harshrai8800s-projects.vercel.app?_vercel_share=LpGJoImaQYUvhOjX8g2cO5q2jyoIY64v",
+      "http://localhost:8080",
+      "http://localhost:8081",
+      "http://localhost:8082",
+    ], 
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,  
   }));
