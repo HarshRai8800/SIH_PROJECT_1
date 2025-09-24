@@ -95,7 +95,7 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="bg-card/95 backdrop-blur-lg border-b border-border fixed top-0 left-0 right-0 z-[9999] shadow-sm">
+    <nav className="bg-card/95 backdrop-blur-lg border-b border fixed top-0 left-0 right-0 z-[9999] shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -177,7 +177,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Nav */}
-          <div className="md:hidden border-t border-border">
+          <div className="md:hidden border-t border">
             <div className="grid grid-cols-3 py-2">
               {commonItems.map((item) => {
                 const Icon = item.icon;

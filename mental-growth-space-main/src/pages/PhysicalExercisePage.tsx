@@ -68,7 +68,7 @@ export default function PhysicalExercisePage() {
               {filteredExercises.map((exercise) => (
                 <Card 
                   key={exercise.id}
-                  className={`cursor-pointer hover:shadow-lg transition-shadow border border-border/50 ${
+                  className={`cursor-pointer hover:shadow-lg transition-shadow border border/50 ${
                     completedExercises[exercise.id] 
                       ? "bg-gradient-to-br from-[#e0f7fa] to-[#c8e6c9]" 
                       : "bg-gradient-to-br from-[#d0f0fd] via-[#e0f7fa] to-[#dcedc8]"

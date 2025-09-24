@@ -90,7 +90,7 @@ export default function PhysicalExercise({
     };
 
     return (
-        <Card className="w-full max-w-3xl mx-auto shadow-lg hover:shadow-xl transition-shadow border border-border/50 bg-gradient-to-br from-[#d0f0fd] via-[#e0f7fa] to-[#dcedc8] rounded-2xl">
+        <Card className="w-full max-w-3xl mx-auto shadow-lg hover:shadow-xl transition-shadow border border/50 bg-gradient-to-br from-[#d0f0fd] via-[#e0f7fa] to-[#dcedc8] rounded-2xl">
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export default function PhysicalExercise({
                 )}
             </CardContent>
 
-            <CardFooter className="flex justify-between border-t border-border/30 pt-4">
+            <CardFooter className="flex justify-between border-t border/30 pt-4">
                 {isStarted && !isCompleted && (
                     <Button
                         variant="ghost"

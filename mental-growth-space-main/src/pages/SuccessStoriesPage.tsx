@@ -218,7 +218,7 @@ Depression still requires daily management, but I now have tools, support, and m
                   </div>
 
                   {/* Story Footer */}
-                  <div className="px-6 py-4 border-t border-border/50 flex items-center justify-between">
+                  <div className="px-6 py-4 border-t border/50 flex items-center justify-between">
                     <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                       <div className="flex items-center space-x-1">
                         <Heart className="w-4 h-4" />

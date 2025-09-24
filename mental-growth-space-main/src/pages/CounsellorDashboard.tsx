@@ -194,7 +194,7 @@ const CounsellorDashboard = () => {
             {counsellorStats.map((stat, idx) => (
               <Card
                 key={idx}
-                className={`p-6 cursor-pointer shadow-md rounded-2xl border border-border hover:shadow-lg transition ${
+                className={`p-6 cursor-pointer shadow-md rounded-2xl border border hover:shadow-lg transition ${
                   stat.clickable ? 'hover:border-primary' : ''
                 }`}
                 onClick={() => (stat.clickable ? setSelected(stat.type) : null)}
@@ -216,7 +216,7 @@ const CounsellorDashboard = () => {
           {(selected === 'appointments' ||
             selected === 'todayAppointments' ||
             selected === 'pastAppointments') && (
-            <Card className="w-full p-6 mb-8 shadow-md rounded-2xl border border-border">
+            <Card className="w-full p-6 mb-8 shadow-md rounded-2xl border border">
               <h2 className="text-xl font-semibold mb-4">
                 {getHeaderTitle()}
               </h2>
@@ -313,11 +313,11 @@ const CounsellorDashboard = () => {
 
           {/* Charts Section */}
           <div className="grid md:grid-cols-2 gap-6">
-            <Card className="p-6 shadow-md rounded-2xl border border-border">
+            <Card className="p-6 shadow-md rounded-2xl border border">
               <h2 className="text-lg font-semibold mb-4">Wellness Overview</h2>
               <WellnessChart />
             </Card>
-            <Card className="p-6 shadow-md rounded-2xl border border-border">
+            <Card className="p-6 shadow-md rounded-2xl border border">
               <h2 className="text-lg font-semibold mb-4">Stress Levels</h2>
               <StressLevelsChart />
             </Card>

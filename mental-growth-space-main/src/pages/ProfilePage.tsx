@@ -320,7 +320,7 @@ const ProfilePage = () => {
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
                   {wellnessGoals.map((goal) => (
-                    <Card key={goal.id} className="p-4 border-border/50">
+                    <Card key={goal.id} className="p-4 border/50">
                       <div className="space-y-3">
                         <div className="flex items-start justify-between">
                           <div className="space-y-1 flex-1">
@@ -377,7 +377,7 @@ const ProfilePage = () => {
                     return (
                       <div
                         key={activity.id}
-                        className="flex items-start space-x-4 p-4 rounded-lg border border-border/50"
+                        className="flex items-start space-x-4 p-4 rounded-lg border border/50"
                       >
                         <div className={`p-2 rounded-lg bg-${activity.color}/10`}>
                           <Icon className={`w-5 h-5 text-${activity.color}`} />

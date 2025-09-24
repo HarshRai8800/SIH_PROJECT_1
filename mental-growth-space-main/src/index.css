@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 /* Digital Psychological Intervention System Design System */
 
 @layer base {
@@ -123,7 +122,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border;
   }
 
   body {

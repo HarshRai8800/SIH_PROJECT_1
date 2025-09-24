@@ -178,7 +178,7 @@ const ChatbotPage = () => {
 
             {/* Input Area */}
             {!counsellingButton && (
-              <div className="border-t border-border p-4">
+              <div className="border-t border p-4">
                 <div className="flex items-center space-x-3">
                   <Input
                     value={input}

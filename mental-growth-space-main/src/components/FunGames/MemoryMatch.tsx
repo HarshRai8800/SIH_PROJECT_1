@@ -27,7 +27,7 @@ export default function MemoryMatch() {
   };
 
   return (
-    <Card className="w-full shadow-lg hover:shadow-xl transition-shadow border border-border/50 bg-gradient-to-br from-[#d0f0fd] via-[#e0f7fa] to-[#dcedc8] rounded-2xl">
+    <Card className="w-full shadow-lg hover:shadow-xl transition-shadow border border/50 bg-gradient-to-br from-[#d0f0fd] via-[#e0f7fa] to-[#dcedc8] rounded-2xl">
       <div className="p-6 text-center">
         <div className="flex items-center justify-center mb-4">
           <Brain className="h-6 w-6 text-primary mr-2" />

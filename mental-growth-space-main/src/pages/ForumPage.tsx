@@ -208,7 +208,7 @@ const ForumPage = () => {
                       </div>
 
                       {/* Post Meta */}
-                      <div className="flex items-center justify-between pt-2 border-t border-border">
+                      <div className="flex items-center justify-between pt-2 border-t border">
                         <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                           <div className="flex items-center space-x-1">
                             <User className="w-4 h-4" />

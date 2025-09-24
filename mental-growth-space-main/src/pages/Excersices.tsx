@@ -69,7 +69,7 @@ export default function Exercises() {
                         <Link to={link}>
                             <Card
                             key={title}
-                            className="flex flex-col justify-between h-96 hover:scale-105 transition-transform border border-border/50 bg-gradient-to-br from-[#d0f0fd] via-[#e0f7fa] to-[#dcedc8] rounded-2xl shadow-md hover:shadow-xl"
+                            className="flex flex-col justify-between h-96 hover:scale-105 transition-transform border border/50 bg-gradient-to-br from-[#d0f0fd] via-[#e0f7fa] to-[#dcedc8] rounded-2xl shadow-md hover:shadow-xl"
                         >
                             <CardHeader className="flex flex-col items-center pt-6">
                                 <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-primary/70 to-secondary/70 flex items-center justify-center mb-3">

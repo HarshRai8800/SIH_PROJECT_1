@@ -61,7 +61,7 @@ export default function MindGamesPage() {
           {mindGamesData.map(({ id, title, icon: Icon, description, difficulty }) => (
             <Card
               key={id}
-              className="flex flex-col justify-between h-96 hover:scale-105 transition-transform border border-border/50 bg-gradient-to-br from-[#f3e5f5] via-[#ede7f6] to-[#e8f5e9] rounded-2xl shadow-md hover:shadow-xl"
+              className="flex flex-col justify-between h-96 hover:scale-105 transition-transform border border/50 bg-gradient-to-br from-[#f3e5f5] via-[#ede7f6] to-[#e8f5e9] rounded-2xl shadow-md hover:shadow-xl"
             >
               <CardHeader className="flex flex-col items-center pt-6">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-primary/70 to-secondary/70 flex items-center justify-center mb-3">
