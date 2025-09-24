@@ -38,15 +38,8 @@ export const registerUser = async (req, res) => {
     }
     // Route to proper table based on role (default to student)
     if (incomingRole === "counsellor") {
-      const counsellor = await db.counsellor.upsert({
-        where: { email },
-        update: {
-          email,
-          firstName: firstName || "",
-          lastName: lastName || "",
-          imageUrl: imageUrl || "",
-        },
-        create: {
+      const counsellor = await db.counsellor.update({
+      data: {
           clerkId,
           email,
           firstName: firstName || "",
@@ -64,17 +57,10 @@ export const registerUser = async (req, res) => {
 
     // Student (default)
 
-    const user = await db.students.upsert({
+    const user = await db.students.update({
 
       where: { email },
-      update: {
-
-        email,
-        firstName,
-        lastName,
-        imageUrl,
-      },
-      create: {
+     data:{
         clerkId,
         email,
         firstName,

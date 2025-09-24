@@ -47,9 +47,9 @@ const RouteProtection = () => {
                         body: JSON.stringify({ role }),
                     });
                 } catch (error) {
-                    localStorage.setItem('error', error.message);
-                    await signOut();
-                    navigate('/sign-up');
+                    // localStorage.setItem('error', error.message);
+                    // await signOut();
+                    // navigate('/sign-up');
                     console.log(error);
                 }
             }

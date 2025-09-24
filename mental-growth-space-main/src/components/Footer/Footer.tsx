@@ -33,7 +33,7 @@ const Footer = () => {
             <h4 className="font-medium text-black">Contact Us</h4>
             <div className="flex items-center justify-center md:justify-start space-x-2 hover:text-blue-700 transition-colors">
               <Phone className="w-4 h-4 text-blue-500" />
-              <span>24/7 Crisis: 988</span>
+              <span>24/7 Crisis: 1098</span>
             </div>
             <div className="flex items-center justify-center md:justify-start space-x-2 hover:text-blue-700 transition-colors">
               <Mail className="w-4 h-4 text-blue-500" />
@@ -55,11 +55,11 @@ const Footer = () => {
             <h4 className="font-medium text-black">Emergency</h4>
             <div className="p-2 bg-blue-50 hover:bg-blue-100 rounded-md border border-blue-200 transition-colors cursor-pointer">
               <p className="font-medium text-black">Crisis Hotline</p>
-              <p className="text-gray-700">988 - Suicide & Crisis Lifeline</p>
+              <p className="text-gray-700">1098 - Suicide & Crisis Lifeline</p>
             </div>
             <div className="p-2 bg-blue-50 hover:bg-blue-100 rounded-md border border-blue-200 transition-colors cursor-pointer">
               <p className="font-medium text-black">Campus Safety</p>
-              <p className="text-gray-700">(555) 987-6543</p>
+              <p className="text-gray-700">1800-599-0019</p>
             </div>
           </motion.div>
         </div>

@@ -314,7 +314,7 @@ Depression still requires daily management, but I now have tools, support, and m
                     Start Wellness Chat
                   </Button>
                   <Button size="sm" variant="outline" className="w-full">
-                    Crisis Line: 988
+                    Crisis Line: 1098
                   </Button>
                 </div>
               </Card>

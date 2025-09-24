@@ -130,7 +130,7 @@ const HeroSection = () => {
         <Button 
           size="lg" 
           className="rounded-full bg-destructive hover:bg-destructive/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 pulse-wellness"
-          onClick={() => window.open('tel:988', '_blank')}
+          onClick={() => window.open('tel:1098', '_blank')}
         >
           <Phone className="w-5 h-5 mr-2" />
           {t("Crisis Support")}

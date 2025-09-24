@@ -300,7 +300,7 @@ const ForumPage = () => {
                     {t('Chat with AI Counselor')}
                   </Button>
                   <Button size="sm" variant="outline" className="w-full">
-                    {t('Crisis Hotline: 988')}
+                    {t('Crisis Hotline: 1098')}
                   </Button>
                 </div>
               </Card>
